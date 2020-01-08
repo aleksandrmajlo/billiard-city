@@ -1,0 +1,173 @@
+.green {
+	color: green;
+}
+
+.red {
+	color: red;
+}
+
+.logouts {
+	display: none;
+	position: absolute;
+	right: 0px;
+	background: #216a94;
+
+}
+
+span.select2-selection.select2-selection--single {
+	min-width: 150px !important;
+}
+#sock td {
+	padding: 10px;
+	border-bottom: 1px solid silver;
+}
+
+#sock tr {
+	border-bottom: 1px solid silver;
+}
+
+a:hover {
+    cursor: pointer !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 26px;
+	position: absolute;
+	top: 10px  !important;
+	right: 1px;
+	width: 20px;
+}
+
+.select2-container--default .select2-selection--single {
+	background-color: #fff;
+	border: 1px solid #aaa;
+	border-radius: 4px;
+	padding: 11px 2px;
+}
+
+.select2-container .select2-selection--single {
+	box-sizing: border-box;
+	cursor: pointer;
+	display: block;
+	height: 45px !important;
+	margin-bottom: 10px !important;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.js-example-basic-single {
+	width: 100% !important;
+	height: 45px;
+}
+
+.select2-container {
+
+	width: 100% !important;
+
+}
+
+
+/*#id2 {
+	font-size: 10px;
+}*/
+.col-xs-12 {
+	padding-bottom: 5px;
+}
+
+.col-xs-12 select {
+	width: 100% !important;
+}
+
+.todo-list li {
+	min-height: 52px;
+}
+
+.logouts .btn-default {
+	color: white;
+	background-color: #3c8dbc;
+	border-color: #3c8dbc;
+}
+
+.user-image {
+	float: left;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	margin-right: 10px;
+	margin-top: -2px;
+}
+
+#selectconnect select {
+	margin-bottom: 10px;
+}
+
+#selectconnect input {
+	margin-bottom: 10px;
+}
+
+#id2 {
+	background-color: #3c8dbc;
+	border-color: #367fa9;
+	color: white;
+	margin: 0 0 10px 10px;
+    font-size: 12px;
+    height: auto!important;
+}
+#id3 {
+	background-color: #f39c12;
+	border-color: #e08e0b;
+	color: white;
+	font-size: 12px;
+    height: auto!important;
+    margin: 0 0 10px 10px;
+}
+label {
+	margin-top: 7px;
+}
+
+div#fb-root {
+	margin-top: 10px;
+}
+
+.red {
+	color: red;
+}
+
+
+@media screen and (max-width: 900px) {
+	.table-container
+	{
+		width: 100%;
+		overflow-y: auto;
+		_overflow: auto;
+		margin: 0 0 1em;
+	}
+}
+
+body {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #333;
+	background-color: #fff;
+}
+.form-control {
+	display: block;
+	width: 100%;
+	height: 45px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+}

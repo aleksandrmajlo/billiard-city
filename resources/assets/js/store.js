@@ -1,0 +1,500 @@
+let store = {
+    state: {
+        //смс
+        id_sms: '',
+        ERRORCode: false,
+        SUCCCode: false,
+        //смс
+
+        menus: [{
+            'title': 'Меню',
+            'id': -1
+        }],
+        cart: [],
+        ErrorCount: [],
+        products: [],
+        categories: [],
+        showCategories: true,
+
+        user: {
+            value: '',
+            text: '',
+        },
+        users: [],
+        price: 0,
+        skidka: 0,
+        total: 0,
+        billing: 1, // тип оплаты
+        lang: {
+
+
+            Cart1: {
+                ru: 'Наименование',
+                ua: 'Найменування',
+            },
+
+
+            Cart2: {
+                ru: 'Кол-во',
+                ua: 'Кіл-ть',
+            },
+
+            Cart3: {
+                ru: 'Цена',
+                ua: 'Ціна',
+            },
+
+            Cart4: {
+                ru: 'Итого',
+                ua: 'Разом',
+            },
+
+            Cart5: {
+                ru: 'Недостаточно товаров на складе!',
+                ua: 'Недостатньо товарів на складі!',
+            },
+
+            Cart6: {
+                ru: 'Указано',
+                ua: 'Вказано',
+            },
+
+
+            ClearorderModal: {
+                ru: 'Очистить заказ?',
+                ua: 'Очистити замовлення?',
+            },
+
+
+            ClearorderModalYes: {
+                ru: 'Да',
+                ua: 'Так',
+            },
+
+
+            ClearorderModalNot: {
+                ru: 'Нет',
+                ua: 'Ні',
+            },
+
+            PayModal: {
+                ru: 'Веберите способ оплаты',
+                ua: 'Виберіть спосіб оплати',
+            },
+
+            PayModalPrice: {
+                ru: 'Итого',
+                ua: 'Разом',
+            },
+
+            PayModalDiscount: {
+                ru: 'Скидка',
+                ua: 'Знижкам',
+            },
+            PayModalTotal: {
+                ru: 'К оплате',
+                ua: 'До оплати',
+            },
+            PayModalNal: {
+                ru: 'Наличными',
+                ua: 'Готівкою',
+            },
+
+            PayModalPrint: {
+                ru: 'Печатать чек?',
+                ua: 'Друкувати чек?',
+            },
+
+            PayModalPay: {
+                ru: 'Оплатить',
+                ua: 'Заплатити',
+            },
+
+            SmsModal: {
+                ru: 'Введите Ваш номер телефона для получения скидки',
+                ua: 'Введіть Ваш номер телефону для отримання знижки',
+            },
+
+            SmsModalSMS: {
+                ru: 'Отправить код по смс',
+                ua: 'Надіслати код по смс',
+            },
+
+            SmsModalBell: {
+                ru: 'Отправить код звонком',
+                ua: 'Надіслати код дзвінком',
+            },
+
+            SmsModalPhone: {
+                ru: 'Введите номер телефона с 0, без +38',
+                ua: 'Введіть номер телефону з 0, без +38',
+            },
+
+            SmsCode: {
+                ru: 'Введите Ваш код для получения скидки',
+                ua: 'Введіть Ваш код для отримання знижки',
+            },
+
+            SmsCode: {
+                ru: 'Введите код',
+                ua: 'Введіть код ',
+            },
+
+            SmsCodeButton: {
+                ru: 'Получить скидку',
+                ua: 'Отримати знижку',
+            },
+
+            SmsCodeErrorEnter: {
+                ru: 'Код неверный',
+                ua: 'Код невірний',
+            },
+
+            SmsCodeError: {
+                ru: 'Укажите клиента',
+                ua: 'Вкажіть клієнта',
+            },
+
+
+        }
+    },
+    mutations: {
+        CategoriesSet(state, data) {
+            state.categories = data.categories;
+        },
+        ProductCategorySet(state, data) {
+            state.products = data.products;
+            state.showCategories = false;
+        },
+        // добавляем категорию
+        MenyAddCategory(state, category) {
+            state.menus = [{
+                'title': 'Меню',
+                'id': -1
+            },
+                {
+                    'title': category.title,
+                    'id': category.id
+                }
+
+            ];
+        },
+        // клик по пункту меню
+        MenuClick(state, menu) {
+            if (menu.id == -1) {
+                state.menus = [{
+                    'title': 'Меню',
+                    'id': -1
+                }
+
+                ];
+                state.showCategories = true;
+            }
+        },
+        //Корзина установить продукты и скидки при первоначальной загрузке*******************************
+        SetCart(state, data) {
+            state.cart = data.cart;
+            state.user = data.user;
+            state.skidka = data.skidka;
+
+        },
+        //Корзина*******************************
+        AddCart(state, product) {
+            let i = state.cart.map(item => item.id).indexOf(product.id);
+            // продукт
+            let j = state.products.map(item => parseInt(item.id)).indexOf(product.id);
+            if (i == -1) {
+                state.cart.push({
+                    title: product.title,
+                    id: product.id,
+                    image: product.image,
+                    price: product.price,
+                    count: 1,
+                    total: product.price,
+                    countThis: product.count,
+                    isOpen: false,
+                    unlimited: product.unlimited
+                });
+                //изменяем к-во
+                if (j !== -1) state.products[j].count = parseFloat(state.products[j].count) - 1;
+            } else {
+                let plusCount = 1;
+                if (plusCount > state.products[j].count && state.cart[i].unlimited !== 1 && state.cart[i].unlimited !== '1') {
+                    state.cart[i].isOpen = true;
+                    setTimeout(() => {
+                        state.cart[i].isOpen = false;
+                    }, 2000)
+                } else {
+                    state.cart[i].count = parseFloat(state.cart[i].count) + 1;
+                    //изменяем к-во
+                    if (j !== -1) state.products[j].count = parseFloat(state.products[j].count) - 1;
+                }
+            }
+        },
+        AddPlusProduct(state, product) {
+            let i = state.cart.map(item => parseInt(item.id)).indexOf(parseInt(product.id));
+            // продукт
+            let j = state.products.map(item => item.id).indexOf(product.id);
+            let plusCount = 0.5;
+            if (j !== -1) {
+                if (plusCount > state.products[j].count && state.cart[i].unlimited !== 1 && state.cart[i].unlimited !== '1') {
+                    state.cart[i].isOpen = true;
+                    setTimeout(() => {
+                        state.cart[i].isOpen = false;
+                    }, 2000)
+                } else {
+                    state.cart[i].count = state.cart[i].count + 0.5;
+                    //изменяем к-во
+                    state.products[j].count = parseFloat(state.products[j].count) - plusCount;
+                }
+            } else {
+                if (plusCount > state.cart[i].countThis && state.cart[i].unlimited !== 1 && state.cart[i].unlimited !== '1') {
+                    state.cart[i].isOpen = true;
+                    setTimeout(() => {
+                        state.cart[i].isOpen = false;
+                    }, 2000)
+                } else {
+                    state.cart[i].count = state.cart[i].count + 0.5;
+                }
+
+            }
+        },
+
+        AddMinusProduct(state, product) {
+            let i = state.cart.map(item => parseInt(item.id)).indexOf(parseInt(product.id));
+            // продукт
+            let j = state.products.map(item => item.id).indexOf(product.id);
+            if (state.cart[i].count > 0.5) {
+                state.cart[i].count = state.cart[i].count - 0.5;
+
+            } else {
+                // удаляем из корзины
+                let i = state.cart.map(item => parseInt(item.id)).indexOf(parseInt(product.id));
+                state.cart.splice(i, 1);
+            }
+            //изменяем к-во
+            if (j !== -1) state.products[j].count = parseFloat(state.products[j].count) + 0.5;
+
+        },
+        CartClear(state) {
+            state.cart = [];
+        },
+        SetTotal(state) {
+            let price = 0;
+            state.cart.forEach((el, i) => {
+                let r = el.count * el.price;
+                state.cart[i].total = r;
+                price += r;
+            });
+            state.price = price;
+            if (state.skidka > 0) {
+                var summaSkidki = state.skidka * state.price / 100;
+                state.total = (state.price - summaSkidki).toFixed(2);
+            } else {
+                state.total = price;
+            }
+
+        },
+        //недостаточно кол-ва
+        ErrorCount(state, data) {
+            state.ErrorCount = data;
+            $('#PayModal').modal('hide');
+        },
+        // установить пользователей
+        UsersSet(state, users) {
+            state.users = users;
+        },
+        // установить пользователя
+        UserSet(state, user) {
+            state.user = user;
+        },
+        // SMS
+        SetSMS(state, id_sms) {
+            state.id_sms = id_sms;
+        },
+        // проверка кода
+        checkCode(state, data) {
+            if (data.res == 1) {
+                // ответ верный
+                state.ERRORCode = false;
+                let i = state.users.map(item => item.value).indexOf(state.user.value);
+                state.skidka = state.users[i].skidka_bar;
+                state.SUCCCode = true;
+
+            } else {
+                state.SUCCCode = false;
+                state.ERRORCode = true;
+                state.skidka = 0;
+
+            }
+        }
+    },
+    actions: {
+        // получить все категории
+        CategoriesGet({
+                          commit
+                      }) {
+            return axios.get('/order/CategoriesGet')
+                .then(response => {
+                    commit('CategoriesSet', response.data);
+                });
+        },
+        // получить продукты даннй категории
+        CategoriesProducts({
+                               commit,
+                               state
+                           }, cat_id) {
+            let i = state.categories.map(item => parseInt(item.id)).indexOf(parseInt(cat_id));
+            let category = state.categories[i];
+            commit('MenyAddCategory', category);
+            return axios.post('/order/ProductCategoryGet', {
+                cat_id: cat_id
+            })
+                .then(response => {
+                    commit('ProductCategorySet', response.data);
+                });
+
+        },
+        SearchProduts({
+                          commit,
+                          state
+                      }, val) {
+            return axios.post('/order/SearchProduts', {
+                val: val
+            })
+                .then(response => {
+                    commit('ProductCategorySet', response.data);
+                });
+        },
+        // оплата
+        Pay({
+                commit,
+                state
+            }, arr) {
+            let data = {
+                order_id: arr.order_id,
+                print: arr.print,
+                cart: state.cart,
+                user: state.user,
+                skidka: state.skidka,
+                billing: state.billing,
+                info: $('#comment').val()
+            };
+            return axios.post('/order/Pay', data)
+                .then(response => {
+                    if (response.data.success) {
+                        location.href = '/open-bar?status=1';
+                        commit('ErrorCount', [])
+                    } else {
+                        commit('ErrorCount', response.data.ErrorCount)
+                    }
+
+                })
+                .catch(error => {
+                    alert(error.response)
+                })
+
+        },
+        //пользователи
+        GetUsers({
+                     commit,
+                     state
+                 }) {
+
+            return axios.post('/order/GetUsers')
+                .then(response => {
+                    commit('UsersSet', response.data.users);
+                })
+                .catch(error => {
+                    alert(error.response)
+                })
+
+        },
+        // отправка смс или звонка
+        SendSMS({
+                    commit,
+                    state
+                }, data) {
+            let ob = {
+                typesms: data.typesms,
+                phones: data.phones,
+                ajaxmy: true
+            }
+            commit('UserSet', data.user);
+            return axios.post('/generateCode', ob)
+                .then(response => {
+                    commit('SetSMS', response.data.id_sms)
+                })
+                .catch(error => {
+
+                })
+
+        },
+
+        // проверка кода
+        checkCode({
+                      commit,
+                      state
+                  }, data) {
+            let i = state.users.map(item => item.value).indexOf(state.user.value);
+            data.user = state.users[i].value;
+            console.log(data);
+
+            return axios.post('/checkCode', data)
+                .then(response => {
+                    commit('checkCode', response.data)
+                    commit('SetTotal');
+                    if (response.data.res == 1) {
+
+                    }
+                    setTimeout(() => {
+                        $('#SmsCode').modal('hide');
+                    }, 300)
+                })
+                .catch(error => {
+
+                })
+        },
+
+        // получение продуктов первончально при загрузке страницы
+        getOrder({
+                     commit,
+                     state
+                 }, order_id) {
+            return axios.post('/order/getOrder', {
+                order_id: order_id
+            })
+                .then(response => {
+                    commit('SetCart', response.data);
+                    commit('SetTotal');
+                })
+                .catch(error => {
+
+                })
+        },
+
+
+        // при добавлении сохранение продуктов
+        setReserveAndCart({
+                              commit,
+                              state
+                          }, data) {
+            let carts = {
+                cart: state.cart,
+                order_id: data.order_id,
+                user: state.user,
+                skidka: state.skidka,
+            };
+            return axios.post('/order/Reserve', carts)
+                .then(response => {
+
+                })
+                .catch(error => {
+
+                })
+        }
+
+    }
+};
+
+export default store;
