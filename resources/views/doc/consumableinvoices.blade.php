@@ -42,6 +42,7 @@
                                         </thead>
                                         <tbody>
                                         @foreach($consumableinvoices as $act)
+
                                             <tr>
                                                 <td>{{$act->id}}</td>
                                                 <td>{{$act->created_at}}</td>
@@ -49,7 +50,6 @@
                                                     @if($act->user)
                                                         {{$act->user->name}}
                                                     @endif
-    
                                                 </td>
                                                 <td>
                                                     {{$act->total}}
@@ -59,6 +59,7 @@
                                                     <a class="btn " href="{{url('doc/consumableinvoice/'.$act->id)}}"> @lang('act.show_act')</a>
                                                 </td>
                                             </tr>
+
                                         @endforeach
                                         </tbody>
                                     </table>

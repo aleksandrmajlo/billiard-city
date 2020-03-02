@@ -40,7 +40,7 @@ class SmsController extends Controller
             $id_sms=SmsController::send_sms($phones, $message, $code,  0, 0,0, $format,false,'',[],$ajax);
             return response()->json([
                 'success' => true,
-                'id_sms'=>$id_sms
+                'id_sms'=> $id_sms
             ], 200);
         }else{
             SmsController::send_sms($phones, $message, $code,  0, 0,0, $format,false,'',[],$ajax);
@@ -96,18 +96,17 @@ class SmsController extends Controller
         //$checkCode = Sms::where('id_sms', '=', $request->cod)->first();
         $checkCode = Sms::where('id_sms', '=', $request->cod)->orderBy('id','desc')->first();
         if($ajax){
-
             if($checkCode->code == $request->codes) {
                 $res= 1;
-                // если код правильный код то обновляем заказ
-                $order=\App\Order::find($request->order_id);
-                $order->customer_id=$request->user;
-                $order->save();
-
+                if($request->has('order_id')){
+                    // если код правильный код то обновляем заказ
+                    $order=\App\Order::find($request->order_id);
+                    $order->customer_id=$request->user;
+                    $order->save();
+                }
             } else {
                 $res= 2;
             }
-
             return response()->json([
                 'success' => true,
                 'res'=>$res

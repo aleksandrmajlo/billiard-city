@@ -3,233 +3,223 @@
     App::setLocale(session('lng'));
 @endphp
 @section('content')
-    <section class="content-header">
-        <h1>
-            @lang('site.panel')
-        </h1>
-    </section>
-    <section class="content"> @if (session('status'))
-            <div class="alert alert-success">
-                {{ session('status') }}
+
+    {{-- старый код --}}
+    <div class="row">
+        @if(Auth::check())
+            <div class="box-header">
+                @if(\Auth::user()->hasRole('manager') || \Auth::user()->hasRole('barmen'))
+                    @if($openChangeId == null)
+                        <h2>@lang('act.open_smena')</h2>
+                        <div class="text-center">
+                            <a class="btn btn-primary btn-lg " href="{{url('open_order?user_id='.Auth::user()->id)}}">
+                                @lang('act.open_smena')
+                            </a>
+                        </div>
+                    @endif
+                @endif
+                @if(isset($openChangeSumStart))
+                    @if(\Auth::user()->hasRole('manager') || \Auth::user()->hasRole('barmen'))
+                        @if($openChangeId != null)
+                            @if($openChangeId != null)
+                                <div class="text-center">
+                                    <a class="btn btn-primary btn-lg "
+                                       href="{{url('close_order?id='.$openChangeId)}}"> @lang('act.close_smena')</a>
+                                </div>
+                            @endif
+                        @endif
+                    @endif
+                @endif
             </div>
         @endif
-        @if(isset($openChangeSumStart))
+    </div>
+    {{-- старый код end --}}
+
+    <div class="row">
+        <div class="col-sm-3 col-sm-push-9 col-md-4 col-md-push-8">
             <div class="row">
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa-opencart"></i></span>
-                        <div class="info-box-content">
-                            @if(\Auth::user()->hasRole('manager'))
-                                <span class="info-box-number">  <i class="fa fa-life-bouy"></i> {{$sumBar}} ₴</span>
-                            @endif
-                            @if(\Auth::user()->hasRole('barmen'))
-                                <span class="info-box-number">  <i class="fa fa-beer"></i> {{$sumBar}} ₴</span>
-                            @endif
-                            @if(\Auth::user()->hasRole('admin'))
-                                <span class="info-box-number">  <i class="fa fa-life-bouy"></i> {{$sumBillAdmin  }}
-                                    ₴</span>
-                                <span class="info-box-number">  <i class="fa fa-beer"></i> {{$sumBarAdmin  }} ₴</span>
-                                @if(\Auth::user()->hasRole('admin') )
-                                    <a data-toggle="modal" data-target="#modal-default">Зняти гроші</a> (<a
-                                            href="/info-money">інфо</a>)
-                                @endif
-                            @endif
+                <div class="col-xs-xs-12 col-xs-6 col-sm-12">
+                    <div class="info__block blue__bg">
+                        <div class="info__block-title">
+                            <p class="title"><img src="/img/bar.png" alt="bar">Bar</p>
+                        </div>
+                        <div class="info__block-info ">
+                            <p>
+                                <span>{{$change_stat['bar_count']}}</span>
+                                <span class="info">@lang('orders.change_ordes')</span>
+                            </p>
+                            <p>
+                                <span>{{$change_stat['bar_summa']}} ₴</span>
+                                <span class="info">@lang('orders.summa_ordes')</span>
+                            </p>
+                            <p class="hidden-sm">
+                                <span>{{$change_stat['bar_month']}} ₴</span>
+                                <span class="info">@lang('orders.month_ordes')</span>
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-green"><i class="fa fa-users"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text"> @lang('site.clients_day')</span>
-                            <span class="info-box-number">{{ $countOrders }}</span>
-                            <span class="info-box-number">Нових: {{ $customerCountNew }}</span>
+
+                <div class="col-xs-xs-12 col-xs-6 col-sm-12">
+                    <div class="info__block orange__bg">
+                        <div class="info__block-title">
+                            <p class="title"><img src="img/snooker.png" alt="Billiard">Billiard</p>
+                        </div>
+                        <div class="info__block-info">
+                            <p><span>{{$change_stat['table_count']}}</span><span class="info">@lang('orders.change_ordes')</span>
+                            </p>
+                            <p><span>{{$change_stat['table_summa']}} ₴</span><span
+                                        class="info">@lang('orders.summa_ordes')</span></p>
+                            <p class="hidden-sm">
+                                <span>{{$change_stat['table_month']}} ₴</span>
+                                <span class="info">@lang('orders.month_ordes')</span>
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-yellow">
-                            <i class="fa fa-money"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">@lang('site.sum_day')</span>
-                            <span class="info-box-number">
-                                <i class="fa fa-life-bouy"></i>
-                                {{ $sumBillAdmin2 }} ₴
-                            </span>
-                            <span class="info-box-number">
-                                <i class="fa fa-beer"></i> {{ $sumBarAdmin2}} ₴
-                            </span>
+
+                <div class="col-xs-xs-12 col-xs-6 col-sm-12 hidden-sm">
+                    <div class="info__block blue__bg ">
+                        <div class="info__block-title">
+                            <p class="title"><img src="img/client.png" alt="Client">Client</p>
+                        </div>
+                        <div class="info__block-info">
+                            <p><span>{{$countOrders}}</span><span class="info">@lang('site.mann_smen')</span></p>
+                            <p><span>100.000</span><span class="info">@lang('site.mann_month')</span></p>
+                            <p><span>200.000</span><span class="info">@lang('site.mann_rek') январь 2019</span></p>
                         </div>
                     </div>
                 </div>
+
             </div>
-        @endif
-        <div class="row">
-            <section class="col-lg-7 connectedSortable ui-sortable">
-                <div class="box">
-                    <div class="box-header">
-                        <h4>@lang('site.next_book')</h4>
-                        <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Бронь</th>
-                                <th>до</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($booking as $book)
+        </div>
+
+        <div class="col-sm-9 col-sm-pull-3 col-md-8 col-md-pull-4">
+
+            <div class="table_block blue">
+                <p>@lang('orders.open_order')</p>
+                <div class="table">
+                    <table class="tables">
+                        @if($orders)
+                            @foreach($orders as $order)
                                 <tr>
-                                    <td><a href="/booking/{{ $book->id }}">{{ $book->id }}</a></td>
-                                    <td>{{ $book->booking_from }}</td>
-                                    <td>{{ $book->booking_before }}</td>
-                                    <td>{{ $book->a_guest }}
-                                        @if($book->id_customers)
-                                            @php
-                                                $customer = App\Customer::where('id', $book->id_customers)->firstOrFail();
-                                            @endphp
-                                            {{$customer->name ?? " "}} ({{$customer->phone ?? " "}})
+                                    <td>
+                                        <img src="/img/number.png" alt="number">{{$order->id}}
+                                    </td>
+                                    <td>
+                                        <img src="/img/many.png" alt="number">{{$order->barprice}}
+                                    </td>
+                                    <td>
+                                        @if(!empty($order->info))
+                                            <a href="/order-closed/{{$order->id}}">
+                                                <div class="non">
+                                                    <img src="/img/coment.png" alt="number">{{$order->info}}
+                                                </div>
+                                                <div class="none">
+                                                    <img src="/img/coment.png" alt="number">{{$order->info}}
+                                                </div>
+                                            </a>
+                                        @else
+
                                         @endif
+
+                                    </td>
+                                    <td>
+                                        <a href="/order-closed/{{$order->id}}">
+                                            <img class="mini" src="/img/plus.png" alt="">
+                                            <div class="non">@lang('orders.more') +</div>
+                                            <div class="nono">
+                                                <img src="/img/plus.png" alt="">подроб...
+                                            </div>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
-                            </tbody>
-                        </table>
-                        <a href="/reserv-table-create" type="button" class="btn btn-block btn-lg btn-success"
-                           style="width: 200px;">+ @lang('site.add') бронь</a>
-                    </div>
-                </div>
-                <div class="box">
-                    @if(Auth::check())
-                        <div class="box-header">
-                            @if(\Auth::user()->hasRole('manager') || \Auth::user()->hasRole('barmen'))
-                                @if($openChangeId == null)
-                                    <h2>@lang('act.open_smena')</h2>
-                                    <div class="text-center">
-                                        <a class="btn btn-primary btn-lg " href="{{url('open_order?user_id='.Auth::user()->id)}}">
-                                            @lang('act.open_smena')
-                                        </a>
-                                    </div>
-                                @endif
-                            @endif
-                            @if(isset($openChangeSumStart))
-                                @if(Auth::check())
-                                    @if(\Auth::user()->hasRole('manager') || \Auth::user()->hasRole('barmen'))
-                                        @if($openChangeId != null)
-                                            <div class="text-center">
-                                                <a class="btn btn-primary btn-lg " href="{{url('close_order?id='.$openChangeId)}}"> @lang('act.close_smena')</a>
-                                            </div>
-                                        @endif
-                        </div>
-                        <div class="box-body">
-                            <ul class="todo-list ui-sortable">
-                                @foreach($changes as $change)
-                                    <li>
-                                        <img src="https://crm.billiard-city.com//{{ $change->user->avatar ?? ' ' }}"
-                                             alt="User Image" class="user-image"/> {{ $change->user->name ?? ' ' }}
-                                        <span class="text">#{{ $change->id }}, (початок: {{ $change->start }}, кінець: {{ $change->stop ?? "йде"}})</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            @endif
-                            @endif
-                            @endif
-                        </div>
+                        @endif
 
-                    @endif
-                    @if(\Auth::user()->hasRole('admin'))
-                        <div class="box-header">
-                            <h4>@lang('site.change')</h4>
-                            <ul class="todo-list ui-sortable">
-                                @if(count($changes) > 0)
-                                    @foreach($changes as $change)
-                                        <li>
-                                            <img src="https://crm.billiard-city.com//{{ $change->user->avatar ?? '' }}"
-                                                 alt="User Image" class="user-image"/> {{ $change->user->name ?? '' }}
-                                            <span class="text">#{{ $change->id ?? '' }}, (@lang('site.open_change')
-                                                : {{ $change->start ?? '' }}, @lang('site.close_change')
-                                                : {{ $change->stop ?? 'актуально'}})</span>
-                                        </li>
-                                    @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                    @endif
+                    </table>
                 </div>
-            </section>
-            <section class="col-lg-5 connectedSortable ui-sortable">
-                <div class="box">
-                    <div class="box-header">
-                        <h4>@lang('site.table_book') </h4>
-                        <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <th>@lang('site.nachalo')</th>
-                                <th>@lang('site.stil')</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if(count($ordersTables) > 0)
-                                @foreach($ordersTables as $ordersTable)
-                                    <tr>
-                                        <td>{{  \Carbon\Carbon::parse($ordersTable->start)->format('d-m-Y H:i')}}</td>
-                                        <td>
-                                            @foreach ($ordersTable->tableReservation as $reservat)
-                                                @php
-                                                    $tableTitle = App\Table::where('id', $reservat->id_table)->firstOrFail();
-                                                @endphp
-                                                {{$tableTitle->title }}
-                                            @endforeach
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="box-header">
-                        <h4>@lang('site.clients_new')</h4>
-                        <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            @foreach($customerNew as $customer)
+                <a class="btn-plus" href="{{url('/orders-create')}}"><img src="/img/btn-plus.png" alt="btn"></a>
+            </div>
+
+            <div class="table_block orange">
+                <p>@lang('site.open_table')</p>
+                <div class="table">
+                    <table class="tables">
+                        @if($open_tables)
+                            @foreach($open_tables as $k=>$open_table)
                                 <tr>
-                                    <td>{{ $customer->name }} {{ $customer->surname }}</td>
+                                    <td><img src="/img/number.png" alt="number">{{$open_table->table->number}}</td>
+                                    <td class="">
+                                        <div class="timerTableHome">
+                                            <img src="/img/clock.png" alt="number">
+                                            <timer-table
+                                                    @if($open_table->activepause)
+                                                    pause="1"
+                                                    @else
+                                                    pause="-1"
+                                                    @endif
+                                                    date="{{Carbon\Carbon::parse($open_table->start )->timestamp}}">
+                                            </timer-table>
+                                            <span class="openText">@lang('table.open')</span>
+                                        </div>
+                                    </td>
+                                    <td class="price">
+                                        <img src="/img/many.png" alt="number">
+                                        <timer-priceorder start="{{$k}}"
+                                                          order_id="{{$open_table->id}}"></timer-priceorder>
+                                    </td>
+                                    <td><img src="/img/stol.png" alt="number">
+                                        №{{$open_table->table->number}}
+                                        <strong class="bill">
+                                            {{$open_table->table->name}}
+                                        </strong>
+                                    </td>
                                 </tr>
                             @endforeach
-                            </tbody>
-                        </table>
-                        <a href="{{route('customerscreate')}}" type="button" class="btn btn-block  btn-lg btn-success"
-                           style="width: 200px;">+ @lang('site.add')
-                        </a>
-                    </div>
+                        @endif
+
+                    </table>
                 </div>
-            </section>
-        </div>
-        <div class="modal fade" id="modal-default">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="POST" action="{{action('MoneyController@edit')}}" enctype="multipart/form-data">
-                            {{ csrf_field() }}
-                            <input name="type" type="radio" value="1"> <label>Більярдна </label>
-                            <br><input name="type" type="radio" value="2"> <label>Бар </label>
-                            <br><label>Грошей</label>
-                            <input type="number" name="admin" class="form-control" value="0" required/>
-                            <br> <input type='submit' class="btn btn-primary active"/>
-                        </form>
-                    </div>
+                <a class="btn-plus" href="/orders-table-create"><img src="/img/btn-plus.png" alt="btn"></a>
+            </div>
+
+
+            <div class="table_block gray">
+                <p>@lang('site.next_book')</p>
+                <div class="table">
+                    <table class="tables">
+                        @if($reservs)
+                            @foreach($reservs as $reserv)
+                                <tr>
+                                    <td>
+                                        <img src="/img/number.png" alt="number">{{$reserv->id}}
+                                    </td>
+                                    <td>
+                                        @php
+                                            $table=\App\Table::where('id', '=', $reserv->id_table)->first();
+                                        @endphp
+                                        <div class="non"><img src="/img/stol.png"
+                                                              alt="number">@lang('site.tableSmall') {{$table->numer}}
+                                        </div>
+                                        <div class="none"><img src="/img/stol.png" alt="number">{{$table->numer}}</div>
+                                    </td>
+                                    <td><img src="/img/user.png" alt="number"></td>
+                                    <td><img src="/img/colendar-s.png"
+                                             alt="number">{{ Carbon\Carbon::parse($reserv->booking_from )->format('d-m-Y') }}
+                                    </td>
+                                    <td><img src="/img/clock.png"
+                                             alt="number">{{ Carbon\Carbon::parse($reserv->booking_from )->format('H:i') }}
+                                        - {{ Carbon\Carbon::parse($reserv->booking_before )->format('H:i') }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </table>
                 </div>
+                <a class="btn-plus" href="/reserv-table-create">
+                    <img src="/img/btn-plus.png" alt="btn">
+                </a>
             </div>
         </div>
-    </section>
+    </div>
 @endsection

@@ -1,7 +1,8 @@
 <template>
     <div class="timerPriceorderConteer text-center">
         <div class="priceBlock">
-            <span class="price">{{priceOrderTotal}}</span><span>₴</span>
+            <span class="price">{{priceOrderTotal}}</span>
+            <span class="valut">₴</span>
         </div>
     </div>
 </template>
@@ -31,9 +32,11 @@
             getPrice() {
                 Vue.axios.get('/ajax/priceorder' + '?order_id=' + this.order_id)
                     .then((response) => {
+
                         this.priceOrder = response.data.results.priceOrder;
                         this.priceOrderTotal = Math.ceil((response.data.results.priceOrderTotal) * 100) / 100;
                         this.priceOrderDiscount = Math.ceil((response.data.results.priceOrderDiscount) * 100) / 100;
+
                         if (!this.first) {
                             this.first = true;
                             setInterval(() => {

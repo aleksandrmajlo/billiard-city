@@ -67,6 +67,7 @@
                                                     <td>
                                                         <input class="form-control" type="number" required min="0"
                                                                step="0.01"
+                                                               value="10"
                                                                name="count_ingredients[]">
                                                     </td>
                                                 </tr>
@@ -117,6 +118,7 @@
                                                                     <input class="form-control" type="number" required
                                                                            min="0"
                                                                             step="0.01"
+                                                                           value="10"
                                                                            name="count_stocks[]">
                                                                 </td>
                                                             </tr>

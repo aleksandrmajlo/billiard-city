@@ -84,6 +84,18 @@
                                             <input name="published" type="radio" value="1" required
                                                    @if(isset($stock->published) && $stock->published == 1) checked @endif>Да
                                         </div>
+                                         <hr/>
+                                        <div class="radio">
+                                            <label class="radio-inline">
+                                                <input required value="1" 
+                                                @if(isset($stock->resolve) && $stock->resolve == 1) checked @endif
+                                                type="radio" name="resolve" checked>@lang('site.resolveYes')</label>
+                                            <label class="radio-inline">
+                                                <input required value="0" 
+                                                @if(isset($stock->resolve) && $stock->resolve == 0) checked @endif
+                                                type="radio" name="resolve">@lang('site.resolveNot')</label>
+                                        </div>    
+                                        <hr/>
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" id="scales" name="unlimited" value="1"

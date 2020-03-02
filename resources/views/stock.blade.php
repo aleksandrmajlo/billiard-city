@@ -121,19 +121,6 @@
                         </div>
                         {{ $products->appends($_GET)->links() }}
 
-                        @if($show_kofeinyiapparatcount)
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
-                                    <tbody>
-                                    <tr>
-                                        <td>@lang('act.kofeinyi_apparat')</td>
-                                        <td>{{$kofeinyiapparatcount}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
-
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -144,8 +131,6 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-
-
     <div class="modal fade" id="modal-default">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -168,6 +153,4 @@
             </div>
         </div>
     </div>
-
-
 @endsection

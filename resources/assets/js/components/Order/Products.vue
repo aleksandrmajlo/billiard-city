@@ -24,10 +24,18 @@
         },
         methods: {
             AddCart(product){
-
+                this.$swal.fire({
+                    icon: 'error',
+                    // title: 'Oops...',
+                    text:  'Йде збереження, почекайте!!',
+                    showConfirmButton:false,
+                    closeOnClickOutside: false
+                });
                 this.$store.commit('AddCart',product);
                 this.$store.commit('SetTotal');
-                this.$store.dispatch('setReserveAndCart',{order_id:this.order_id})
+                this.$store.dispatch('setReserveAndCart',{order_id:this.order_id}).then(()=>{
+                    this.$swal.close()
+                })
             }
         }
     }

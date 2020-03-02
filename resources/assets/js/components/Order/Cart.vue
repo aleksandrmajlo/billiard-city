@@ -1,27 +1,30 @@
 <template>
     <div>
         <div v-if="ErrorCount.length>0">
-               <div class="alert alert-warning" role="alert">{{text5}}</div>
-               <div class="table-wrapper">
-                   <table class="table order-priсe" align="center">
-                       <thead>
-                           <tr>
-                               <td>{{text1}}</td>
-                               <td>{{text2}}</td>
-                               <td>{{text6}}</td>
-                           </tr>
-                       </thead>
-                       <tbody>
-                           <tr v-for="(err,ind) in ErrorCount" :key="ind">
-                               <td>{{err.title}}</td>
-                               <td>{{err.count}}</td>
-                               <td>{{err.countThis}}</td>
-                           </tr>
-                       </tbody>
-                   </table>
-               </div>
+            <div class="alert alert-warning" role="alert">{{text5}}</div>
+            <div class="table-wrapper">
+                <table class="table order-priсe" align="center">
+                    <thead>
+                    <tr>
+                        <td>{{text1}}</td>
+                        <td>{{text2}}</td>
+                        <td>{{text6}}</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(err,ind) in ErrorCount" :key="ind">
+                        <td>{{err.title}}</td>
+                        <td>{{err.count}}</td>
+                        <td>{{err.countThis}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="table-wrapper">
+
+
+
             <div class="mobile-show">{{text1}}</div>
             <table class="table order-priсe" align="center">
                 <thead>
@@ -35,14 +38,18 @@
                 <tbody>
                 <tr v-for="(product,index) in cart" :data-title="product.title" v-tooltip="{ content: 'Не доступно ',
                                                                                              show: product.isOpen,
-                                                                                             trigger: 'manual', }" >
+                                                                                             trigger: 'manual', }">
                     <td>{{product.title}}</td>
                     <td :data-title="text2">
                         <div class="inner">
                             <div class="block-add">
-                                <button class="btn btn-warning btn-sm" @click.prevent="Minus(product,index)" type="button">-</button>
+                                <button class="btn btn-warning btn-sm" @click.prevent="Minus(product,index)"
+                                        type="button">-
+                                </button>
                                 <span>{{product.count}}</span>
-                                <button class="btn btn-warning btn-sm" @click.prevent="Plus(product,index)" type="button">+</button>
+                                <button class="btn btn-warning btn-sm" @click.prevent="Plus(product,index)"
+                                        type="button">+
+                                </button>
                             </div>
                         </div>
                     </td>
@@ -61,19 +68,19 @@
 <script>
     export default {
         name: "Cart",
-        props:['order_id'],
-        data(){
+        props: ['order_id'],
+        data() {
             return {
-                text1:'',
-                text2:'',
-                text3:'',
-                text4:'',
-                text5:'',
-                text6:'',
+                text1: '',
+                text2: '',
+                text3: '',
+                text4: '',
+                text5: '',
+                text6: '',
             }
         },
-        created(){
-            this.$store.dispatch('getOrder',this.order_id);
+        created() {
+            this.$store.dispatch('getOrder', this.order_id);
             this.text1 = this.$store.state.lang.Cart1[LanguneThisJs];
             this.text2 = this.$store.state.lang.Cart2[LanguneThisJs];
             this.text3 = this.$store.state.lang.Cart3[LanguneThisJs];
@@ -82,28 +89,65 @@
             this.text6 = this.$store.state.lang.Cart6[LanguneThisJs];
         },
         computed: {
-            cart(){
+            cart() {
                 return this.$store.state.cart
             },
-            ErrorCount(){
+            ErrorCount() {
                 return this.$store.state.ErrorCount
             },
         },
-        methods:{
-            Minus(product,index){
-                this.$store.commit('AddMinusProduct',product);
+        methods: {
+            Minus(product, index) {
+                this.$swal.fire({
+                    icon: 'error',
+                    text: 'Йде збереження, почекайте!!',
+                    showConfirmButton:false,
+                    closeOnClickOutside: false
+                });
+                this.$store.commit('AddMinusProduct', product);
                 this.$store.commit('SetTotal');
-                this.$store.dispatch('setReserveAndCart',{order_id:this.order_id})
+                this.$store.dispatch('setReserveAndCart', {order_id: this.order_id}).then(()=>{
+                    this.$swal.close()
+                })
             },
-            Plus(product,index){
-                this.$store.commit('AddPlusProduct',product)
+            Plus(product, index) {
+                this.$swal.fire({
+                    icon: 'error',
+                    text:  'Йде збереження, почекайте!!',
+                    showConfirmButton:false,
+                    closeOnClickOutside: false
+                });
+                this.$store.commit('AddPlusProduct', product)
                 this.$store.commit('SetTotal');
-                this.$store.dispatch('setReserveAndCart',{order_id:this.order_id})
+
+                this.$store.dispatch('setReserveAndCart', {order_id: this.order_id}).then(()=>{
+                    this.$swal.close()
+                })
             }
         }
     }
 </script>
 
 <style scoped>
+    .preloaderCart {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 100;
+    }
 
+    .inner_preloaderCart {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color:red;
+    }
+    .inner_preloaderCart h2{
+        margin-top: 20px;
+        font-size: 31px;
+        font-weight: 600;
+    }
 </style>

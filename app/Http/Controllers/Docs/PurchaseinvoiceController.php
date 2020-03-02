@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Stock;
 use App\Bars\Ingredient;
 use Illuminate\Support\Facades\Auth;
-
+use Excel;
 
 class PurchaseinvoiceController extends Controller
 {
@@ -21,13 +21,11 @@ class PurchaseinvoiceController extends Controller
             $purchaseinvoices = Purchaseinvoice::orderBy('created_at', 'desc');
 
             if ($request->has('start') && !empty($request->start)) {
-                $start = explode('.', $request->start);
-                $purchaseinvoices = $purchaseinvoices->where('created_at', '>=', date($start[2] . '-' . $start[1] . '-' . $start[0]) . ' 00:00:00');
+                $purchaseinvoices = $purchaseinvoices->where('created_at', '>=', $request->start . ' 00:00:00');
             }
 
             if ($request->has('end') && !empty($request->end)) {
-                $end = explode('.', $request->end);
-                $purchaseinvoices = $purchaseinvoices->where('created_at', '<', date($end[2] . '-' . $end[1] . '-' . $end[0]) . ' 23:59:59');
+                $purchaseinvoices = $purchaseinvoices->where('created_at', '<', $request->end . ' 23:59:59');
             }
             if ($request->has('user_id') && !empty($request->user_id)) {
                 $purchaseinvoices = $purchaseinvoices->where('user_id', '=', $request->user_id);
@@ -96,5 +94,43 @@ class PurchaseinvoiceController extends Controller
 
         return redirect('doc/purchaseinvoice')->with('success', true);
 
+    }
+
+
+    public function export(Request $request){
+        $id = $request->id;
+        $purchaseinvoice=Purchaseinvoice::findOrFail($id);
+        $results = [];
+        $product = trans('act.product');
+        foreach ($purchaseinvoice->stocks as $stock) {
+            $results[] = [
+                $stock->title,
+                $stock->categorySee->title,
+                $product,
+                $stock->pivot->count
+            ];
+
+        }
+        $ing=trans('act.ingredient');
+        foreach($purchaseinvoice->ingredients as $ingredient){
+            $results[] = [
+                $ingredient->title,
+                "",
+                $ing,
+                $ingredient ->pivot->count
+            ];
+        }
+
+
+        Excel::create(trans('purchaseinvoice.title').' №' . $id, function ($excel) use ($results) {
+            $excel->sheet('Лист 1', function ($sheet) use ($results) {
+                $sheet->fromArray($results)->row(1, array(
+                    trans('act.name'),
+                    trans('act.cat'),
+                    trans('act.type'),
+                    trans('purchaseinvoice.sklad'),
+                ));
+            });
+        }) ->download('xls');
     }
 }

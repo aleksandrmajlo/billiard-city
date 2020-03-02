@@ -14,7 +14,7 @@
         <div class="box">
           <div class="box-body">
 
-            <form method="POST" action="{{action('OrderController@storeOrderTable')}}" enctype="multipart/form-data" />
+            <form method="POST" action="{{action('OrderController@storeOrderTable')}}" enctype="multipart/form-data" >
             {{ csrf_field() }}
               <div class="row" id="raz">
                   <div class="col-xs-12">

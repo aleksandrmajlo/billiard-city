@@ -94,7 +94,13 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-xs-12 mt-10">
+                        <doc-print id="print" header="@lang('act.act') "></doc-print>
+                        <a class="btn btn-info" target="_blank" href="/doc/compareexport?act1={{$act1->id}}&act2={{$act2->id}}">@lang('act.excel')</a>
+                    </div>
+                    <div class="col-xs-12 mt-10">
                         <div class="box">
+
+                            <div id="print">
                                 <div class="table-responsive">
                                     <table id="ActsTable" class="table table-bordered table-striped">
                                         <thead>
@@ -104,21 +110,21 @@
                                         <td>
                                             @lang('act.cat')
                                         </td>
-        
+
                                         <td>
                                             @lang('act.type')
                                         </td>
-        
+
                                         <td>
                                             @lang('act.sklad_smena') {{$act1->change->id}}
                                         </td>
                                         <td>
                                             @lang('act.sklad_smena') {{$act2->change->id}}
                                         </td>
-        
+
                                         </thead>
                                         <tbody>
-        
+
                                         @if(request()->has('type'))
                                             @if(request()->type=='product')
                                                 @foreach($comp_results['stocks'] as $stock)
@@ -155,6 +161,8 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

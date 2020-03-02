@@ -21,9 +21,15 @@ class Stock extends Model
         return $this->hasOne('App\CategoryStock', 'id', 'categorystock_id');
     }
 
+
     public function acts()
     {
         return $this->belongsToMany('App\Acts\Act')->withPivot('count');
+    }
+
+    public function writeofs()
+    {
+        return $this->belongsToMany('App\Acts\Writeof')->withPivot('count');
     }
 
     public function purchaseinvoices()

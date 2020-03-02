@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 class SocketController extends Controller
 {
     public function index() {
+
+
         $sockets = Socket::all();
         return view('socket', compact('sockets'));
     }

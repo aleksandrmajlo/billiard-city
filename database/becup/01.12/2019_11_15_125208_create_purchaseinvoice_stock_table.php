@@ -17,16 +17,12 @@ class CreatePurchaseinvoiceStockTable extends Migration
 
             $table->bigIncrements('id');
             $table->integer('purchaseinvoice_id')->unsigned()->nullable();
-
             $table->foreign('purchaseinvoice_id')->references('id')
                 ->on('purchaseinvoices')->onDelete('cascade');
-
             $table->integer('stock_id')->unsigned()->nullable();
             $table->foreign('stock_id')->references('id')
                 ->on('stocks')->onDelete('cascade');
-
             $table->unsignedBigInteger('count')->default(0);
-
             $table->timestamps();
         });
     }

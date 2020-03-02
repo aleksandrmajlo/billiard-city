@@ -46,9 +46,10 @@
             SmsModal() {
                 $('#SmsModal').modal('show');
             },
+
             PrintOrder(){
                 this.disabledPrint=true;
-                axios.post('/order/OrderPrint', {
+                axios.post('/order/SendPrint', {
                     order_id: this.order_id,
                 })
                     .then( (response)=> {

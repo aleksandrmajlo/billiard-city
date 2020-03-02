@@ -55,6 +55,8 @@
                                 data-max_min_night="{{$table->max_min_night}}"
                                 data-min="{{$table->min_min}}"
                                 data-socket="{{$table->socket}}"
+                                data-number="{{$table->number}}"
+                                data-image="{{$table->image}}"
                                 data-rele="{{$table->port}}" class="addTable btn btn-default pull-right" data-toggle="modal"
                                 data-target="#modal-default" style="float: right">Настроить</a>
                             </td></td>
@@ -77,9 +79,9 @@
 
             </div>
             <div class="modal-body">
-              <form method="POST" action="{{action('TableController@edit')}}" enctype="multipart/form-data" />
+              <form method="POST" action="{{action('TableController@edit')}}" enctype="multipart/form-data" >
               {{ csrf_field() }}
-              <input type="number" name="id"  class="form-control" id="table_id" style="display: none;"  />
+                <input type="number" name="id"  class="form-control" id="table_id" style="display: none;"  />
                 <label>Мінімальний вартість у відкритому столі (грн.) </label>
                 <input type="number" name="max_min"  class="form-control"  id="table_max" value="{{ $table->max_min }}"  />
 
@@ -95,9 +97,25 @@
                   <option value="socket2" @if($table->socket == 'socket2') selected @endif>socket 2</option>
               </select>
 
+
               <label>№ реле</label>
               <input type="number" name="port"  class="form-control"  id="rele"  value="{{ $table->port }}"  />
-              <br> <input type = 'submit'   class="btn btn-primary active" />
+
+
+              <div class="form-group">
+                  <div >
+                        <img  style="margin-top:20px;"  id='conteerTableImage' class="hidden img-responsive" src="{{$table->image}}" >
+                  </div>
+                <label>Icon</ladel>
+                <input type="file" name='image' class="form-control" >
+              </div>
+
+              <div class="form-group">
+                <label>Number</ladel>
+                <input type="number"   id="table_number"  required min="1" name='number' class="form-control" value="{{ $table->number }}" >
+              </div>
+
+              <input type = 'submit'   class="btn btn-primary active" />
 
             </form>
           </div>

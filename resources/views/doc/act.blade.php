@@ -34,6 +34,7 @@
             <div class="row">
                 <div class="col-xs-12 mt-10">
                    <doc-print id="print" header="@lang('act.act') #{{$act->id}}  {{$act->created_at}}"></doc-print>
+                    <a class="btn btn-info" target="_blank" href="/doc/act/export/{{$act->id}}">@lang('act.excel')</a>
                 </div>
                 <div class="col-xs-12 mt-10">
                     <div class="box">

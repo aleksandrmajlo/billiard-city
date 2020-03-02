@@ -10,22 +10,26 @@
                                     <div class="form-group">
                                         <label>@lang('act.start')</label>
                                         <input class="form-control dateMy"
+                                               type="date" 
                                                @if(app('request')->has('start')&&!empty(app('request')->input('start')))
-                                               value="{{ app('request')->input('start') }}"
+                                                  value="{{ app('request')->input('start') }}"
                                                @endif
                                                name="start">
                                     </div>
                                 </div>
+                                
                                 <div class="itemFilter">
                                     <div class="form-group">
                                         <label>@lang('act.end')</label>
                                         <input class="form-control dateMy"
+                                              type="date" 
                                                @if(app('request')->has('end')&&!empty(app('request')->input('end')))
-                                               value="{{ app('request')->input('end') }}"
+                                                   value="{{ app('request')->input('end') }}"
                                                @endif
                                                name="end">
                                     </div>
                                 </div>
+
                                 <div class="itemFilter">
                                     <div class="form-group">
                                         <label>@lang('act.worker')</label>
@@ -40,6 +44,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="flexBlock">
@@ -52,6 +57,7 @@
                                     </a>
                                 </div>
                             </div>
+
                         </form>
                     </div>
                 </div>

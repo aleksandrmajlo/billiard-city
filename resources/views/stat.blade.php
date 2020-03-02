@@ -33,7 +33,8 @@
                                 <div class="col-12 col-xs-12 col-md-2 ">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input placeholder="от" type="text" name="ot" autocomplete="off"
+                                        <input placeholder="от"  name="ot" autocomplete="off"
+                                               type="date"
                                                class="form-control datepicker-here" data-date-format="yyyy-mm-dd"
                                                data-time-format="hh:ii" data-timepicker="true"
                                                data-position="bottom left" value="{{ $_GET['ot'] ?? '' }}">
@@ -43,7 +44,8 @@
                                 <div class="col-12 col-xs-12 col-md-2 ">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input placeholder="от" type="text" name="do" autocomplete="off"
+                                        <input placeholder="от" name="do" autocomplete="off"
+                                               type="date"
                                                class="form-control datepicker-here" data-date-format="yyyy-mm-dd"
                                                data-time-format="hh:ii" data-timepicker="true"
                                                data-position="bottom left" value="{{ $_GET['do'] ?? '' }}">

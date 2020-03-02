@@ -61,12 +61,14 @@ class ActService
                 }
             }
         }
+
         $consumableinvoice = new Consumableinvoice;
         $consumableinvoice->summa = $change->summa_end - $change->summa_start;
         $consumableinvoice->change_id = $change->id;
         $consumableinvoice->user_id = $change->user_id;
         $consumableinvoice->count = $count;
         $consumableinvoice->save();
+
     }
 
 

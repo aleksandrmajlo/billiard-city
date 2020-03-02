@@ -14,6 +14,7 @@ class CreateActStockTable extends Migration
     public function up()
     {
         Schema::create('act_stock', function (Blueprint $table) {
+            
             $table->bigIncrements('id');
 
             $table->integer('act_id')->unsigned()->nullable();

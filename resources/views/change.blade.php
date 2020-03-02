@@ -84,39 +84,48 @@
                                 <tbody>
 
                                 @foreach($changes as $change)
-                                    <tr>
-                                        <td>{{ $change->id }}</td>
-                                        <td>{{ $change->user->name ?? ''}}</td>
-                                        <td>{{ $change->start }}</td>
-                                        <td>@if(empty($change->stop)) <span
-                                                    class="green">зміна йде</span> @endif {{ $change->stop }}</td>
-                                        <td>
-                                            @if(isset($change->start) && isset($change->stop))
-                                                @php
-                                                    $amountCountChange = \App\Order::where('created_at', '>=', $change->start)
-                                                    ->where('created_at', '<=', $change->stop)
-                                                     ->where('user_id', '=', $change->user_id)
-                                                     ->sum('amount');
+                                    @if($change)
 
-                                                  $amountCountClients = \App\Order::where('created_at', '>', $change->start)
-                                                    ->where('created_at', '<', $change->stop)
-                                                     ->where('user_id', '=', $change->user_id)
-                                                     ->count();
-                                                @endphp
-                                            @endif
-                                            {{count($change->orders) }}
-                                        </td>
-                                        <td> {{ $change->total }} ₴</td>
-                                        <td> {{ $change->summa_start }} ₴</td>
-                                        <td>
-                                            @if(!empty($change->stop))
-                                                {{ $change->summa_end  }} ₴
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <a href="/change/{{ $change->id }}">>>></a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ $change->id }}</td>
+                                            <td>{{ $change->user->name ?? ''}}</td>
+                                            <td>{{ $change->start }}</td>
+                                            <td>@if(empty($change->stop)) <span
+                                                        class="green">зміна йде</span> @endif {{ $change->stop }}
+                                            </td>
+                                            <td>
+                                                @if(isset($change->start) && isset($change->stop))
+                                                    @php
+                                                        $amountCountChange = \App\Order::where('created_at', '>=', $change->start)
+                                                        ->where('created_at', '<=', $change->stop)
+                                                         ->where('user_id', '=', $change->user_id)
+                                                         ->sum('amount');
+
+                                                      $amountCountClients = \App\Order::where('created_at', '>', $change->start)
+                                                        ->where('created_at', '<', $change->stop)
+                                                         ->where('user_id', '=', $change->user_id)
+                                                         ->count();
+                                                    @endphp
+                                                @endif
+                                                {{count($change->orders) }}
+                                            </td>
+                                            <td>
+{{--                                                @if($change->total )--}}
+                                                    {{ $change->total }} ₴
+                                                {{--@endif--}}
+                                            </td>
+                                            <td> {{ $change->summa_start }} ₴</td>
+                                            <td>
+                                                @if(!empty($change->stop))
+                                                    {{ $change->summa_end  }} ₴
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="/change/{{ $change->id }}">>>></a>
+                                            </td>
+
+                                        </tr>
+                                    @endif
                                 @endforeach
                                 </tbody>
                             </table>

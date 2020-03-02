@@ -1,9 +1,3 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
 require('./common');
 
@@ -17,6 +11,7 @@ Vue.use(VueAxios, axios)
 import Vuex from 'vuex';
 Vue.use(Vuex);
 import store from './store.js';
+
 
 // ******* alert 
 import VueSweetalert2 from 'vue-sweetalert2';
@@ -43,6 +38,15 @@ Vue.filter('two_digits', function (value) {
     }
     return value.toString();
 });
+// фильтр минуты в часы
+Vue.filter('minutes_houres', function (minutes) {
+    var num = minutes;
+    var hours = (num / 60);
+    var rhours = Math.floor(hours);
+    var minutes = (hours - rhours) * 60;
+    var rminutes = Math.round(minutes);
+    return rhours + " : " + rminutes;
+});
 
 Vue.component('TimerTable', require('./components/TimerTable.vue'));
 Vue.component('OrderTest', require('./components/OrderTest.vue'));
@@ -54,7 +58,6 @@ Vue.component('ActForm', require('./components/Acts/ActForm.vue'));
 Vue.component('DocPrint', require('./components/Print/DocPrint.vue'));
 
 // Заказ
-
 Vue.component('Categories', require('./components/Order/Categories.vue'));
 Vue.component('Products', require('./components/Order/Products.vue'));
 Vue.component('MenuOrder', require('./components/Order/MenuOrder.vue'));
@@ -66,6 +69,24 @@ Vue.component('ClearorderModal', require('./components/Order/ClearorderModal.vue
 Vue.component('PayModal', require('./components/Order/PayModal.vue'));
 Vue.component('SmsModal', require('./components/Order/SmsModal.vue'));
 Vue.component('SmsCode', require('./components/Order/SmsCode.vue'));
+Vue.component('CommentOrder', require('./components/Order/CommentOrder.vue'));
+
+// таймер сверху
+Vue.component('ClockHeader', require('./components/ClockHeader.vue'));
+
+// заказ ро столу
+Vue.component('TotalTable', require('./components/Ordertable/TotalTable.vue'));
+
+// доки
+Vue.component('WriteofProducts', require('./components/Docs/WriteofProducts.vue'));
+
+// Столы
+Vue.component('OpenTable', require('./components/Table/OpenTable.vue'));
+Vue.component('FreeTable', require('./components/Table/FreeTable.vue'));
+Vue.component('CloseTable', require('./components/Table/CloseTable.vue'));
+Vue.component('PrintTable', require('./components/Table/PrintTable.vue'));
+Vue.component('TableAdd', require('./components/Table/TableAdd.vue'));
+Vue.component('ScreenTable', require('./components/Table/ScreenTable.vue'));
 
 const app = new Vue({
     el: '#app',

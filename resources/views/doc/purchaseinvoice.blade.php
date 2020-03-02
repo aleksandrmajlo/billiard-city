@@ -32,37 +32,43 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12 ">
+                <doc-print id="print" header=" @lang('purchaseinvoice.title') #{{$purchaseinvoice->id}}  {{$purchaseinvoice->created_at}}"></doc-print>
+                <a class="btn btn-info" target="_blank" href="/doc/purchaseinvoice/export/{{$purchaseinvoice->id}}">@lang('act.excel')</a>
+            </div>
+            <div class="col-xs-12 ">
                 <div class="box">
-
                     <div class="box-body">
-                        <table id="ActsTable" class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <td>
-                                    @lang('act.name')
-                                </td>
-                                <td>
-                                    @lang('act.cat')
-                                </td>
-                                <td>
-                                    @lang('act.type')
-                                </td>
-                                <td>
-                                    @lang('purchaseinvoice.sklad')
-                                </td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                               @foreach($purchaseinvoice->ingredients as $ingredient)
-                                   @include('doc.ingredient')
-                               @endforeach
-                               @foreach($purchaseinvoice->stocks as $stock)
-                                  @include('doc.stock')
-                               @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                        <div id="print">
+                            <table id="ActsTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <td>
+                                        @lang('act.name')
+                                    </td>
+                                    <td>
+                                        @lang('act.cat')
+                                    </td>
+                                    <td>
+                                        @lang('act.type')
+                                    </td>
+                                    <td>
+                                        @lang('purchaseinvoice.sklad')
+                                    </td>
+                                </tr>
+                                </thead>
+                                <tbody>
 
+                                @foreach($purchaseinvoice->stocks as $stock)
+                                    @include('doc.stock')
+                                @endforeach
+                                @foreach($purchaseinvoice->ingredients as $ingredient)
+                                    @include('doc.ingredient')
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

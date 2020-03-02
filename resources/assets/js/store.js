@@ -5,7 +5,8 @@ let store = {
         ERRORCode: false,
         SUCCCode: false,
         //смс
-
+        info: "",
+        typeOrder: '',
         menus: [{
             'title': 'Меню',
             'id': -1
@@ -78,7 +79,7 @@ let store = {
             },
 
             PayModal: {
-                ru: 'Веберите способ оплаты',
+                ru: 'Выберите способ оплаты',
                 ua: 'Виберіть спосіб оплати',
             },
 
@@ -89,7 +90,7 @@ let store = {
 
             PayModalDiscount: {
                 ru: 'Скидка',
-                ua: 'Знижкам',
+                ua: 'Знижка',
             },
             PayModalTotal: {
                 ru: 'К оплате',
@@ -108,6 +109,21 @@ let store = {
             PayModalPay: {
                 ru: 'Оплатить',
                 ua: 'Заплатити',
+            },
+
+            PayModalComment: {
+                ru: 'Сумма округляется согласно  постановлению НБУ № 25',
+                ua: 'Сума округляється згідно з постановою НБУ № 25',
+            },
+
+            CartModalPay: {
+                ru: 'Карткой',
+                ua: 'Карткою',
+            },
+
+            SertModalPay: {
+                ru: 'Сертификатом',
+                ua: 'Сертифікатом',
             },
 
             SmsModal: {
@@ -132,31 +148,37 @@ let store = {
 
             SmsCode: {
                 ru: 'Введите Ваш код для получения скидки',
-                ua: 'Введіть Ваш код для отримання знижки',
+                ua: 'Введіть Ваш код для отримання знижки'
             },
 
             SmsCode: {
                 ru: 'Введите код',
-                ua: 'Введіть код ',
+                ua: 'Введіть код '
             },
 
             SmsCodeButton: {
                 ru: 'Получить скидку',
-                ua: 'Отримати знижку',
+                ua: 'Отримати знижку'
             },
 
             SmsCodeErrorEnter: {
                 ru: 'Код неверный',
-                ua: 'Код невірний',
+                ua: 'Код невірний'
             },
 
             SmsCodeError: {
                 ru: 'Укажите клиента',
-                ua: 'Вкажіть клієнта',
+                ua: 'Вкажіть клієнта'
             },
 
 
-        }
+        },
+        //****************столы *******************
+        tables: [],
+        // активный стол на закрытие
+        TableCloseActive: false,
+        // активный стол на открытие
+        TableAddActive: false
     },
     mutations: {
         CategoriesSet(state, data) {
@@ -196,10 +218,13 @@ let store = {
             state.cart = data.cart;
             state.user = data.user;
             state.skidka = data.skidka;
+            state.typeOrder = data.typeOrder;
+            state.info = data.info;
 
         },
         //Корзина*******************************
         AddCart(state, product) {
+
             let i = state.cart.map(item => item.id).indexOf(product.id);
             // продукт
             let j = state.products.map(item => parseInt(item.id)).indexOf(product.id);
@@ -231,6 +256,7 @@ let store = {
                 }
             }
         },
+
         AddPlusProduct(state, product) {
             let i = state.cart.map(item => parseInt(item.id)).indexOf(parseInt(product.id));
             // продукт
@@ -259,13 +285,13 @@ let store = {
 
             }
         },
-
+        // клик на минусе продукта
         AddMinusProduct(state, product) {
             let i = state.cart.map(item => parseInt(item.id)).indexOf(parseInt(product.id));
             // продукт
             let j = state.products.map(item => item.id).indexOf(product.id);
             if (state.cart[i].count > 0.5) {
-                state.cart[i].count = state.cart[i].count - 0.5;
+                state.cart[i].count = parseFloat(state.cart[i].count) - 0.5;
 
             } else {
                 // удаляем из корзины
@@ -279,6 +305,7 @@ let store = {
         CartClear(state) {
             state.cart = [];
         },
+        // цена бара
         SetTotal(state) {
             let price = 0;
             state.cart.forEach((el, i) => {
@@ -294,6 +321,11 @@ let store = {
                 state.total = price;
             }
 
+        },
+        // цена открытых столов
+        SetTotalTable(state, data) {
+            state.price = data.priceOrder;
+            state.total = data.priceOrderTotal;
         },
         //недостаточно кол-ва
         ErrorCount(state, data) {
@@ -318,16 +350,50 @@ let store = {
                 // ответ верный
                 state.ERRORCode = false;
                 let i = state.users.map(item => item.value).indexOf(state.user.value);
-                state.skidka = state.users[i].skidka_bar;
+                if (state.typeOrder == "type_bar") {
+                    state.skidka = state.users[i].skidka_bar;
+                } else {
+                    state.skidka = state.users[i].skidka;
+                }
                 state.SUCCCode = true;
-
             } else {
                 state.SUCCCode = false;
                 state.ERRORCode = true;
                 state.skidka = 0;
-
             }
+            setTimeout(() => {
+                state.SUCCCode = false;
+                state.ERRORCode = false;
+            }, 300)
+        },
+        //установить все столы *************************************88
+        SetTables(state, tables) {
+            state.tables = tables;
+        },
+
+        // активный стол на закрытие
+        SetTableactive(state, id) {
+            if (id) {
+                state.TableAddActive = false;
+            }
+            state.TableCloseActive = id;
+        },
+
+        // активный стол на добавление
+        SetTableAddActive(state, id) {
+            if (id) {
+                state.TableCloseActive = false;
+            }
+            state.TableAddActive = id;
+        },
+
+        //установить цены скидки стола открытого для модалки
+        SetTableTotaldata(state,data){
+            state.total=data.total;
+            state.skidka=data.skidka;
+            state.price=data.price;
         }
+
     },
     actions: {
         // получить все категории
@@ -366,7 +432,7 @@ let store = {
                     commit('ProductCategorySet', response.data);
                 });
         },
-        // оплата
+        // оплата бара
         Pay({
                 commit,
                 state
@@ -394,6 +460,38 @@ let store = {
                     alert(error.response)
                 })
 
+        },
+        // оплата стола
+        PayTable({
+                     commit,
+                     state
+                 }, arr) {
+
+            let index = state.tables.map(item => parseInt(item.id)).indexOf(state.TableCloseActive);
+            let order_id = state.tables[index].order_id;
+            let data = {
+                order_id: order_id,
+                print: arr.print,
+                user: state.user,
+                billing: state.billing,
+                info: $('#comment').val()
+            };
+
+            return axios.post('/order/PayTable', data)
+                .then(response => {
+                    if (response.data.success) {
+                        commit('ErrorCount', [])
+                        commit('SetTableactive', false)
+                    } else {
+                        commit('ErrorCount', response.data.ErrorCount)
+                    }
+                })
+                .catch(error => {
+                    // alert(error.response)
+                })
+                .finally(function () {
+                    // location.href = '/close-table';
+                });
         },
         //пользователи
         GetUsers({
@@ -438,18 +536,26 @@ let store = {
                   }, data) {
             let i = state.users.map(item => item.value).indexOf(state.user.value);
             data.user = state.users[i].value;
-            console.log(data);
-
+            var TableOrder = false;
+            if ('table' == data.order_id) {
+                let index = state.tables.map(item => parseInt(item.id)).indexOf(state.TableCloseActive);
+                data.order_id = state.tables[index].order_id;
+                TableOrder = true;
+            }
             return axios.post('/checkCode', data)
                 .then(response => {
-                    commit('checkCode', response.data)
-                    commit('SetTotal');
-                    if (response.data.res == 1) {
-
+                    if (TableOrder) {
+                        commit('checkCode', response.data)
+                    } else {
+                        commit('checkCode', response.data)
+                        if (state.typeOrder == "type_bar") {
+                            commit('SetTotal');
+                        }
                     }
                     setTimeout(() => {
                         $('#SmsCode').modal('hide');
                     }, 300)
+
                 })
                 .catch(error => {
 
@@ -466,10 +572,23 @@ let store = {
             })
                 .then(response => {
                     commit('SetCart', response.data);
-                    commit('SetTotal');
+                    if (response.data.typeOrder == "type_bar") {
+                        commit('SetTotal');
+                    }
                 })
                 .catch(error => {
 
+                })
+        },
+
+        // запрос цены открытого стола
+        getTablePrice({
+                          commit,
+                          state
+                      }, order_id) {
+            return axios.get('/ajax/priceorder' + '?order_id=' + order_id)
+                .then((response) => {
+                    commit('SetTotalTable', response.data.results)
                 })
         },
 
@@ -491,6 +610,17 @@ let store = {
                 })
                 .catch(error => {
 
+                })
+        },
+
+        // получить  столы
+        getTables({
+                      commit,
+                      state
+                  }) {
+            return axios.get('/table/getTables')
+                .then((response) => {
+                    commit('SetTables', response.data.tables)
                 })
         }
 

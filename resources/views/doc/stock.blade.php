@@ -5,6 +5,11 @@
             <td>{{$stock->categorySee->title}}</td>
             <td> @lang('act.product')</td>
             <td> {{$stock ->pivot->count}}</td>
+
+            @if(isset($cause))
+                <td> {{$stock ->pivot->cause}}</td>
+            @endif
+
         </tr>
     @endif
 
@@ -14,5 +19,8 @@
         <td>{{$stock->categorySee->title}}</td>
         <td> @lang('act.product')</td>
         <td> {{$stock ->pivot->count}}</td>
+        @if(isset($cause))
+            <td> {{$stock ->pivot->cause}}</td>
+        @endif
     </tr>
 @endif

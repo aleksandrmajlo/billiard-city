@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     $("#loginUser").click(function () {
         $('.logouts').toggle();
     });
@@ -7,6 +8,7 @@ $(document).ready(function () {
         $('#orderid').val(idOrder);
     });
     $(".phone_mask").mask("+38 (999) 999-99-99");
+
     $('.addproduct').click(function () {
         var countid = this.id;
         var countid2 = Number(countid) + 1;
@@ -78,12 +80,14 @@ $(document).ready(function () {
 
     $('#contactform').on('submit', function (e) {
         e.preventDefault();
+        console.log($('#contactform'))
         $.ajax({
             dataType: 'json',
             type: "POST",
             url: '/generateCode',
             data: $('#contactform').serialize(),
             success: function (msg) {
+
                 $("#msg").append("<div> id: " + msg + ". </div>");
                 $("#cod").val(msg);
                 $('#formaphonsend').hide();
@@ -109,10 +113,14 @@ $(document).ready(function () {
 
 
     $(".addTable").click(function () {
+
         var min = ($(this).data('min'));
         var max_min_night = ($(this).data('max_min_night'));
         var max = ($(this).data('max'));
         var id = ($(this).data('id'));
+        var number = ($(this).data('number'));
+        var image = ($(this).data('image'));
+        console.log(image)
 
         var socket = ($(this).data('socket'));
         var rele = ($(this).data('rele'));
@@ -122,7 +130,34 @@ $(document).ready(function () {
         $('#table_max').val(max);
         $('#table_id').val(id);
         $('#rele').val(rele);
+
+        $('#table_number').val(number);
+        if (image !== "") {
+            $('#conteerTableImage').removeClass('hidden')
+                .attr('src', image);
+        } else {
+            $('#conteerTableImage').addClass('hidden')
+                .attr('src', '');
+        }
+
     });
 
+    //добавить товар
+
+
+});
+$(window).on('load', function () {
+
+    if ($('.js-example-basic-single').length) {
+        $('.js-example-basic-single').select2({
+            tags: true
+        });
+    }
+
+    if ($('.js-example-basic-single2').length) {
+        $('.js-example-basic-single2').select2({
+            placeholder: 'Добавить товар'
+        });
+    }
 
 });

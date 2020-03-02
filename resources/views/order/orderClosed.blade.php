@@ -10,12 +10,14 @@
     @endif
     <section class="content">
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-12 col-md-12">
                 <div class="box">
                     <div class="box-body orderClosedConteer">
                         <h1>@lang('site.zakaz') #{{ $order->id }}</h1>
                         <div class="table-responsive">
+
                             <table id="example1" class="table table-bordered table-striped">
+
                                 <thead>
                                 <tr>
                                     <th>Товар</th>
@@ -27,6 +29,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+
                                 @if(!$order->bars->isEmpty())
                                     @foreach($order->bars as $product)
                                         <tr>
@@ -45,6 +48,7 @@
                                         </tr>
                                     @endforeach
                                 @endif
+
                                 @if($pauses)
                                     @foreach($pauses as $pause)
                                         <tr>
@@ -70,6 +74,7 @@
                                         </tr>
                                     @endforeach
                                 @endif
+
                                 <tr>
                                     <td>{{$order->table->title}}</td>
                                     <td>{{ $s1->format('d-m-Y H:i') }}</td>
@@ -104,6 +109,7 @@
                             </dd>
                         </dl>
                         <hr>
+
                         <h2>Звіт по часу</h2>
                         <dl class="row">
                             <dt class="col-sm-3 col-lg-3">загальний час:</dt>
@@ -117,6 +123,7 @@
                             <dt class="col-sm-3 col-lg-3">час пауз:</dt>
                             <dd class="col-sm-9 col-lg-9">{{ $pauseMinutes }}</dd>
                         </dl>
+
                         <h2>Звіт по столу</h2>
                         <dl class="row">
                             <dt class="col-sm-3 col-lg-3">сума:</dt>
@@ -138,7 +145,6 @@
                             <dt class="col-sm-3 col-lg-3">сума за стіл зі знижкою:</dt>
                             <dd class="col-sm-9 col-lg-9">{{ $price['priceOrderTotal'] }}</dd>
                         </dl>
-
                         <hr>
 
                         @if(!$order->bars->isEmpty())
@@ -164,46 +170,38 @@
                             <hr>
                         @endif
 
-
-                        <h2>Сума за замовлення:</h2>
-                        <p class="text-primary text-capitalize text-bold"
-                           style="font-size: 140%;">{{ $price['priceTotal'] }} </p>
-
-                        <form method="POST" action="{{action('OrderController@orderBillClosedOrder')}}">
-                            {{ csrf_field() }}
-                            <div class=" form-group">
-                                <label>@lang('site.type_playment')</label>
-                                <select class="form-control" name="billing" id="sel1">
-                                    <option value="1">@lang('site.price_nal')</option>
-                                    <option value="2">@lang('site.price_kart')</option>
-                                </select>
-                            </div>
-
-                            <div class=" form-group">
-                                <label>@lang('site.primitka')</label>
-                                <textarea name="info" class="form-control"></textarea>
-                            </div>
-                            <input type="hidden" name="sum_booking" value="{{ $price['priceTotal'] }}">
-                            <input type="hidden" name="min" value="{{ $minutes }}">
-                            <input type="hidden" name="priceAmount" value="{{ $price['priceTotal'] }}">
-                            <input type='hidden' value="{{ $order->reservation_id }}" name="idreserv"/>
-                            <input id="b1" type='hidden' value="{{ $order->id }}" name="id"/>
-                            <input id="b1" type='submit' value="@lang('site.close')"
-                                   class="btn btn btn-lg btn-warning active "/>
-                        </form>
-
                     </div>
                 </div>
             </div>
+            <div class="col-md-6 col-xs-12  s-order hidden">
+                {{--<form method="POST" action="{{action('OrderController@orderBillClosedOrder')}}">--}}
+{{--                    {{ csrf_field() }}--}}
+                    <div class="total-order">
+                        <comment-order  order_id="{{$order->id}}"></comment-order>
+                        <total-table
+                                price_first="{{$price['priceOrder']}}"
+                                total_first="{{ $price['priceOrderTotal'] }}"
+                                order_id="{{$order->id}}"></total-table>
+                        <div class="to-pay clearfix">
 
-            <div class="col-xs-12">
+                            <button id="SmsModalShow" class="pay-check" type="button"><img
+                                        src="/images/pay-button-2.png"></button>
+                            <print-table order_id="{{$order->id}}"></print-table>
+                            <button id="PayModalShow" class="btn btn-warning pull-right"
+                                    type="button">@lang('orders.pay')</button>
+                                    
+                        </div>
+                    </div>
+                {{--</form>--}}
+            </div>
+            {{--
+            <div class="col-xs-12  col-md-12">
                 <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button"
                    aria-expanded="false" aria-controls="collapseExample">
                     Price Log Minutes
                 </a>
                 <div class="collapse" id="collapseExample">
                     <div class="card card-body">
-
                         @if($LogData)
                             @foreach($LogData['price'] as $key=>$price)
                                 @if($price)
@@ -223,7 +221,11 @@
                 </div>
             </div>
 
-
+            --}}
         </div>
+
+        <sms-modal order_id="{{$order->id}}"></sms-modal>
+        <sms-code order_id="{{$order->id}}"></sms-code>
+        <pay-modal order_id="{{$order->id}}"></pay-modal>
     </section>
 @endsection

@@ -24,33 +24,22 @@ class StockController extends Controller
 
         $products = Stock::orderBy('title', 'ASC')
             ->paginate(10);
-        $show_kofeinyiapparatcount=true;
         if($request->all()) {
             $products = new Stock();
             if(isset($request->searchtitle)) {
-                $show_kofeinyiapparatcount=false;
                 $products = $products->where('title', 'like',  '%' . $request->searchtitle . '%');
             }
             if(isset($request->type) && $request->type > 0) {
-
                  $products = $products->where('categorystock_id', $request->type);
-                 if($request->type=='20'){
-                     $show_kofeinyiapparatcount=true;
-                 }else{
-                     $show_kofeinyiapparatcount=false;
-                 }
             }
             $products = $products->orderBy('title', 'ASC')->paginate(10);
         }
         $kofeinyi_apparat_category_id=config('category.kofeinyi_apparat_category_id');
-        $kofeinyiapparatcount=Kofeinyiapparatcount::get();
 
         return view('stock', compact(
             'products',
             'categoryStocks',
-            'kofeinyiapparatcount',
-            'kofeinyi_apparat_category_id',
-            'show_kofeinyiapparatcount'
+            'kofeinyi_apparat_category_id'
         ));
     }
 
@@ -113,12 +102,14 @@ class StockController extends Controller
         $stock->count = $request->count;
         $stock->unlimited = $request->unlimited;
         $stock->published = $request->published;
+        $stock->resolve = $request->resolve;
+
         if($request->image){
             $file = $request->file('image');
             $stock->image=self::upload($file);
         }
+        
         $stock->save();
-
         if($request->ingredients&&!empty($request->ingredients)){
             $ingredient_ar=[];
             foreach ($request->ingredients as $k=>$ingredient){
@@ -157,6 +148,7 @@ class StockController extends Controller
         $stock->count = $request->count;
         $stock->published = $request->published;
         $stock->unlimited = $request->unlimited;
+        $stock->resolve = $request->resolve;
 
         if($request->image){
             $file = $request->file('image');

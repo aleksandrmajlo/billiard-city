@@ -53,6 +53,12 @@ class ChangeController extends Controller
         $workers = User::all();
         $tables = Table::all();
 
+        foreach ($changes as $change){
+//            dump($change->id);
+//            dump($change->total);
+
+        }
+//        dd();
 
         return view('change', compact('changes', 'workers', 'tables'));
     }
@@ -99,8 +105,6 @@ class ChangeController extends Controller
         $change->stop = null;
         $change->save();
 
-
-
         /*
          * создаем акты ********************************
          */
@@ -130,17 +134,18 @@ class ChangeController extends Controller
             $kofeinyiapparat->save();
             //обновление общего кол-ва кофе
             Kofeinyiapparatcount::add($request->kofeinyi_apparat);
+
+            // создание акта расходные накладные
+            ActService::CreateConsumableinvoice($change);
             /*
              * создаем акты end ************************************
             */
         }
 
-
         return redirect('/')->with('status', 'зміна відкрита!');
     }
 
-    // закрытие смены
-
+    // закрытие смены !!!!!!!!!!!!!нерабочее для бармена точно !!!!!!!!!!!!!!!
     public function closeChange(Request $request)
     {
 
@@ -169,7 +174,7 @@ class ChangeController extends Controller
             }
             ActService::UpdateStockIngr($act->id);
             // создание акта расходные накладные
-            ActService::CreateConsumableinvoice($change);
+//            ActService::CreateConsumableinvoice($change);
 
             $kofeinyiapparat = new Kofeinyiapparat();
             $kofeinyiapparat->count = $request->kofeinyi_apparat;
@@ -182,16 +187,6 @@ class ChangeController extends Controller
         return redirect('/')->with('status', 'Close change!');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     public function seeChange($id)
     {
@@ -216,48 +211,4 @@ class ChangeController extends Controller
         ));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Change $change
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Change $change)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Change $change
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Change $change)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Change $change
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Change $change)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Change $change
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Change $change)
-    {
-        //
-    }
 }

@@ -13,10 +13,7 @@
                             <cart order_id="{{$id}}"></cart>
                         </div>
                         <div class="total-order">
-                            <div class="textarea-wrapper">
-                                <textarea id="comment" class="wishes-to-order"
-                                          placeholder="@lang('orders.text') "></textarea>
-                            </div>
+                            <comment-order order_id="{{$id}}"></comment-order>
                             <total-order></total-order>
                             <button-block  order_id="{{$id}}"></button-block>
                         </div>

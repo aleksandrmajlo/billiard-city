@@ -29,12 +29,8 @@
                       <div class="row">
                           <div class="col-xs-6">
                               <label>@lang('site.client')</label>
-
                               <input id="advanced-demo" class="form-control"   type="text" name="q" placeholder="Начните вводить телефон клиента ..." style="width:100%; max-width:600px;outline:0">
-
                               <div id="fb-root"> </div>
-
-
                           </div>
                           <div class="col-xs-6" style="margin-top: 25px;">
                               <a href="{{route('customerscreate')}}" type="button" class="btn btn-block btn-success" style="width: 200px;">+ @lang('site.add')</a>

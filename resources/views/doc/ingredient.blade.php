@@ -5,6 +5,9 @@
             <td></td>
             <td> @lang('act.ingredient')</td>
             <td> {{$ingredient ->pivot->count}}</td>
+            @if(isset($cause))
+                <td> {{$ingredient ->pivot->cause}}</td>
+            @endif
         </tr>
     @endif
 @else
@@ -13,5 +16,8 @@
         <td></td>
         <td> @lang('act.ingredient')</td>
         <td> {{$ingredient ->pivot->count}}</td>
+        @if(isset($cause))
+            <td> {{$ingredient ->pivot->cause}}</td>
+        @endif
     </tr>
 @endif

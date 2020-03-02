@@ -42,6 +42,7 @@ class HomeController extends Controller
                 App::setLocale($userLang);
             }
         }
+        $openChange=null;
         if (Auth::user()) {
             $userAuthId = Auth::user()->id;
             $userAuthName = Auth::user()->name;
@@ -77,94 +78,34 @@ class HomeController extends Controller
             $openChangeSumStart = null;
         }
 
-        $customerCountNew = Customer::where('created_at', '>', Carbon::now()->subHour(24))->count();
-        $amountCount24 = Order::where('created_at', '>', Carbon::now()->subHour(24))->sum('amount');
-        $amountCountChange = 0;
-        if (isset($openChange->start)) {
-            if (\Illuminate\Support\Facades\Auth::user()->hasRole('manager')) {
-                $amountCountChange = Order::where('created_at', '>', $openChange->start)
-                    ->where('type_billiards', 1)
-                    ->sum('amount');
-            }
-            if (\Illuminate\Support\Facades\Auth::user()->hasRole('barmen')) {
-                $amountCountChange = Order::where('created_at', '>', $openChange->start)
-                    ->where('type_bar', 1)
-                    ->sum('amount');
-            }
-
-            $sumBar = $openChange->summa_start + $amountCountChange;
-        }
-        $sumBarAdmin2 = 0;
-        $sumBillAdmin2 = 0;
-        if (Auth::check()) {
-
-            if (\Illuminate\Support\Facades\Auth::user()->hasRole('admin')) {
-//                $changes2 = Change::all();
-                $changes2 = Change::whereNull('stop')->get();
-                if (count($changes2) > 0) {
-                    foreach ($changes2 as $k => $change) {
-
-                        $userChange = DB::select('select * from users_roles where user_id = ?', array($change->user_id));
-                        if (isset($userChange[0]->role_id) && $userChange[0]->role_id == 2) {
-                            $openChange = Change::where('user_id', '=', $userChange[0]->user_id)
-                                ->orderBy('created_at', 'desc')
-                                ->first();
-                            $amountCountChange2 = Order::where('created_at', '>', $openChange->start)
-                                ->where('type_billiards', 1)
-                                ->where('status', 1)
-                                ->sum('amount');
-                            $sumBillAdmin2 = round($amountCountChange2,2);
-                        }
-
-                        if (isset($userChange[0]->role_id) && $userChange[0]->role_id == 3) {
-                            $openChange = Change::where('user_id', '=', $userChange[0]->user_id)
-                                ->orderBy('created_at', 'desc')
-                                ->first();
-                            $orders = Order::where('created_at', '>', $openChange->start)
-                                ->where('type_bar', 1)
-                                ->where('status', 1)
-                                ->get();
-                            $sumBarAdmin2 = $openChange->total;
-                        }
-                    }
-                }
-            }
-        }
-
-        $ordersTables = Order::where('type_billiards', 1)
-            ->where('status', '=', null)
+        // открытые заказы .....
+        $orders = Order::where('type_bar', 1)
+            ->where('closed', '=', null)
             ->orderBy('created_at', 'desc')
             ->get();
+        $change_stat = \App\Services\ChangeService::change_this();
 
-        $customerNew = '';
-        $customerNew = Customer::take(10)->orderBy('created_at', 'desc')->get();
-        $nowdate = Carbon::now();
-        $booking = Reservation::orderBy('created_at', 'desc')
-            ->where('booking_from', '>=', $nowdate)
-            ->where('book', '=', 1)
-            ->take(5)
-            ->get();
-        $sumBillMin = Money::all()->where('admin_type', 1)->sum('admin');
-        $sumBarMin = Money::all()->where('admin_type', 2)->sum('admin');
-        $sumBill = Money::all()->sum('sum_bil') + $sumBillMin;
-        $sumBar = Money::all()->sum('sum_bar') + $sumBarMin;
-        $sumBillAdmin = Money::all()->sum('sum_bil') + $sumBillMin;
-        $sumBarAdmin = Money::all()->sum('sum_bar') + $sumBarMin;
-        $amountCount24 = $sumBillAdmin + $sumBarAdmin;
-        $amountCount24 = $sumBill + $sumBar;
+        // открытые столы
+        $open_tables = Order::where('type_billiards', 1)
+            ->where('closed', '=', null)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10000);
 
-        /*
-         * получаем ингадиенты и продукты без инградиентов
-         */
-        $ingredients = \App\Bars\Ingredient::all();
-        $stocks = Stock::has('ingredients', '<', 1)->get();
+        // резерв
+        $reservs = Reservation::all()->where('book', '!=', null);
 
-        return view('home', compact(
-            'ingredients',
-            'stocks',
-            'userAuthName',
-            'userAuthAvatar',
-            'changes', 'openChangeId', 'openChangeSumStart', 'booking', 'ordersTables', 'customerNew', 'openChangeStart', 'timOld', 'countOrders', 'customerCountNew', 'amountCount24', 'sumBar', 'sumBill', 'chart', 'pie', 'chart2', 'sumBarAdmin', 'sumBillAdmin', 'sumBarAdmin2', 'sumBillAdmin2'));
+        //cтатистика по людям
+
+
+        return view('home', [
+            'orders' => $orders,
+            'change_stat' => $change_stat,
+            'openChangeId' => $openChangeId,
+            'openChangeSumStart'=>$openChangeSumStart,
+            'open_tables'=>$open_tables,
+            'reservs'=>$reservs,
+            'countOrders'=>$countOrders
+        ]);
     }
 
     public function noAccess()

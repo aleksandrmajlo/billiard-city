@@ -71,6 +71,14 @@ class TableController extends Controller
         $table->max_min_night = $request->max_min_night;
         $table->socket = $request->socket;
         $table->port = $request->port;
+        $table->number = $request->number;
+
+        if($request->image){
+            $file = $request->file('image');
+            $table->image=self::upload($file);
+        }
+
+
         $table->save();
         return redirect('/table')->with('status', 'Оновлено');
     }
@@ -99,4 +107,15 @@ class TableController extends Controller
         $table->delete();
         return redirect('/table')->with('status', 'Delete!');
     }
+
+
+
+    public static function upload($file){
+        $destinationPath = 'uploads';
+        $fileName = "product".time().'.'.$file->getClientOriginalExtension();
+        $file->move($destinationPath,$fileName);
+        $fileBase='/uploads/'.$fileName;
+        return $fileBase;
+    }
+    
 }

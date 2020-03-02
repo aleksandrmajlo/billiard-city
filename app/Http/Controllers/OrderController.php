@@ -32,8 +32,6 @@ use App\Services\ActService;
 use App\Bars\Ingredient;
 
 
-
-
 class OrderController extends Controller
 {
 
@@ -91,7 +89,6 @@ class OrderController extends Controller
         */
 
 
-
         //******************* новый код *******************************************
 
         if (Auth::user()) {
@@ -115,7 +112,7 @@ class OrderController extends Controller
         $orderCreate->closed = null;
         $orderCreate->save();
 
-        return redirect('/order-closed/'.$orderCreate->id);
+        return redirect('/order-closed/' . $orderCreate->id);
     }
 
     public function orderBar($id)
@@ -125,7 +122,7 @@ class OrderController extends Controller
         return view('order-bar', compact('products'));
     }
 
-
+    //старая  страница создания стола 
     public function createOrderTable()
     {
         $reservTable[] = 0;
@@ -138,9 +135,7 @@ class OrderController extends Controller
                 $reservTable[] = $reser->id_table;
             }
         }
-
         $tables = Table::whereNotIn('id', $reservTable)->get();
-
 
         if (count($tables) <= 0) {
             return redirect('/open-table')->with('status', 'Всі столи зайняті');
@@ -157,7 +152,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-       
+
         foreach ($request->all() as $k => $item) {
             if (strpos($k, 'product') !== false) {
                 $products[] = $item;
@@ -166,33 +161,32 @@ class OrderController extends Controller
                 $counts[] = $item;
             }
         }
-        $kofeinyi_apparat_category_id=config('category.kofeinyi_apparat_category_id');
+        $kofeinyi_apparat_category_id = config('category.kofeinyi_apparat_category_id');
 
         // обновление количества продуктов или инградиентов при открытии бара
         foreach ($products as $k => $product) {
-            $stock=Stock::find($product);
+            $stock = Stock::find($product);
             // количество категории кава не уменьшаем
-            if($stock->categorySee->id==$kofeinyi_apparat_category_id){
+            if ($stock->categorySee->id == $kofeinyi_apparat_category_id) {
                 Kofeinyiapparatcount::addOrder((int)$counts[$k]);
             }
             // проверка на кол-во - или доступно для создания
-            if(count($stock->ingredients)>0){
-                foreach ($stock->ingredients as $ingredient){
-                    $newCount=$ingredient->count-($ingredient->pivot->count*$counts[$k]);
-                    if($newCount<0){
+            if (count($stock->ingredients) > 0) {
+                foreach ($stock->ingredients as $ingredient) {
+                    $newCount = $ingredient->count - ($ingredient->pivot->count * $counts[$k]);
+                    if ($newCount < 0) {
                         return redirect('/orders-create')->with('status', 'Недостатньо товарів на складі!');
-                    }
-                    else{
-                        $ing=Ingredient::find($ingredient->id);
-                        $newCount=$ing->count-($ingredient->pivot->count*$counts[$k]);
-                        $ing->count=$newCount;
+                    } else {
+                        $ing = Ingredient::find($ingredient->id);
+                        $newCount = $ing->count - ($ingredient->pivot->count * $counts[$k]);
+                        $ing->count = $newCount;
                         $ing->save();
                     }
                 }
 
-            }else{
+            } else {
                 $newCount = $stock->count - $counts[$k];
-                if ($stock->unlimited == null&&$newCount<0) {
+                if ($stock->unlimited == null && $newCount < 0) {
                     return redirect('/orders-create')->with('status', 'Недостатньо товарів на складі!');
                 }
                 $stock->count = $newCount;
@@ -291,7 +285,9 @@ class OrderController extends Controller
         return Redirect::back()->with('status', 'Доданно!');
     }
 
-
+    /*
+     * добавление стола старая ---------------
+     */
     public function storeOrderTable(Request $request)
     {
         app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $request->table]);
@@ -338,10 +334,15 @@ class OrderController extends Controller
             dd('Сетка тарифов не заполнена');
         }
 
+        $customer = $request->customer;
+        if (intval($customer) == -1) {
+            $customer = null;
+        }
+
         $reservation = new Reservation();
         $reservation->id_table = $request->table;
         $reservation->id_user = Auth::user()->id;
-        $reservation->id_customers = $request->customer;
+        $reservation->id_customers = $customer;
         $reservation->booking_from = Carbon::now();
         $reservation->booking_before = null;
         $reservation->sum_booking = null;
@@ -357,7 +358,7 @@ class OrderController extends Controller
         $orderCreate = new Order();
         $orderCreate->table_id = $request->table;
         $orderCreate->user_id = Auth::user()->id;
-        $orderCreate->customer_id = $request->customer;
+        $orderCreate->customer_id = $customer;
         $orderCreate->reservation_id = $reservation->id;
         $orderCreate->amount = 0;
         if ($change && count($change) > 0) {
@@ -369,13 +370,21 @@ class OrderController extends Controller
         $orderCreate->save();
 
 
-        return redirect('/open-table')->with('status', 'Додано!');
+        return redirect('/open-table')->with('status', 'Додано333!');
     }
 
+    // для бара редирект
     public function closeBar(Request $request)
     {
 
         return redirect('/open-bar')->with('status', 'Закрито!');
+    }
+
+    // для стола редирект
+    public function closeTable(Request $request)
+    {
+
+        return redirect('/open-table')->with('status', 'Замовлення закрите!');
     }
 
     // /info о заказе
@@ -404,24 +413,20 @@ class OrderController extends Controller
             $min = $resrv->min;
             $schettable = 1;
         }
-        $pricesum=[];
-        return view('order-bar-closed', compact('products', 
-                                                'orderId',
-                                                'pricesum',
-                                                'customerid',
-                                                'orderId2',
-                                                'schet', 'schettable',
-                                                'min', 'summabill', 'pauseId'));
+        $pricesum = [];
+        return view('order-bar-closed', compact('products',
+            'orderId',
+            'pricesum',
+            'customerid',
+            'orderId2',
+            'schet', 'schettable',
+            'min', 'summabill', 'pauseId'));
     }
 
 
     // закрытие заказа бара форма
     public function orderBarClosed($id)
     {
-
-
-
-
         $schettable = 2;
         $products = Bar::where('order_id', '=', $id)
             ->get();
@@ -430,11 +435,12 @@ class OrderController extends Controller
         if ($orderId->status == 1) {
             return redirect('/open-bar')->with('status', 'Замовлення вже закрито!');
         }
-        return view('order.order-bar-create',[
-            'id'=>$id
+        return view('order.order-bar-create', [
+            'id' => $id
         ]);
 
     }
+
     /*
      * закрытие заказа страница  столы
      */
@@ -442,7 +448,7 @@ class OrderController extends Controller
     {
         $tz = config('app.timezone');
         $money = config('app.moneyClobal');
-        $order = Order::where('id', '=', $id)->first();
+        $order = Order::find($id);
 
         if ($order->status == 1) {
             return redirect('/open-table')->with('status', 'Замовлення вже закрито!');
@@ -478,10 +484,11 @@ class OrderController extends Controller
 
         // массивы цен перебираем
         $k = 0;
-        $minStart=0;
+        $minStart = [];
         foreach ($tablePrices as $tablePrice) {
             $range[] = range($tablePrice->start, $tablePrice->end);
             $price[] = $tablePrice->price;
+
             foreach ($vars as $var) {
                 if (in_array($var, $range[$k])) {
                     $minpay = app()->call('App\Http\Controllers\OrderController@minPay', [
@@ -490,14 +497,14 @@ class OrderController extends Controller
                             'var' => $vars
                         ]
                     );
-                    if($minStart===0){
-                        $minStart=$minpay;
-                    }
+
+                    $minStart[] = $minpay;
                     $count[] = 1 * round($minpay / 60, 2);
                 }
             }
             $k++;
         }
+        $minStartValue=min($minStart);
         // паузы
         $pauses = Pause::where('order_id', $order->id)->get();
         $countPause = [];
@@ -580,12 +587,12 @@ class OrderController extends Controller
             'price' => $count,
             'pricePause' => $countPause,
         ];
-
         /*
          * цена продукта и стола  в одном месте
          */
-        $PriceResults = OrderService::getOrderProductPrice($order, $count,$countPause, $endValidate,$minStart);
+        $PriceResults = OrderService::getOrderProductPrice($order, $count, $countPause, $endValidate, $minStartValue);
 
+        /*
         $LogData['minutes'] = [];
         $tz = config('app.timezone');
         foreach ($LogData['price'] as $k => $item) {
@@ -593,6 +600,8 @@ class OrderController extends Controller
             $thisTime = $startCarbon->addMinutes($k);
             $LogData['minutes'][] = $thisTime->format('H:i');
         }
+        */
+
         return view('order.orderClosed',
             [
                 'order' => $order,
@@ -606,7 +615,7 @@ class OrderController extends Controller
                 'pauses' => $pauses,
                 'money' => $money,
                 'LogData' => $LogData,
-                'tz'=>$tz
+                'tz' => $tz
             ]
         );
     }
@@ -628,7 +637,7 @@ class OrderController extends Controller
     }
 
 
-    // само закрытие заказа
+    // само закрытие заказа бара
     public function orderBarClosedOrder(Request $request)
     {
 
@@ -660,6 +669,7 @@ class OrderController extends Controller
     }
 
 
+    // ставим на паузу ------
     public function pauseBill(Request $request)
     {
         app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $request->table]);

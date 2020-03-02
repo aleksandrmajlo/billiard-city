@@ -36,12 +36,14 @@ class Consumableinvoice extends Model
                         }
                     }
                     foreach ($order->bars as $bar) {
-                        $products[] = [
-                            'id' => $bar->stock->id,
-                            'count' => $bar->count,
-                            'price' => $bar->stock->price,
-                            'discount' => $skidka
-                        ];
+                        if($bar->stock&&$bar->stock->id){
+                            $products[] = [
+                                'id' => $bar->stock->id,
+                                'count' => $bar->count,
+                                'price' => $bar->stock->price,
+                                'discount' => $skidka
+                            ];
+                        }
                     }
 
                 }

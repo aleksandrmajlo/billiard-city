@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     $('#addIngredientForm').submit(function (e) {
         e.preventDefault();
         let formData = new FormData(this);
@@ -50,10 +51,6 @@ $(document).ready(function () {
 
 
     $('.select2').select2();
-
-    $('.dateMy').datepicker({
-        autoclose: true,
-    });
 
     // добавить составляющую
     $('#addProdIng').click(function (e) {
@@ -152,7 +149,6 @@ $(document).ready(function () {
         let formData = new FormData(this);
         axios.post('/ajax/orderCloseValidate', formData)
             .then(response => {
-
                 let tbodyCloseOrder = $('#tbodyCloseOrder');
                 $('#alert-error').addClass('hidden');
                 tbodyCloseOrder.html('');
@@ -189,10 +185,7 @@ $(document).ready(function () {
                             scrollTop: $('#alert-error').offset().top + "px"
                         },
                         500, "linear");
-
-                    console.log($('#order_OrderForced_Conteer'))
                     $('#order_OrderForced_Conteer').removeClass('hidden');
-
                 }
                 if (response.data.success) {
                     axios.post('/ajax/orderClose', formData)
@@ -224,6 +217,34 @@ $(document).ready(function () {
                 $('#closeFormOrderButton').prop('disabled', false);
             });
     })
-    //
+
+
+    $('.selectCustomer').select2();
+    $('.selectCustomer').change(function () {
+        let $selected = $(".selectCustomer option:selected");
+        let name = $selected.data('name')
+        let v = $selected.text();
+        $('.selectedName').text(name);
+        //************************************ 
+        // document.getElementById('advanced-demo').value = item.getAttribute('data-langname');
+        // document.getElementById('fb-root').innerHTML = 'id: ' + item.getAttribute('data-name') + ' (' + item.getAttribute('data-lang') + ') ';
+        $('.gdd').val(name);
+        // $('#customer2').val(name);
+        $('.rads').show();
+        $('#p1').show();
+        $('#phons').val(v)
+
+    })
+
+    //****************** заказ на странице  столов ***********************************
+    $('#SmsModalShow').click(function (e) {
+        e.preventDefault();
+        $('#SmsModal').modal('show');
+    })
+    $('#PayModalShow').click(function (e) {
+        e.preventDefault();
+        $('#PayModal').modal('show');
+    })
+    //****************** заказ на странице  столов end***********************************
 
 })

@@ -1,0 +1,402 @@
+.calendars .pickmeop {}
+
+.calendars .pickmeop * {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+.calendars .pickmeop.pmu-flat {
+    position: relative;
+}
+
+.calendars .pickmeop.pmu-hidden {
+    display: none
+}
+
+.calendars .pickmeop .pmu-instance {
+    display: inline-block;
+    height: auto;
+    padding: .5em;
+    text-align: center;
+    width: 100%
+}
+
+.calendars .pickmeop .pmu-instance .pmu-button {
+    font-size: 12px;
+    line-height: 24px;
+    text-align: center;
+    color: #828282;
+}
+
+.calendars .pickmeop .pmu-instance .pmu-month {
+    font-weight: bold;
+    color: #F2994A;
+    line-height: 32px;
+}
+
+.calendars .pickmeop .pmu-instance .pmu-today {
+    background: #F2994A;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.calendars .pickmeop .pmu-instance .pmu-not-in-month {
+    color: #666
+}
+
+.calendars .pickmeop .pmu-instance .pmu-disabled,
+.calendars .pickmeop .pmu-instance .pmu-disabled:hover {
+    color: #333;
+    cursor: default
+}
+
+.calendars .pickmeop .pmu-instance .pmu-selected {
+    background: #F2994A;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.calendars .pickmeop .pmu-instance .pmu-not-in-month.pmu-selected {
+    background: #F2994A
+}
+
+.calendars .pickmeop .pmu-instance nav {
+    color: #eee;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    line-height: 14px
+}
+
+.calendars .pickmeop .pmu-instance nav *:first-child :hover {
+    color: #88c5eb
+}
+
+.calendars .pickmeop .pmu-instance nav .pmu-prev,
+.calendars .pickmeop .pmu-instance nav .pmu-next {
+    color: #F2994A;
+    height: 0em;
+    width: 1em;
+    font-size: 40px;
+}
+
+.calendars .pickmeop .pmu-instance nav .pmu-month {
+    width: 14em
+}
+
+.calendars .pickmeop .pmu-instance .pmu-years *,
+.calendars .pickmeop .pmu-instance .pmu-months * {
+    display: inline-block;
+    line-height: 3.6em;
+    width: 3.5em
+}
+
+.calendars .pickmeop .pmu-instance .pmu-day-of-week {
+    width: 15px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    border-bottom: 1px solid #FFFFFF;
+    text-align: center;
+    color: #828282;
+    width: 100%;
+}
+
+.calendars .pickmeop .pmu-days {
+    margin: 6px 0;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+.calendars .pickmeop .pmu-instance .pmu-day-of-week *,
+.calendars .pickmeop .pmu-instance .pmu-days * {
+    display: inline-block;
+    width: 24px;
+    margin: 1px 5.5px;
+}
+
+.calendars .pickmeop .pmu-instance .pmu-day-of-week * {
+    padding: 5px;
+}
+
+.pmu-month .pickmeop .pmu-instance:first-child .pmu-prev,
+.calendars .pmu-month .pickmeop .pmu-instance:last-child .pmu-next {
+    display: block
+}
+
+.calendars .pickmeop .pmu-instance:first-child .pmu-month,
+.calendars .pmu-month .pickmeop .pmu-instance:last-child .pmu-month {
+    width: 13em
+}
+
+.calendars .pickmeop .pmu-instance:first-child:last-child .pmu-month {
+    width: 100%
+}
+
+.calendars .pickmeop:not(.pmu-view-days) .pmu-days,
+.calendars .pickmeop:not(.pmu-view-days) .pmu-day-of-week,
+.calendars .pickmeop:not(.pmu-view-months) .pmu-months,
+.calendars .pickmeop:not(.pmu-view-years) .pmu-years {
+    display: none
+}
+
+.range .pickmeup .pmu-instance {
+    height: 462px;
+    padding: .5625em;
+    text-align: center;
+    width: 455px;
+}
+
+.range .pickmeup {
+    background: #ECF0F5;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.range .pickmeup .pmu-instance .pmu-day-of-week {
+    color: #999;
+    cursor: default;
+    margin: 0 6px;
+}
+
+.range .pickmeup .pmu-instance .pmu-day-of-week * {
+    width: 50px;
+    margin: 0 6.5px;
+    font-size: 16px;
+    color: #F2994A;
+}
+
+.range .pickmeup .pmu-instance .pmu-days * {}
+
+.range .pickmeup .pmu-instance:first-child:last-child .pmu-month {
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    color: #F2994A;
+    text-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+}
+
+.range .pickmeup .pmu-instance:first-child .pmu-prev,
+.range .pickmeup .pmu-instance:last-child .pmu-next {
+    display: none;
+}
+
+.range .pickmeup .pmu-instance .pmu-button {
+    font-size: 16px;
+    text-align: center;
+    color: #828282;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #FFFFFF;
+    box-sizing: border-box;
+    border-radius: 5px;
+    margin: 5.5px;
+    line-height: 50px;
+    position: relative;
+}
+
+.range .pickmeup .pmu-instance .pmu-button:hover,
+.range .pickmeup .pmu-instance .pmu-selected {
+    background: #F2994A;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    color: #FFFFFF;
+}
+
+.range .pickmeup .pmu-instance:first-child:last-child .pmu-month {
+    width: 8em;
+    padding: 16px 0;
+}
+
+.range .pickmeup .pmu-instance .pmu_button {
+    background: #ECF0F5;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.06), 0px -4px 6px rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    color: #828282;
+    width: 90px;
+    height: 30px;
+    line-height: 31px;
+    margin-top: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.range .pickmeup .pmu-instance .pmu_button:hover {
+    background: #F2994A;
+    color: #fff;
+}
+
+.range .pickmeup .pmu-instance .pmu-today {
+    background: #F2994A;
+    color: #fff;
+}
+
+
+/* Table */
+
+#data-table th,
+#data-table td {
+    border: none;
+    /* Turn off all borders */
+    border-bottom: 1px solid #ccc;
+    margin: 0;
+    padding: 10px;
+    text-align: left;
+}
+
+
+/* Toggle */
+
+
+/* Graph */
+
+
+/* Containers */
+
+#figure {
+    height: auto;
+    position: relative;
+}
+
+#figure ul {
+    display: none;
+}
+
+.graph {
+    height: 283px;
+    position: relative;
+}
+
+.charts {
+    width: 70%;
+    display: inline-block;
+}
+
+
+/* Legend */
+
+.legend {
+    background: #f0f0f0;
+    border-radius: 4px;
+    bottom: 0;
+    position: absolute;
+    text-align: left;
+    width: 540px;
+}
+
+.legend li {
+    display: block;
+    float: left;
+    height: 20px;
+    margin: 0;
+    padding: 10px 30px;
+    width: 120px;
+}
+
+.legend span.icon {
+    background-position: 50% 0;
+    border-radius: 2px;
+    display: block;
+    float: left;
+    height: 16px;
+    margin: 2px 10px 0 0;
+    width: 16px;
+}
+
+
+/* X-Axis */
+
+.x-axis {
+    bottom: 0;
+    color: #555;
+    position: absolute;
+    text-align: center;
+    width: 540px;
+}
+
+.x-axis li {
+    float: left;
+    margin: 0 15px;
+    padding: 5px 0;
+    width: 76px;
+}
+
+
+/* Y-Axis */
+
+.y-axis {
+    width: 0;
+}
+
+
+/* Graph Bars */
+
+.bars {
+    height: 253px;
+    position: absolute;
+    width: auto;
+    z-index: 10;
+}
+
+.bar-group {
+    float: left;
+    height: 100%;
+    margin: 0 15px;
+    position: relative;
+    width: 67px;
+}
+
+.bar {
+    border-radius: 5px;
+    bottom: 0;
+    cursor: pointer;
+    height: 0;
+    position: absolute;
+    text-align: center;
+    width: 67px;
+}
+
+.bar.fig0 {
+    left: 0;
+}
+
+.bar.fig1 {
+    left: 0;
+}
+
+.bar.fig2 {
+    left: 0;
+}
+
+.bar span {
+    font-size: 16px;
+    line-height: 19px;
+    color: #FFFFFF;
+}
+
+#data-table {
+    display: none;
+}
+
+.fig0 {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    background: #478ECC;
+}
+
+.fig1 {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    background: #F2994A;
+}
+
+.fig2 {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    background: #14988B;
+}
+
+.bar span {
+    display: block;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}

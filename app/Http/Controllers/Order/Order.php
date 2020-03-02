@@ -22,6 +22,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Stock;
 use Illuminate\Support\Facades\Auth;
+use App\Reservation;
+
+
 
 use Illuminate\Support\Facades\DB;
 
@@ -94,7 +97,7 @@ class Order extends Controller
 
     }
 
-    //оплата заказа
+    //оплата заказа бара
     /*
      * billing  тип оплат (1 наличкой)
      * info   коммент
@@ -111,7 +114,6 @@ class Order extends Controller
 
         $orderUpdate = \App\Order::find($request->order_id);
         $orderUpdate->status = 1;
-        $orderUpdate->info = $request->info;
         $orderUpdate->billing = $request->billing;
         if ($change) {
             $orderUpdate->changes_id = $change->id;
@@ -125,8 +127,7 @@ class Order extends Controller
         if ($money) {
             $money->sum_bar = $orderUpdate->amount;
             $money->save();
-        }
-        else {
+        } else {
             $money = new Money;
             $money->sum_bar = $orderUpdate->amount;;
             $money->order = $orderUpdate->id;
@@ -136,13 +137,64 @@ class Order extends Controller
         }
         // печать !!!!!!!!!!!!!!!!!
         if (1 == intval($request->print)) {
-//            self::getOrderPrint($orderUpdate->id);
+            self::getOrderPrint($orderUpdate->id);
         }
         // очищаем резерв
         Reserve::where('order_id', $orderUpdate->id)->delete();
         return response()->json([
             'success' => true,
         ], 200);
+    }
+
+    // оформление открытого стола
+    public function PayTable(Request $request)
+    {
+
+        if (Auth::user()) {
+            $user = Auth::user()->id;
+            $change = Change::where('user_id', $user)
+                ->where('stop', null)
+                ->first();
+        }
+        //цена в одном месте
+        $prices=OrderService::priceOrder($request->order_id);
+
+        $orderUpdate = \App\Order::find($request->order_id);
+        $orderUpdate->status = 1;
+         $orderUpdate->billing = $request->billing;
+         $orderUpdate->amount = $prices['priceOrderTotal'];
+        if ($change && count($change) > 0) {
+            $orderUpdate->changes_id = $change->id;
+        }
+        $orderUpdate->closed = Carbon::now();
+        $orderUpdate->save();
+
+        app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $orderUpdate->table_id]);
+
+        $money = new Money;
+        $money->sum_bil = $prices['priceOrderTotal'];
+        $money->order = $request->order_id;
+        $money->user_id = Auth::user()->id;
+        $money->smena = $orderUpdate->changes_id;
+        $money->save();
+
+        // резерв
+        $reserv=Reservation::find($orderUpdate->reservation_id);
+        if ($reserv) {
+            $reserv->booking_before = Carbon::now();
+            $reserv->closed = 1;
+            $reserv->sum_booking = $prices['priceOrderTotal'];
+            $reserv->min =$prices['priceOrderTotal'];
+            $reserv->save();
+        }
+        // печать !!!!!!!!!!!!!!!!!
+        if (1 == intval($request->print)) {
+            self::getOrderPrint($orderUpdate->id);
+        }
+        return response()->json([
+            'success' => true,
+        ], 200);
+
     }
 
     // добавить продукты в заказ
@@ -180,14 +232,21 @@ class Order extends Controller
         $customers = \App\Customer::all();
         $results = [];
         foreach ($customers as $customer) {
+
             $skidka_bar = 0;
             if ($customer->skidka_bar) {
                 $skidka_bar = $customer->skidka_bar;
             }
+
+            $skidka = 0;
+            if ($customer->skidka) {
+                $skidka = $customer->skidka;
+            }
             $results[] = [
                 'text' => $customer->phone,
                 'value' => $customer->id,
-                'skidka_bar' => $skidka_bar
+                'skidka_bar' => $skidka_bar,
+                'skidka' => $skidka
             ];
         }
         return response()->json([
@@ -198,79 +257,119 @@ class Order extends Controller
     }
 
     //отправить на печать при нажатии кнопки
-    public function SendPrint(Request $request){
-        $order_id=$request->order_id;
+    public function SendPrint(Request $request)
+    {
+        $order_id = $request->order_id;
         self::getOrderPrint($order_id);
         return response()->json([
             'success' => true,
         ], 200);
 
     }
-    // получить заказ для печати
-    public static function getOrderPrint($order_id){
-        $orderData=[];
 
-        $order=\App\Order::find($order_id);
-        $orderData['id']=$order->id;
-        $orderData['start']=$order->start;
-        if($order->closed){
-            $orderData['end']=$order->closed;
-        }else{
-            $orderData['end']=Carbon::now()->format('Y-M-d h:i:s');
+    // получить заказ для печати
+    public static function getOrderPrint($order_id)
+    {
+        $orderData = [];
+        $order = \App\Order::find($order_id);
+        $orderData['id'] = $order->id;
+        $tz = config('app.timezone');
+
+        $orderData['start'] = Carbon::parse($order->start)->format('Y-m-d H:i');
+        if ($order->closed) {
+            $orderData['end'] = Carbon::parse($order->closed)->format('Y-m-d H:i');
+        } else {
+            $orderData['end'] = Carbon::now()->format('Y-m-d H:i');
         }
-        $orderData['products']='';
-        if($order->bars){
-            foreach ($order->bars as $bar){
-                $orderData['products'].=$bar->stock->title." ".$bar->stock->price." * ".$bar->count. " = ".round($bar->stock->price*$bar->count,2)."\n";
+
+        $orderData['products'] = '';
+        if ($order->type_bar == 1) {
+            if ($order->bars) {
+                foreach ($order->bars as $bar) {
+                    $orderData['products'] .= $bar->stock->title . " \n" . $bar->stock->price . " * " . $bar->count . " = " . round($bar->stock->price * $bar->count, 2) . "\n";
+                }
+            }
+            if ($order->customer_id) {
+                $customer = \App\Customer::find($order->customer_id);
+                $orderData['customer'] = $customer->fullname;
+                $orderData['discount'] = $customer->skidka_bar;
+            } else {
+                $orderData['customer'] = "Гість";
+                $orderData['discount'] = "0";
+            }
+        } else {
+            $startCarbon = new Carbon($order->start, $tz);
+            $endCarbon = new Carbon($order->closed, $tz);
+            $minutes = (int)$startCarbon->diffInMinutes($endCarbon, false);
+
+            $orderData['products'] .= '' . $order->table->title . " \n з " . $startCarbon->format('Y-m-d H:i') . ' \n по ' . $endCarbon->format('Y-m-d H:i') . "\n";
+            $orderData['products'] .= $minutes . "хв. = " . $order->barprice . "\n";
+            // паузы
+            $pauses = \App\Pause::where('order_id', $order->id)->get();
+            if ($pauses) {
+                foreach ($pauses as $pause) {
+                    if (isset($pause->end_pause)) {
+                        $startPause = new Carbon($pause->start_pause, $tz);
+                        $endPause = new Carbon($pause->end_pause, $tz);
+                        $pauseMinutes = (int)$startPause->diffInMinutes($endPause, false);
+                        $orderData['products'] .= '' . $order->table->title . " - пауза\n з " . Carbon::parse($pause->start_pause)->format('Y-m-d H:i') . " по " . Carbon::parse($pause->end_pause)->format('Y-m-d h:i') . "\n";
+                        $orderData['products'] .= $pauseMinutes . " хв. =  0\n";
+                    }
+                }
+            }
+            if ($order->customer_id) {
+                $customer = \App\Customer::find($order->customer_id);
+                $orderData['customer'] = $customer->fullname;
+                $orderData['discount'] = $customer->skidka;
+            } else {
+                $orderData['customer'] = "Гість";
+                $orderData['discount'] = "0";
             }
         }
-        if($order->customer_id){
-            $customer = \App\Customer::find( $order->customer_id);
-            $orderData['customer']=$customer->fullname;
-            $orderData['discount']=$customer->skidka_bar;
-        }else{
-            $orderData['customer']="Гість";
-            $orderData['discount']="0";
 
-        }
-        $orderData['total']=$order->barprice;
+
+        $orderData['total'] = $order->barprice;
         self::OrderPrint($orderData);
     }
 
     // печать заказа
-    static public function OrderPrint($orderData,$close=true)
+    static public function OrderPrint($orderData, $close = true)
     {
-        $pr="**************\n";
+        $pr = "**************\n";
 
-        $text="Більярд Сіті\n";
-        $text.=$pr;
-        $text.="Замовлення #".$orderData['id']."\n";
-        $text.="Початок: ".$orderData['start']."\n";
-        $text.="Кінець: ".$orderData['end']."\n";
-        $text.=$pr;
-        $text.=$orderData['products'];
-        $text.=$pr;
-        $text.="Клієнт: ".$orderData['customer']."\n";
-        $text.="Знижка: ".$orderData['discount']."%\n";
-        $text.="Разом: =".$orderData['total']."\n";
-        $text.="Готівкою: ".$orderData['total']."\n";
-        $text.=$pr;
-        $text.="+38 (067) 574 89 89 \n";
-        $text.="вул. Героїв УПА 77\n";
-        $text.="billiard-city.com\n";
+        // /*
+        $text = "Більярд Сіті\n";
+        $text .= "+38 (067) 574 89 89 \n";
+        $text .= "вул. Героїв УПА 77\n";
+        $text .= "billiard-city.com\n";
 
-//        dump($text);
-//        dd();
+        $text .= $pr;
+        $text .= "Замовлення #" . $orderData['id'] . "\n";
+        $text .= "Початок: " . $orderData['start'] . "\n";
+        $text .= "Кінець: " . $orderData['end'] . "\n";
+        $text .= $pr;
+        $text .= $orderData['products'];
+        $text .= $pr;
+        $text .= "Клієнт: " . $orderData['customer'] . "\n";
+        $text .= "Знижка: " . $orderData['discount'] . "%\n";
+        $text .= "Разом: =" . $orderData['total'] . "\n";
+        $text .= "Готівкою: " . $orderData['total'] . "\n";
+        $text .= $pr;
 
-        $printsetting=\App\Printsetting::find(1);
-//        $connector = new NetworkPrintConnector("178.210.129.98", 9100);
-        $connector = new NetworkPrintConnector($printsetting->ip, $printsetting->port);
+        $text .= "\n";
+        $text .= "\n";
+        $text .= "\n";
 
+        $text = str_replace("і", "i", $text);
+        $text = str_replace("І", "I", $text);
+
+        $printsetting = \App\Printsetting::find(1);
+
+        $connector = new NetworkPrintConnector($printsetting->ip, intval($printsetting->port));
         $printer = new Printer($connector);
-        $printer->text("Работает? или нет?\n");
+        $printer->text($text);
         $printer->cut();
         $printer->close();
-
 
     }
 
@@ -285,16 +384,20 @@ class Order extends Controller
         $user = [
             'text' => "",
             'value' => "",
-            'skidka_bar' => ''
+            'skidka_bar' => '',
+            'skidka' => '',
         ];
 
         if ($order->customer_id) {
             $customer = Customer::find($order->customer_id);
             $user['text'] = $customer->phone;
-            $skidka = $user['skidka_bar'] = $customer->skidka_bar;
+            if ($order->type_bar == 1) {
+                $skidka = $user['skidka_bar'] = $customer->skidka_bar;
+            } else {
+                $skidka = $user['skidka'] = $customer->skidka;
+            }
             $user['value'] = $customer->id;
         }
-
         if ($order->bars) {
             foreach ($order->bars as $bar) {
                 $stock = Stock::find($bar->product_id);
@@ -311,11 +414,18 @@ class Order extends Controller
                 ];
             }
         }
+        if ($order->type_bar == 1) {
+            $typeOrder = "type_bar";
+        } else {
+            $typeOrder = "type_billiards";
+        }
         return response()->json([
             'success' => true,
             'cart' => $cart,
             'user' => $user,
-            'skidka' => $skidka
+            'skidka' => $skidka,
+            'typeOrder' => $typeOrder,
+            'info' => $order->info
 
         ], 200);
     }
@@ -422,9 +532,22 @@ class Order extends Controller
         ], 200);
     }
 
+    // запись инфы
+    public function setInfo(Request $request)
+    {
+        $order_id = $request->order_id;
+        $order = \App\Order::find($order_id);
+        $order->info = $request->info;
+        $order->save();
+        return response()->json([
+            'success' => true,
+        ], 200);
+    }
+
     // для тєста
-    public function printTest(){
-        self::getOrderPrint(215);
+    public function printTest()
+    {
+        self::getOrderPrint(4503);
     }
 
 

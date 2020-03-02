@@ -18,9 +18,17 @@ class Ingredient extends Model
         return $this->belongsToMany('App\Acts\Act')->withPivot('count');
     }
 
+
     public function purchaseinvoices()
     {
         return $this->belongsToMany('App\Acts\Purchaseinvoice')->withPivot('count');
     }
+
+    public function writeofs()
+    {
+        return $this->belongsToMany('App\Acts\Writeof')->withPivot('count');
+    }
+
+
 
 }

@@ -33,5 +33,6 @@ return [
     'thisCount'=>'Указанное количество',
     'kofeinyi_apparat'=>'Кофемашина',
     'order_OrderForced'=>'Закрыть принудительно',
+    'excel'=>'Экспорт в excel',
 
 ];

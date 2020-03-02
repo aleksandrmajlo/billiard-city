@@ -25,7 +25,6 @@ class ReservationController extends Controller
     public function index()
     {
         $reservsTable = Reservation::all()->where('book', '!=', null);
-
         $events = [];
         foreach ($reservsTable as $reservTable) {
             $nameTitle = Table::where('id', '=', $reservTable->id_table)->first();
@@ -50,7 +49,6 @@ class ReservationController extends Controller
         }
         $lang = '';
         $lang = Session::get('lng');
-
         if (isset($lang)) {
             if ($lang == "ru") {
                 $dayWeek = ["Вск", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
@@ -61,7 +59,6 @@ class ReservationController extends Controller
                 $month = 'Месяц';
                 $week = 'Неделя';
                 $day = 'День';
-
             }
             if ($lang == "ua") {
                 $dayWeek = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
@@ -74,7 +71,6 @@ class ReservationController extends Controller
                 $day = 'День';
             }
         }
-
         $calendar = \Calendar::addEvents($events)
             ->setOptions([
                 'lang' => 'uk',
@@ -116,6 +112,7 @@ class ReservationController extends Controller
     {
         $gustreserv = null;
         $customerreserv = null;
+
         if ($request->radiogroup == 1) {
             $gustreserv = $request->reserv_name . ' (' . $request->reserv_phone . ')';
         } else {
@@ -153,8 +150,9 @@ class ReservationController extends Controller
             ->where('closed', '=', null)
             ->orderBy('created_at', 'desc')
             ->paginate(10000);
-
-        return view('order.open_table', [
+        return view(
+            'order.open_table',
+            [
                 'orders' => $orders,
                 'products' => $products,
                 'tz' => $tz
@@ -175,77 +173,15 @@ class ReservationController extends Controller
             ->where('closed', '=', null)
             ->orderBy('created_at', 'desc')
             ->get();
-        if ($request->has('status')){
+
+
+
+        if ($request->has('status')) {
             return redirect('/open-bar')->with('status', 'Замовлення створено!');
         }
         return view('open_order', compact('orders', 'products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Reservation $reservation
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Reservation $reservation
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Reservation $reservation
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Reservation $reservation
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Reservation $reservation)
-    {
-        //
-    }
 
     public function destroyBooking($id)
     {

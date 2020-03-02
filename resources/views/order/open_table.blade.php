@@ -100,12 +100,6 @@
                                                                     <i class="fa  fa-hourglass-3"></i> Пауза
                                                                 @endif
                                                             </a>
-                                                            <a  class="btn btn-primary  btn-app btn-success id3"
-                                                               data-order="{{ $order->id }}" data-toggle="modal"
-                                                               data-target="#modal-default">
-                                                                <i class="fa fa-edit"></i> @lang('site.add') бар
-                                                            </a>
-
                                                             <a href="/orderbil-closed/{{$order->id}}"
                                                                class="btn btn-app btn-warning ">
                                                                 <i class="fa fa-unlock-alt"></i> Закрити
@@ -132,6 +126,7 @@
             <!-- /.row -->
     </section>
 
+    {{--
     <div class="modal fade" id="modal-default">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -194,6 +189,9 @@
             </div>
         </div>
     </div>
+
+    --}}
+
     <!-- /.modal -->
     <div class="modal modal-warning fade" id="modal-warning">
         <div class="modal-dialog">

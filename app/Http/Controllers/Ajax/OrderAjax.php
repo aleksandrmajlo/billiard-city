@@ -28,6 +28,7 @@ class OrderAjax extends Controller
         if ($request->has('order_id')) {
             $order_id = $request->input('order_id');
             $results = OrderService::priceOrder($order_id);
+
         }
         return response()->json([
             'success' => true,
@@ -36,7 +37,7 @@ class OrderAjax extends Controller
 
     }
 
-    // закрытие заказа
+    // закрытие смены барменом
     public function orderClose(Request $request)
     {
 
@@ -66,14 +67,12 @@ class OrderAjax extends Controller
                 $act->stocks()->save($st,['count'=>$request->count_stocks[$k]]);
             }
         }
+
         // если принудительно то отправлем письмо
         if($request->has('Forced')){
             ActService::CloseEmailForced($request->all(),$act->id,$change->id);
         }
-
         ActService::UpdateStockIngr($act->id);
-        // создание акта расходные накладные
-        ActService::CreateConsumableinvoice($change);
 
         $kofeinyiapparat=new Kofeinyiapparat();
         $kofeinyiapparat->count=$request->kofeinyi_apparat;
@@ -81,14 +80,13 @@ class OrderAjax extends Controller
         $kofeinyiapparat->save();
         //обновление общего кол-ва кофе
         Kofeinyiapparatcount::add($request->kofeinyi_apparat);
-
         return response()->json([
             'success' => true,
             'url'  =>env('APP_URL'),
         ], 200);
 
     }
-    // валидация при закрытии
+    // валидация при закрытии смены барменом
     public function orderCloseValidate(Request $request)
     {
         $results = ActService::CloseValidate($request->all());

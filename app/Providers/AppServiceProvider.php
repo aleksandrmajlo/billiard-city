@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Http\ViewComposers\SettingsComposer;
+//use App\Http\ViewComposers\SettingsComposer;
 use Illuminate\Support\Facades\App;
 
 use Illuminate\Support\ServiceProvider;
@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(Request $request)
     {
 
-        View::composer(['layouts.app'], SettingsComposer::class);
+//        View::composer(['layouts.app'], SettingsComposer::class);
     }
 
     /**

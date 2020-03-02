@@ -16,8 +16,6 @@ class Purchaseinvoice extends Model
         return $this->belongsToMany('App\Stock')->withPivot('count');
     }
 
-
-
     public function user(){
         return $this->belongsTo('App\User');
     }

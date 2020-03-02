@@ -12,6 +12,7 @@ use App\Acts\Act;
 use App\CategoryStock;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Excel;
 
 class ActController extends Controller
 {
@@ -56,28 +57,28 @@ class ActController extends Controller
     }
 
     // показать акт
-    public function show($id,Request $request)
+    public function show($id, Request $request)
     {
         $act = Act::findOrFail($id);
         $cats = CategoryStock::all();
-        $showApparat=true;
-        if($request->has('title')){
-            $showApparat=false;
+        $showApparat = true;
+        if ($request->has('title')) {
+            $showApparat = false;
+        }
+        if ($request->has('type')) {
+            $showApparat = false;
+        }
+        if ($request->has('cat') && $request->cat == '20') {
+            $showApparat = true;
+        } elseif ($request->has('cat') && $request->cat !== '20') {
+            $showApparat = false;
         }
 
-        if($request->has('type')){
-            $showApparat=false;
-        }
-        if($request->has('cat')&&$request->cat=='20'){
-            $showApparat=true;
-        }elseif($request->has('cat')&&$request->cat!=='20'){
-            $showApparat=false;
-        }
         return view('doc/act', [
             'act' => $act,
             'cats' => $cats,
             'id' => $id,
-            'showApparat'=>$showApparat,
+            'showApparat' => $showApparat,
             'urlFilter' => '/doc/act/' . $id
         ]);
     }
@@ -99,6 +100,7 @@ class ActController extends Controller
 
             $act1 = Act::find($request->act1);
             $act2 = Act::find($request->act2);
+
             if (count($act1->ingredients) > 0) {
                 foreach ($act1->ingredients as $k => $ingredient) {
                     $count2 = 0;
@@ -141,25 +143,24 @@ class ActController extends Controller
             if ($act2->kofeinyiapparat) {
                 $kofeinyi_apparat2 = $act2->kofeinyiapparat->count;
             }
-            $comp_results['kofeinyi_apparat']=[$kofeinyi_apparat1,$kofeinyi_apparat2];
-
+            $comp_results['kofeinyi_apparat'] = [$kofeinyi_apparat1, $kofeinyi_apparat2];
 
 
         }
         $cats = CategoryStock::all();
 
-        $showApparat=true;
-        if($request->has('title')){
-            $showApparat=false;
+        $showApparat = true;
+        if ($request->has('title')) {
+            $showApparat = false;
         }
 
-        if($request->has('type')){
-            $showApparat=false;
+        if ($request->has('type')) {
+            $showApparat = false;
         }
-        if($request->has('cat')&&$request->cat=='20'){
-            $showApparat=true;
-        }elseif($request->has('cat')&&$request->cat!=='20'){
-            $showApparat=false;
+        if ($request->has('cat') && $request->cat == '20') {
+            $showApparat = true;
+        } elseif ($request->has('cat') && $request->cat !== '20') {
+            $showApparat = false;
         }
 
 
@@ -169,8 +170,124 @@ class ActController extends Controller
             'comp_results' => $comp_results,
             'act1' => $act1,
             'act2' => $act2,
-            'showApparat'=>$showApparat,
+            'showApparat' => $showApparat,
             'urlFilter' => '/doc/compare?act1=' . $request->act1 . '&act2=' . $request->act2
         ]);
     }
+
+    // экспорт
+    public function export(Request $request)
+    {
+
+        $id = $request->id;
+        $act = Act::findOrFail($id);
+        $results = [];
+        $product = trans('act.product');
+        foreach ($act->stocks as $stock) {
+            $results[] = [
+                $stock->title,
+                $stock->categorySee->title,
+                $product,
+                $stock->pivot->count
+            ];
+
+        }
+        $ing=trans('act.ingredient');
+        foreach($act->ingredients as $ingredient){
+            $results[] = [
+                $ingredient->title,
+                "",
+                $ing,
+                $ingredient ->pivot->count
+            ];
+        }
+
+        $results[]=[
+            trans('act.kofeinyi_apparat'),
+            '',
+            '',
+            $act->kofeinyiapparat->count
+        ];
+        Excel::create('Акт №' . $id, function ($excel) use ($results) {
+            $excel->sheet('Лист 1', function ($sheet) use ($results) {
+                $sheet->fromArray($results)->row(1, array(
+                    trans('act.name'),
+                    trans('act.cat'),
+                    trans('act.type'),
+                    trans('act.sklad'),
+                ));
+            });
+        }) ->download('xls');
+    }
+
+    public function compareexport(Request $request){
+
+        if ($request->has('act1') && $request->has('act2')) {
+            $comp_results = [
+            ];
+
+            $act1 = Act::find($request->act1);
+            $act2 = Act::find($request->act2);
+
+
+            $product = trans('act.product');
+            if (count($act1->stocks) > 0) {
+                foreach ($act1->stocks as $k => $stock) {
+                    $count2 = 0;
+                    if (isset($act2->stocks[$k])) {
+                        $count2 = $act2->stocks[$k]->pivot->count;
+                    }
+                    $comp_results[] = [
+                        'title' => $stock->title,
+                        'cat' => $stock->categorySee->title,
+                        $product,
+                        $stock->pivot->count,
+                        $count2,
+                    ];
+                }
+            }
+
+            $ing=trans('act.ingredient');
+            if (count($act1->ingredients) > 0) {
+                foreach ($act1->ingredients as $k => $ingredient) {
+                    $count2 = 0;
+                    if (isset($act2->ingredients[$k])) {
+                        $count2 = $act2->ingredients[$k]->pivot->count;
+                    }
+                    $comp_results[] = [
+                        'title' => $ingredient->title,
+                        "",
+                        $ing,
+                        $ingredient->pivot->count,
+                        $count2
+                    ];
+                }
+            }
+
+            $kofeinyi_apparat1 = 0;
+            if ($act1->kofeinyiapparat) {
+                $kofeinyi_apparat1 = $act1->kofeinyiapparat->count;
+            }
+
+            $kofeinyi_apparat2 = 0;
+            if ($act2->kofeinyiapparat) {
+                $kofeinyi_apparat2 = $act2->kofeinyiapparat->count;
+            }
+            $comp_results[] = [trans('act.kofeinyi_apparat'), "",  "",$kofeinyi_apparat1, $kofeinyi_apparat2];
+            Excel::create('Акт №' . $act1->id.' №'. $act2->id, function ($excel) use ($comp_results,$act1,$act2) {
+                $excel->sheet('Лист 1', function ($sheet) use ($comp_results,$act1,$act2) {
+                    $sheet->fromArray($comp_results)->row(1, array(
+                        trans('act.name'),
+                        trans('act.cat'),
+                        trans('act.type'),
+                        trans('act.sklad')." №".$act1->change->id,
+                        trans('act.sklad_smena')." №".$act2->change->id,
+                    ));
+                });
+            }) ->download('xls');
+
+
+        }
+    }
+
 }

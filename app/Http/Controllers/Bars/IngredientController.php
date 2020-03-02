@@ -7,6 +7,7 @@ use App\Services\ActService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Kofeinyiapparatcount;
 
 class IngredientController extends Controller
 {
@@ -24,9 +25,14 @@ class IngredientController extends Controller
         if($user->hasRole('admin')){
             $ReadCount=true;
         }
+
+        $kofeinyi_apparat_category_id=config('category.kofeinyi_apparat_category_id');
+        $kofeinyiapparatcount=Kofeinyiapparatcount::get();
+
         return view('bars/ingredients', [
             'ingredients' => $ingredients,
-            'ReadCount'   =>$ReadCount
+            'ReadCount'   =>$ReadCount,
+            'kofeinyiapparatcount'=>$kofeinyiapparatcount
         ]);
     }
 
