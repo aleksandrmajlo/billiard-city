@@ -12,7 +12,9 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
-                    <div class="box-body"><h1>@lang('site.zakaz') #{{ $orderId }}</h1>
+                    <div class="box-body"><h1>
+                            @lang('site.zakaz') #{{ $orderId }}
+                        </h1>
                         <table id="example1" class="table table-bordered table-striped" style="width: 60%;">
                             <thead>
                             <tr>
@@ -92,7 +94,7 @@
                                     <h3>
                                         @lang('site.itogo') :
                                         @if($orderId2->type_bar==1)
-                                            {{$orderId2->barprice}}
+                                            {{$orderId2->amount}}
                                         @else
                                             {{$priceAmount = floor(array_sum($pricesum) -  (array_sum($pricesum) * $customer->skidka_bar / 100 ))}}
                                         @endif
@@ -102,7 +104,7 @@
                                         <h4 style="color: green">Знижка: 0%</h4>
                                         @lang('site.itogo'):
                                         @if($orderId2->type_bar==1)
-                                            {{$orderId2->barprice}}
+                                            {{$orderId2->amount}}
                                         @else
                                             {{$priceAmount = floor(array_sum($pricesum))}}
                                         @endif

@@ -27,8 +27,6 @@ class ActService
     // обновление продуктов и ингадиентов
     static public function UpdateStockIngr($act_id)
     {
-
-
         $act = Act::find($act_id);
         if ($act->ingredients) {
             foreach ($act->ingredients as $ingredient) {
@@ -61,7 +59,6 @@ class ActService
                 }
             }
         }
-
         $consumableinvoice = new Consumableinvoice;
         $consumableinvoice->summa = $change->summa_end - $change->summa_start;
         $consumableinvoice->change_id = $change->id;
@@ -72,9 +69,10 @@ class ActService
     }
 
 
-    // валидация при открытии смены
-    static public function CreateValidate($request, $act_id,$change_id)
+    // отправка письма при открытии смены
+    static public function CreateValidate($ingredients, $stocks, $act_id, $change_id)
     {
+        /*
         // получаем последний акт
         $act = Act::where('id', '!=', $act_id)->orderBy('created_at', 'DESC')->first();
         $actOldId = null;
@@ -111,58 +109,47 @@ class ActService
                 }
             }
         }
+        */
 
-        if (!empty($results['ingredients']) || !empty($results['stocks'])) {
-            $admin=Auth::user();
-            $results['admin']=$admin->name;
-            $results['change_id']=$change_id;
-
-            $MAIL_TO_ADMIN = env('MAIL_TO_ADMIN');
-            Mail::to($MAIL_TO_ADMIN)->send(new AdminOrder($results));
-            Mail::to('alekslv74@yandex.ua')->send(new AdminOrder($results));
-            if ("http://billiard-city.local" !== env('APP_URL')) {
-                Mail::to('alex.stepanov100@gmail.com')->send(new AdminOrder($results));
-            }
+        $act = Act::where('id', '!=', $act_id)->orderBy('created_at', 'DESC')->first();
+        $actOldId = null;
+        if ($act) {
+            $actOldId = $act->id;
         }
+
+        $results = [
+            'ingredients' => $ingredients,
+            'stocks' => $stocks,
+//            'coffee' => false,
+            'act_id' => $act_id,
+            'old_act_id' => $actOldId
+        ];
+
+        $admin = Auth::user();
+        $results['admin'] = $admin->name;
+        $results['change_id'] = $change_id;
+
+        $MAIL_TO_ADMIN = env('MAIL_TO_ADMIN');
+        Mail::to($MAIL_TO_ADMIN)->send(new AdminOrder($results));
+        Mail::to('alekslv74@yandex.ua')->send(new AdminOrder($results));
+        if ("http://billiard-city.local" !== env('APP_URL')) {
+            Mail::to('alex.stepanov100@gmail.com')->send(new AdminOrder($results));
+        }
+
     }
 
     // отправляем письмо если смена принудительно закрыта
-    static public function CloseEmailForced($request, $act_id,$change_id)
+    static public function CloseEmailForced($ingredients, $stocks, $act_id, $change_id)
     {
         $results = [
-            'ingredients' => [],
-            'stocks' => [],
+            'ingredients' => $ingredients,
+            'stocks' => $stocks,
             'coffee' => false,
             'act_id' => $act_id
         ];
+
+        /*
         $kofeinyi_apparat_category_id = config('category.kofeinyi_apparat_category_id');
-        $stocks = Stock::all();
-        foreach ($stocks as $stock) {
-            if ($stock->categorySee->id == $kofeinyi_apparat_category_id) continue;
-            if (count($stock->ingredients) < 1) {
-                $ind = array_search($stock->id, $request['stocks']);
-                $thisCount = (float)$request['count_stocks'][$ind];
-                if ((float)$stock->count !== $thisCount) {
-                    $results['stocks'][] = [
-                        'thisCount' => round($stock->count,2),
-                        'oldCount' => round($thisCount,2),
-                        'title' => $stock->title
-                    ];
-                }
-            }
-        }
-        $ingredients = Ingredient::all();
-        foreach ($ingredients as $ingredient) {
-            $ind = array_search($ingredient->id, $request['ingredients']);
-            $thisCount = (float)$request['count_ingredients'][$ind];
-            if ((float)$ingredient->count !== $thisCount) {
-                $results['ingredients'][] = [
-                    'thisCount' => round($ingredient->count,2),
-                    'oldCount' => round($thisCount,2),
-                    'title' => $ingredient->title
-                ];
-            }
-        }
         $kavaCount = DB::table('count_this_Kofeinyiapparat')
             ->where('id', 1)
             ->first();
@@ -174,10 +161,11 @@ class ActService
                 'title' => 'Кавовий апарат'
             ];
         }
+        */
 
-        $admin=Auth::user();
-        $results['admin']=$admin->name;
-        $results['change_id']=$change_id;
+        $admin = Auth::user();
+        $results['admin'] = $admin->name;
+        $results['change_id'] = $change_id;
 
         $MAIL_TO_ADMIN = env('MAIL_TO_ADMIN');
         Mail::to($MAIL_TO_ADMIN)->send(new AdmincloseOrder($results));
@@ -186,56 +174,6 @@ class ActService
             Mail::to('alex.stepanov100@gmail.com')->send(new AdmincloseOrder($results));
         }
     }
-
-    // валидация при закрытии смены
-    static public function CloseValidate($request)
-    {
-        $results = [
-            'ingredients' => [],
-            'stocks' => [],
-            'coffee' => false
-        ];
-
-        $kofeinyi_apparat_category_id = config('category.kofeinyi_apparat_category_id');
-        $stocks = Stock::all();
-        foreach ($stocks as $stock) {
-            // количество категории кава не уменьшаем
-            if ($stock->categorySee->id == $kofeinyi_apparat_category_id) continue;
-            if (count($stock->ingredients) < 1) {
-                $ind = array_search($stock->id, $request['stocks']);
-                $thisCount = (float)$request['count_stocks'][$ind];
-                if ((float)$stock->count !== $thisCount) {
-                    $results['stocks'][] = [
-                        'thisCount' => $thisCount,
-                        'oldCount' => $stock->count,
-                        'title' => $stock->title
-                    ];
-                }
-            }
-        }
-        $ingredients = Ingredient::all();
-        foreach ($ingredients as $ingredient) {
-            $ind = array_search($ingredient->id, $request['ingredients']);
-            $thisCount = (float)$request['count_ingredients'][$ind];
-            if ((float)$ingredient->count !== $thisCount) {
-                $results['ingredients'][] = [
-                    'thisCount' => $thisCount,
-                    'oldCount' => $ingredient->count,
-                    'title' => $ingredient->title
-                ];
-            }
-        }
-
-        $kavaCount = DB::table('count_this_Kofeinyiapparat')
-            ->where('id', 1)
-            ->first();
-        $kavaRequest = $request['kofeinyi_apparat'];
-        if ((int)$kavaCount->count != (int)$kavaRequest) {
-            $results['coffee'] = ['Кавовий апарат', $kavaCount->count, $kavaRequest];
-        }
-        return $results;
-    }
-
 
     // обновление продукта с инградиентами
     static public function UpdateProductCount()

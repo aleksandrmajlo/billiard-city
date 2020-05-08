@@ -16,6 +16,7 @@ class CategoryStockController extends Controller
     {
         $categoryStock = CategoryStock::find($request->id);
         $categoryStock->title = $request->title;
+        $categoryStock->color = $request->color;
         if($request->image){
             $file = $request->file('image');
             $categoryStock->image=self::upload($file);
@@ -27,6 +28,7 @@ class CategoryStockController extends Controller
     public function store(Request $request) {
         $categoryStock = new CategoryStock();
         $categoryStock->title = $request->title;
+        $categoryStock->color = $request->color;
         if($request->image){
             $file = $request->file('image');
             $categoryStock->image=self::upload($file);

@@ -1,7 +1,7 @@
 <template>
     <a href="" @click.prevent="PrintOrder" class="link-item link-blue">
         <img src="/img/chek.png" alt="chek">
-        <p>друк чека</p>
+        <p>{{$t('table_print')}}</p>
     </a>
 </template>
 

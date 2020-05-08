@@ -18,7 +18,7 @@
                                 <div class="col-12 col-md-2  col-xs-12">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input placeholder="от" type="text" name="ot" autocomplete="off"
+                                        <input placeholder="от" type="date" name="ot" autocomplete="off"
                                                class="form-control datepicker-here" data-date-format="yyyy-mm-dd"
                                                data-time-format="hh:ii" data-timepicker="true"
                                                data-position="bottom left">
@@ -28,7 +28,7 @@
                                 <div class="col-12 col-md-2 col-xs-12">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input placeholder="от" type="text" name="do" autocomplete="off"
+                                        <input placeholder="от" type="date" name="do" autocomplete="off"
                                                class="form-control datepicker-here" data-date-format="yyyy-mm-dd"
                                                data-time-format="hh:ii" data-timepicker="true"
                                                data-position="bottom left">

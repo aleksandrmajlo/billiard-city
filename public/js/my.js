@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     $("#loginUser").click(function () {
         $('.logouts').toggle();
     });
@@ -8,12 +7,9 @@ $(document).ready(function () {
         $('#orderid').val(idOrder);
     });
     $(".phone_mask").mask("+38 (999) 999-99-99");
-
     $('.addproduct').click(function () {
         var countid = this.id;
         var countid2 = Number(countid) + 1;
-        // $("#sel1").clone().appendTo("#select_apend").val(0).attr("name", "product" + countid2);
-
         $("#sel2").clone().appendTo("#input_apend").val(1).attr("name", "count" + countid2);
 
         $("#del").append("<a class='btn btn-sm btn-app dels' id='" + countid2 + "' style='height: 44px;'><i class='fa fa-trash'></i></a>");
@@ -23,7 +19,6 @@ $(document).ready(function () {
         $('.js-example-basic-single2').select2({
             placeholder: 'Добавить товар'
         });
-
         $('.js-example-basic-single').select2({
             placeholder: 'Добавить товар'
         });
@@ -41,21 +36,16 @@ $(document).ready(function () {
         $('.customersd').fadeOut(300);
         $('#b1').show();
     });
-
     $("#phons").on('keyup input', function () {
         var text = $('#phons').val();
         $('#ph').val(text);
     });
-
     $(document).on('click', '.dels', function () {
         $("select[name=product" + this.id + "]").remove();
         $(".new" + this.id).remove();
-
         $("input[name=count" + this.id + "]").remove();
         $("#" + this.id).hide();
     });
-
-
     $('#chechcode').on('submit', function (e) {
         e.preventDefault();
         $.ajax({
@@ -77,17 +67,14 @@ $(document).ready(function () {
             }
         });
     });
-
     $('#contactform').on('submit', function (e) {
         e.preventDefault();
-        console.log($('#contactform'))
         $.ajax({
             dataType: 'json',
             type: "POST",
             url: '/generateCode',
             data: $('#contactform').serialize(),
             success: function (msg) {
-
                 $("#msg").append("<div> id: " + msg + ". </div>");
                 $("#cod").val(msg);
                 $('#formaphonsend').hide();
@@ -98,17 +85,19 @@ $(document).ready(function () {
 
     $(".addCategory").click(function () {
         var title = ($(this).data('title'));
+        var color = ($(this).data('color'));
         var id = ($(this).data('id'));
         var image = ($(this).data('image'));
+
         if (typeof image !== "undefined") {
             $('#uploadImage').attr('src', image);
             $('#uploadImage').parent().removeClass('hidden');
         } else {
             $('#uploadImage').parent().addClass('hidden');
         }
-        console.log(image)
         $('.idcatecory').val(id);
         $('.titlecatecory').val(title);
+        $('.colorcategory').val(color);
     });
 
 
@@ -147,17 +136,14 @@ $(document).ready(function () {
 
 });
 $(window).on('load', function () {
-
-    if ($('.js-example-basic-single').length) {
+    if($('.js-example-basic-single').length) {
         $('.js-example-basic-single').select2({
             tags: true
         });
     }
-
     if ($('.js-example-basic-single2').length) {
         $('.js-example-basic-single2').select2({
             placeholder: 'Добавить товар'
         });
     }
-
 });

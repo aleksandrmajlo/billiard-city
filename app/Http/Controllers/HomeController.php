@@ -91,12 +91,23 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10000);
 
+
         // резерв
-        $reservs = Reservation::all()->where('book', '!=', null);
+
+        $reservs = Reservation::where('book', '!=', null)
+                               ->where('booking_from', '>=',date('Y-m-d').' 00:00:00')
+                               ->get();
+        // пользователь
+        $barmen=false;
+        if(Auth::user()->hasRole('barmen')){
+            $barmen=true;
+        }
+        $manager=false;
+        if(Auth::user()->hasRole('manager')){
+            $manager=true;
+        }
 
         //cтатистика по людям
-
-
         return view('home', [
             'orders' => $orders,
             'change_stat' => $change_stat,
@@ -104,7 +115,9 @@ class HomeController extends Controller
             'openChangeSumStart'=>$openChangeSumStart,
             'open_tables'=>$open_tables,
             'reservs'=>$reservs,
-            'countOrders'=>$countOrders
+            'countOrders'=>$countOrders,
+            'barmen'     =>$barmen,
+            'manager'     =>$manager
         ]);
     }
 

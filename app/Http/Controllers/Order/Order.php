@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Reservation;
 
 
-
 use Illuminate\Support\Facades\DB;
 
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
@@ -111,7 +110,6 @@ class Order extends Controller
                 ->where('stop', null)
                 ->first();
         }
-
         $orderUpdate = \App\Order::find($request->order_id);
         $orderUpdate->status = 1;
         $orderUpdate->billing = $request->billing;
@@ -149,27 +147,41 @@ class Order extends Controller
     // оформление открытого стола
     public function PayTable(Request $request)
     {
-
+        $change = null;
         if (Auth::user()) {
             $user = Auth::user()->id;
             $change = Change::where('user_id', $user)
                 ->where('stop', null)
                 ->first();
         }
+        // проверка на паузы
+        // если активна то стол не закрываем
+        $pauses = \App\Pause::where('order_id', $request->order_id)->get();
+        $pause_active=false;
+        if ($pauses) {
+            foreach ($pauses as $pause) {
+                if (is_null($pause->end_pause)) {
+                    $pause_active=true;
+                }
+            }
+        }
         //цена в одном месте
-        $prices=OrderService::priceOrder($request->order_id);
+        $prices = OrderService::priceOrder($request->order_id);
 
         $orderUpdate = \App\Order::find($request->order_id);
         $orderUpdate->status = 1;
-         $orderUpdate->billing = $request->billing;
-         $orderUpdate->amount = $prices['priceOrderTotal'];
-        if ($change && count($change) > 0) {
+        $orderUpdate->billing = $request->billing;
+        $orderUpdate->amount = $prices['priceOrderTotal'];
+        if ($change) {
             $orderUpdate->changes_id = $change->id;
         }
         $orderUpdate->closed = Carbon::now();
         $orderUpdate->save();
 
-        app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $orderUpdate->table_id]);
+        if(!$pause_active){
+            // выключаем свет
+            app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $orderUpdate->table_id]);
+        }
 
         $money = new Money;
         $money->sum_bil = $prices['priceOrderTotal'];
@@ -179,12 +191,12 @@ class Order extends Controller
         $money->save();
 
         // резерв
-        $reserv=Reservation::find($orderUpdate->reservation_id);
+        $reserv = Reservation::find($orderUpdate->reservation_id);
         if ($reserv) {
             $reserv->booking_before = Carbon::now();
             $reserv->closed = 1;
             $reserv->sum_booking = $prices['priceOrderTotal'];
-            $reserv->min =$prices['priceOrderTotal'];
+            $reserv->min = $prices['minutes'];
             $reserv->save();
         }
         // печать !!!!!!!!!!!!!!!!!
@@ -227,7 +239,7 @@ class Order extends Controller
     }
 
     // получить всех клиентов
-    public function GetUsers()
+    public function GetUsers(Request $request)
     {
         $customers = \App\Customer::all();
         $results = [];
@@ -242,8 +254,12 @@ class Order extends Controller
             if ($customer->skidka) {
                 $skidka = $customer->skidka;
             }
+            $text=$customer->phone;
+            if($request->has('name')){
+                $text=$customer->fullname.' ('.$customer->phone.')';
+            }
             $results[] = [
-                'text' => $customer->phone,
+                'text' => $text,
                 'value' => $customer->id,
                 'skidka_bar' => $skidka_bar,
                 'skidka' => $skidka
@@ -297,13 +313,15 @@ class Order extends Controller
                 $orderData['customer'] = "Гість";
                 $orderData['discount'] = "0";
             }
-        } else {
+        }
+        else {
             $startCarbon = new Carbon($order->start, $tz);
             $endCarbon = new Carbon($order->closed, $tz);
             $minutes = (int)$startCarbon->diffInMinutes($endCarbon, false);
 
-            $orderData['products'] .= '' . $order->table->title . " \n з " . $startCarbon->format('Y-m-d H:i') . ' \n по ' . $endCarbon->format('Y-m-d H:i') . "\n";
-            $orderData['products'] .= $minutes . "хв. = " . $order->barprice . "\n";
+            $orderData['products'] .= '' . $order->table->title . " \n з " . $startCarbon->format('Y-m-d H:i') . " \n по " . $endCarbon->format('Y-m-d H:i') . "\n";
+//            $orderData['products'] .= $minutes . "хв. = " . $order->barprice . "\n";
+            $orderData['products'] .= $minutes . "хв. = " . $order->amount . "\n";
             // паузы
             $pauses = \App\Pause::where('order_id', $order->id)->get();
             if ($pauses) {
@@ -313,6 +331,11 @@ class Order extends Controller
                         $endPause = new Carbon($pause->end_pause, $tz);
                         $pauseMinutes = (int)$startPause->diffInMinutes($endPause, false);
                         $orderData['products'] .= '' . $order->table->title . " - пауза\n з " . Carbon::parse($pause->start_pause)->format('Y-m-d H:i') . " по " . Carbon::parse($pause->end_pause)->format('Y-m-d h:i') . "\n";
+                        $orderData['products'] .= $pauseMinutes . " хв. =  0\n";
+                    }else{
+                        $startPause = new Carbon($pause->start_pause, $tz);
+                        $pauseMinutes = (int)$startPause->diffInMinutes($endCarbon, false);
+                        $orderData['products'] .= '' . $order->table->title . " - пауза\n з " . Carbon::parse($pause->start_pause)->format('Y-m-d H:i') . " по " . $endCarbon->format('Y-m-d H:i') . "\n";
                         $orderData['products'] .= $pauseMinutes . " хв. =  0\n";
                     }
                 }
@@ -327,8 +350,8 @@ class Order extends Controller
             }
         }
 
-
-        $orderData['total'] = $order->barprice;
+//        $orderData['total'] = $order->barprice;
+        $orderData['total'] = $order->amount;
         self::OrderPrint($orderData);
     }
 
@@ -471,6 +494,7 @@ class Order extends Controller
         }
         // кофе уменьшаем кол-во чашек
         Kofeinyiapparatcount::minusOrder((int)$kofeinyi_apparat_count);
+
         Reserve::where('order_id', $order_id)->delete();
         //********************************************************************
 

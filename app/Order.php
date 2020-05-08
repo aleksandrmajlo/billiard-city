@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
+   
     public function tableReservation()
     {
         return $this->hasMany('App\Reservation', 'id', 'reservation_id');
@@ -32,10 +33,17 @@ class Order extends Model
     {
         return $this->hasOne('App\Table', 'id', 'table_id');
     }
+
     public function pauses()
     {
         return $this->hasMany('App\Pause');
     }
+
+    public function bars()
+    {
+        return $this->hasMany('App\Bar');
+    }
+
     public function getActivepauseAttribute()
     {
         $pauses = DB::table('pauses')
@@ -49,11 +57,7 @@ class Order extends Model
         }
     }
 
-    public function bars()
-    {
-        return $this->hasMany('App\Bar');
-    }
-
+    /*
     // сумма для даного заказа общая
     public function getBarpriceAttribute()
     {
@@ -61,7 +65,6 @@ class Order extends Model
         $bar_products = \App\Bar::where('order_id', '=', $this->id)
             ->get();
         if ($this->type_bar == 1) {
-
             if ($bar_products) {
                 foreach ($bar_products as $bar_product) {
                     $total += $bar_product->count * $bar_product->stock->price;
@@ -80,9 +83,53 @@ class Order extends Model
         }
         return $total;
     }
+    */
 
     public function change()
     {
-        return $this->belogsTo('App\Change', 'changes_id');
+        return $this->belongsTo('App\Change', 'changes_id');
     }
+
+    public function getIsbarAttribute(){
+        if($this->type_bar == 1){
+            return true;
+        }
+        return false;
+    }
+
+    public function getTypeAttribute(){
+        $locale = app()->getLocale();
+        $type=1;
+        if($this->type_billiards == 1){
+            $type=2;
+        }
+        if($locale=="ru"){
+            if($type==1){
+                return 'Бар';
+            }
+            if($type==2){
+                return 'Бильярд';
+            }
+        }else{
+            if($type==1){
+                return 'Бар';
+            }
+            if($type==2){
+                return 'Більярд';
+            }
+        }
+        
+    }
+
+    public   function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    public   function customer()
+    {
+        return $this->belongsTo('App\Customer');
+    }
+
+    
 }

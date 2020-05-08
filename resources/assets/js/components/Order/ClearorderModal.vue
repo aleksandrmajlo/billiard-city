@@ -4,14 +4,13 @@
             <div class="modal-content">
 
                 <div class="modal-body">
-                    <p class="text-center">{{text1}}</p>
+                    <p class="text-center">{{$t('ClearorderModal')}}</p>
                     <div class="flex">
-
                         <div class="item">
-                            <a href="#" class="btn btn-warning" @click.prevent="Yes">{{text2}}</a>
+                            <a href="#" class="btn btn-warning" @click.prevent="Yes">{{$t('ClearorderModalYes')}}</a>
                         </div>
                         <div class="item">
-                            <a href="#" class="btn btn-warning" @click.prevent="Not">{{text3}}</a>
+                            <a href="#" class="btn btn-warning" @click.prevent="Not">{{$t('ClearorderModalNot')}}</a>
                         </div>
 
                     </div>
@@ -24,19 +23,6 @@
 
 <script>
     export default {
-        name: "ClearorderModal",
-        data(){
-            return {
-                text1:'',
-                text2:'',
-                text3:'',
-            }
-        },
-        created(){
-            this.text1=this.$store.state.lang.ClearorderModal[LanguneThisJs];
-            this.text2=this.$store.state.lang.ClearorderModalYes[LanguneThisJs];
-            this.text3=this.$store.state.lang.ClearorderModalNot[LanguneThisJs];
-        },
         methods:{
             Yes(){
                  this.$store.commit('CartClear')
@@ -49,7 +35,6 @@
         }
     }
 </script>
-
 <style scoped lang="scss">
     p{
         font-size: 16px;

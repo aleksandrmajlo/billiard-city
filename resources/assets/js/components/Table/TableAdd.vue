@@ -67,6 +67,7 @@
 </template>
 <script>
     import {ModelSelect} from "vue-search-select";
+
     export default {
         name: "TableAdd",
         components: {
@@ -118,11 +119,15 @@
                     return 'Введіть код';
                 }
             },
-
             id_sms() {
                 return this.$store.state.id_sms;
             },
 
+        },
+        mounted() {
+            this.$root.$on('SetClientNull', (item, response) => {
+                this.SetClientNullValue();
+            })
         },
         methods: {
             AddTable() {
@@ -138,9 +143,9 @@
                     client: this.client.value
                 }).then(response => {
                     this.$swal.close();
-                    let id=this.TableAddActive;
+                    let id = this.TableAddActive;
                     this.$store.commit('SetTableAddActive', false);
-                    this.$store.dispatch('getTables').then(()=>{
+                    this.$store.dispatch('getTables').then(() => {
                         this.$store.commit('SetTableactive', id);
                     });
                 })
@@ -169,7 +174,7 @@
             checkCode() {
                 this.disabledCode = true;
                 this.validateCodeError = false;
-                let data={
+                let data = {
                     cod: this.id_sms,
                     codes: this.code,
                     ajaxmy: true,
@@ -177,8 +182,8 @@
                 return axios.post('/checkCode', data)
                     .then(response => {
                         if (response.data.res == 1) {
-                            this.validateCode=true;
-                        }else{
+                            this.validateCode = true;
+                        } else {
                             this.validateCodeError = true;
                         }
                         this.disabledCode = false;
@@ -191,6 +196,14 @@
             Back() {
                 $('.ConteerRowTable').removeClass('TableOpenFree')
             },
+            // установить на ноль телефон
+            SetClientNullValue() {
+                this.client = {
+                    value: "",
+                    text: ""
+                };
+            }
+
         }
     }
 </script>

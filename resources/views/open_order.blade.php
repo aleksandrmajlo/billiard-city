@@ -51,7 +51,7 @@
                             @endif
                           </td>
                           <td>{{  \Carbon\Carbon::parse($order->start)->format('d-m-Y H:i')}}</td>
-                          <td><b>{{ $order->barprice }} ₴</b></td>
+                          <td><b>{{ $order->amount }} ₴</b></td>
                           <th style="font-width: normal !Important;">{{ $order->info }} </th>
                           <td class="tr_button">
                                 <div class="buttonOpenTableConteer">

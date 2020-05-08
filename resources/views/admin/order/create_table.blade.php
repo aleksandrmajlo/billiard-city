@@ -114,7 +114,6 @@
                                 </div>
                                 <input type='submit' id="p1" value="@lang('site.vidpraviti')"
                                        style="display: none; margin-top: 15px;" class="btn btn-lg btn-success"/>
-
                             </form>
                         </div>
                         <div id="msg"></div>

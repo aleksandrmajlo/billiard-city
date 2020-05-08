@@ -16,163 +16,15 @@ let store = {
         products: [],
         categories: [],
         showCategories: true,
-
         user: {
             value: '',
-            text: '',
+            text: ''
         },
         users: [],
         price: 0,
         skidka: 0,
         total: 0,
-        billing: 1, // тип оплаты
-        lang: {
 
-
-            Cart1: {
-                ru: 'Наименование',
-                ua: 'Найменування',
-            },
-
-
-            Cart2: {
-                ru: 'Кол-во',
-                ua: 'Кіл-ть',
-            },
-
-            Cart3: {
-                ru: 'Цена',
-                ua: 'Ціна',
-            },
-
-            Cart4: {
-                ru: 'Итого',
-                ua: 'Разом',
-            },
-
-            Cart5: {
-                ru: 'Недостаточно товаров на складе!',
-                ua: 'Недостатньо товарів на складі!',
-            },
-
-            Cart6: {
-                ru: 'Указано',
-                ua: 'Вказано',
-            },
-
-
-            ClearorderModal: {
-                ru: 'Очистить заказ?',
-                ua: 'Очистити замовлення?',
-            },
-
-
-            ClearorderModalYes: {
-                ru: 'Да',
-                ua: 'Так',
-            },
-
-
-            ClearorderModalNot: {
-                ru: 'Нет',
-                ua: 'Ні',
-            },
-
-            PayModal: {
-                ru: 'Выберите способ оплаты',
-                ua: 'Виберіть спосіб оплати',
-            },
-
-            PayModalPrice: {
-                ru: 'Итого',
-                ua: 'Разом',
-            },
-
-            PayModalDiscount: {
-                ru: 'Скидка',
-                ua: 'Знижка',
-            },
-            PayModalTotal: {
-                ru: 'К оплате',
-                ua: 'До оплати',
-            },
-            PayModalNal: {
-                ru: 'Наличными',
-                ua: 'Готівкою',
-            },
-
-            PayModalPrint: {
-                ru: 'Печатать чек?',
-                ua: 'Друкувати чек?',
-            },
-
-            PayModalPay: {
-                ru: 'Оплатить',
-                ua: 'Заплатити',
-            },
-
-            PayModalComment: {
-                ru: 'Сумма округляется согласно  постановлению НБУ № 25',
-                ua: 'Сума округляється згідно з постановою НБУ № 25',
-            },
-
-            CartModalPay: {
-                ru: 'Карткой',
-                ua: 'Карткою',
-            },
-
-            SertModalPay: {
-                ru: 'Сертификатом',
-                ua: 'Сертифікатом',
-            },
-
-            SmsModal: {
-                ru: 'Введите Ваш номер телефона для получения скидки',
-                ua: 'Введіть Ваш номер телефону для отримання знижки',
-            },
-
-            SmsModalSMS: {
-                ru: 'Отправить код по смс',
-                ua: 'Надіслати код по смс',
-            },
-
-            SmsModalBell: {
-                ru: 'Отправить код звонком',
-                ua: 'Надіслати код дзвінком',
-            },
-
-            SmsModalPhone: {
-                ru: 'Введите номер телефона с 0, без +38',
-                ua: 'Введіть номер телефону з 0, без +38',
-            },
-
-            SmsCode: {
-                ru: 'Введите Ваш код для получения скидки',
-                ua: 'Введіть Ваш код для отримання знижки'
-            },
-
-            SmsCode: {
-                ru: 'Введите код',
-                ua: 'Введіть код '
-            },
-
-            SmsCodeButton: {
-                ru: 'Получить скидку',
-                ua: 'Отримати знижку'
-            },
-
-            SmsCodeErrorEnter: {
-                ru: 'Код неверный',
-                ua: 'Код невірний'
-            },
-
-            SmsCodeError: {
-                ru: 'Укажите клиента',
-                ua: 'Вкажіть клієнта'
-            },
-
-
-        },
         //****************столы *******************
         tables: [],
         // активный стол на закрытие
@@ -224,7 +76,6 @@ let store = {
         },
         //Корзина*******************************
         AddCart(state, product) {
-
             let i = state.cart.map(item => item.id).indexOf(product.id);
             // продукт
             let j = state.products.map(item => parseInt(item.id)).indexOf(product.id);
@@ -443,7 +294,7 @@ let store = {
                 cart: state.cart,
                 user: state.user,
                 skidka: state.skidka,
-                billing: state.billing,
+                billing: arr.billing,
                 info: $('#comment').val()
             };
             return axios.post('/order/Pay', data)
@@ -473,7 +324,7 @@ let store = {
                 order_id: order_id,
                 print: arr.print,
                 user: state.user,
-                billing: state.billing,
+                billing: arr.billing,
                 info: $('#comment').val()
             };
 

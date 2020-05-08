@@ -16,7 +16,6 @@
         name: "ClockHeader",
         data() {
             return {
-
                 Year: '',
                 Month: '',
                 Datt: '',
@@ -36,7 +35,7 @@
                 this.Year = date.getFullYear();
 
                 let month = date.getMonth();
-                if (month < 10) month = '0' + month;
+                if (month < 10) month = '0' + (month+1);
                 this.Month = month;
 
                 let dat = date.getDate();

@@ -20,6 +20,7 @@ class ActController extends Controller
     {
 
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
+
             $acts = new Act();
             $acts = Act::orderBy('created_at', 'desc');
 
@@ -61,6 +62,8 @@ class ActController extends Controller
     {
         $act = Act::findOrFail($id);
         $cats = CategoryStock::all();
+
+
         $showApparat = true;
         if ($request->has('title')) {
             $showApparat = false;
@@ -68,6 +71,7 @@ class ActController extends Controller
         if ($request->has('type')) {
             $showApparat = false;
         }
+
         if ($request->has('cat') && $request->cat == '20') {
             $showApparat = true;
         } elseif ($request->has('cat') && $request->cat !== '20') {
@@ -134,6 +138,7 @@ class ActController extends Controller
                 }
             }
 
+            /*
             $kofeinyi_apparat1 = 0;
             if ($act1->kofeinyiapparat) {
                 $kofeinyi_apparat1 = $act1->kofeinyiapparat->count;
@@ -144,10 +149,11 @@ class ActController extends Controller
                 $kofeinyi_apparat2 = $act2->kofeinyiapparat->count;
             }
             $comp_results['kofeinyi_apparat'] = [$kofeinyi_apparat1, $kofeinyi_apparat2];
-
+            */
 
         }
         $cats = CategoryStock::all();
+
 
         $showApparat = true;
         if ($request->has('title')) {
@@ -157,6 +163,8 @@ class ActController extends Controller
         if ($request->has('type')) {
             $showApparat = false;
         }
+
+
         if ($request->has('cat') && $request->cat == '20') {
             $showApparat = true;
         } elseif ($request->has('cat') && $request->cat !== '20') {
@@ -192,22 +200,25 @@ class ActController extends Controller
             ];
 
         }
-        $ing=trans('act.ingredient');
-        foreach($act->ingredients as $ingredient){
+        $ing = trans('act.ingredient');
+        foreach ($act->ingredients as $ingredient) {
             $results[] = [
                 $ingredient->title,
                 "",
                 $ing,
-                $ingredient ->pivot->count
+                $ingredient->pivot->count
             ];
         }
 
+        /*
         $results[]=[
             trans('act.kofeinyi_apparat'),
             '',
             '',
             $act->kofeinyiapparat->count
         ];
+        */
+
         Excel::create('Акт №' . $id, function ($excel) use ($results) {
             $excel->sheet('Лист 1', function ($sheet) use ($results) {
                 $sheet->fromArray($results)->row(1, array(
@@ -217,10 +228,11 @@ class ActController extends Controller
                     trans('act.sklad'),
                 ));
             });
-        }) ->download('xls');
+        })->download('xls');
     }
 
-    public function compareexport(Request $request){
+    public function compareexport(Request $request)
+    {
 
         if ($request->has('act1') && $request->has('act2')) {
             $comp_results = [
@@ -247,7 +259,7 @@ class ActController extends Controller
                 }
             }
 
-            $ing=trans('act.ingredient');
+            $ing = trans('act.ingredient');
             if (count($act1->ingredients) > 0) {
                 foreach ($act1->ingredients as $k => $ingredient) {
                     $count2 = 0;
@@ -264,6 +276,7 @@ class ActController extends Controller
                 }
             }
 
+            /*
             $kofeinyi_apparat1 = 0;
             if ($act1->kofeinyiapparat) {
                 $kofeinyi_apparat1 = $act1->kofeinyiapparat->count;
@@ -274,17 +287,19 @@ class ActController extends Controller
                 $kofeinyi_apparat2 = $act2->kofeinyiapparat->count;
             }
             $comp_results[] = [trans('act.kofeinyi_apparat'), "",  "",$kofeinyi_apparat1, $kofeinyi_apparat2];
-            Excel::create('Акт №' . $act1->id.' №'. $act2->id, function ($excel) use ($comp_results,$act1,$act2) {
-                $excel->sheet('Лист 1', function ($sheet) use ($comp_results,$act1,$act2) {
+            */
+
+            Excel::create('Акт №' . $act1->id . ' №' . $act2->id, function ($excel) use ($comp_results, $act1, $act2) {
+                $excel->sheet('Лист 1', function ($sheet) use ($comp_results, $act1, $act2) {
                     $sheet->fromArray($comp_results)->row(1, array(
                         trans('act.name'),
                         trans('act.cat'),
                         trans('act.type'),
-                        trans('act.sklad')." №".$act1->change->id,
-                        trans('act.sklad_smena')." №".$act2->change->id,
+                        trans('act.sklad') . " №" . $act1->change->id,
+                        trans('act.sklad_smena') . " №" . $act2->change->id,
                     ));
                 });
-            }) ->download('xls');
+            })->download('xls');
 
 
         }

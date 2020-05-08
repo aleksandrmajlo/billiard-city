@@ -36,14 +36,12 @@ class Consumableinvoice extends Model
                         }
                     }
                     foreach ($order->bars as $bar) {
-                        if($bar->stock&&$bar->stock->id){
                             $products[] = [
                                 'id' => $bar->stock->id,
                                 'count' => $bar->count,
                                 'price' => $bar->stock->price,
                                 'discount' => $skidka
                             ];
-                        }
                     }
 
                 }
@@ -52,7 +50,6 @@ class Consumableinvoice extends Model
             foreach ($products as $k => $product) {
                 $thTotal = $product['price'] * $product['count'];
                 $summSk = $product["discount"] * $thTotal / 100;
-
                 $thTotal = $thTotal - $summSk;
                 $total += $thTotal;
             }
@@ -75,4 +72,5 @@ class Consumableinvoice extends Model
         }
         return $total;
     }
+
 }

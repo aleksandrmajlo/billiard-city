@@ -86,7 +86,8 @@
                             </table>
                         </div>
 
-                        <div class="col-md-12" style="margin-top:20px;">
+
+                         <div class="col-md-12" style="margin-top:20px;">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped">
                                     <tbody>
@@ -98,6 +99,8 @@
                                 </table>
                             </div>
                         </div>
+
+
 
 
                     </div>

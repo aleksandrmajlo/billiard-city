@@ -80,7 +80,7 @@
                                     <td>{{ $s1->format('d-m-Y H:i') }}</td>
                                     <td>{{ $s2->format('d-m-Y H:i') }}</td>
                                     <td class="text-center">
-                                        {{$price['priceOrderMinutes']}}  {{$money}}
+                                         {{$price['priceOrderMinutes']}}  {{$money}}
                                         <br>(це є середня ціна за хвилину для стола)
                                     </td>
                                     <td>{{$minutes}}</td>

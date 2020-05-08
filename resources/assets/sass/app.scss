@@ -4,6 +4,7 @@
 // @import "variables";
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "~vue-search-select/dist/VueSearchSelect.css";
 
 .example-modal .modal {
     position: relative;
@@ -460,6 +461,7 @@ table.tables {
     }
 }
 
+input[type="submit"][disabled="disabled"],
 button[disabled="disabled"] {
     cursor: not-allowed !important;
 }
@@ -534,4 +536,137 @@ a.backTable {
             display: block;
         }
     }
+}
+
+.user.statPageUser {
+    .overflowHidden {
+        overflow: hidden;
+    }
+
+    .filter-form input.order-time {
+        width: 47%;
+    }
+
+    .checkboxFilter {
+        display: flex;
+        align-items: center;
+
+        input {
+            width: 30px;
+            margin: 0;
+            margin-right: 10px;
+        }
+
+        label {
+            height: auto;
+        }
+    }
+}
+
+input[readonly] {
+    cursor: not-allowed !important;
+}
+
+ul.pagination {
+    li.disabled {
+        a {
+            cursor: not-allowed !important;
+        }
+    }
+
+    a {
+        border: none;
+    }
+
+    a.active {
+        background: rgb(71, 142, 204);
+        color: rgb(255, 255, 255);
+    }
+
+}
+
+@media (max-width: 480px) {
+    .filter-form .buttons {
+        display: flex !important;
+        justify-content: center !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+
+        button,
+        a {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-bottom: 10px;
+            min-width: 200px;
+        }
+    }
+}
+
+.overClock a[data-v-5862a990] {
+    padding: 19px 30px 15px;
+}
+
+.overClock a.calen1 img[data-v-5862a990] {
+    vertical-align: sub !important;
+}
+
+.overClock a.calen2 img[data-v-5862a990] {
+    vertical-align: top !important;
+}
+
+.text-nowrap {
+    white-space: nowrap;
+}
+
+.timerBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        margin: 0;
+    }
+
+    .text {
+        text-align: center;
+    }
+
+    .digit {
+        margin-right: 5px;
+        text-align: center;
+    }
+
+    .spacer {
+        margin-right: 5px;
+    }
+}
+
+.selectFormConteer {
+    .ui.selection.dropdown {
+        min-height: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+        border-radius: 15px;
+    }
+}
+
+.dateConteer {
+    display: flex;
+    min-width: 400px;
+
+    [type="date"] {}
+
+    [type="time"] {
+        // min-width: 100px;
+        margin-left: 10px;
+    }
+}
+
+#PayModal .modal-content .modal-body .type .item.active {
+    border-color: #F2994A !important;
+}
+
+.win {
+    z-index: 1000 !important;
 }

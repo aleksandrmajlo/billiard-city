@@ -1,14 +1,14 @@
 <template>
     <div>
         <div v-if="ErrorCount.length>0">
-            <div class="alert alert-warning" role="alert">{{text5}}</div>
+            <div class="alert alert-warning" role="alert">{{$t('Cart5')}}</div>
             <div class="table-wrapper">
                 <table class="table order-priсe" align="center">
                     <thead>
                     <tr>
-                        <td>{{text1}}</td>
-                        <td>{{text2}}</td>
-                        <td>{{text6}}</td>
+                        <td>{{$t('Cart1')}}</td>
+                        <td>{{$t('Cart2')}}</td>
+                        <td>{{$t('Cart6')}}</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -22,17 +22,14 @@
             </div>
         </div>
         <div class="table-wrapper">
-
-
-
-            <div class="mobile-show">{{text1}}</div>
+            <div class="mobile-show">{{$t('Cart1')}}</div>
             <table class="table order-priсe" align="center">
                 <thead>
                 <tr>
-                    <td>{{text1}}</td>
-                    <td>{{text2}}</td>
-                    <td>{{text3}}</td>
-                    <td>{{text4}}</td>
+                    <td>{{$t('Cart1')}}</td>
+                    <td>{{$t('Cart2')}}</td>
+                    <td>{{$t('Cart3')}}</td>
+                    <td>{{$t('Cart4')}}</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,7 +37,7 @@
                                                                                              show: product.isOpen,
                                                                                              trigger: 'manual', }">
                     <td>{{product.title}}</td>
-                    <td :data-title="text2">
+                    <td :data-title="$t('Cart2')">
                         <div class="inner">
                             <div class="block-add">
                                 <button class="btn btn-warning btn-sm" @click.prevent="Minus(product,index)"
@@ -53,10 +50,10 @@
                             </div>
                         </div>
                     </td>
-                    <td :data-title="text3">
+                    <td :data-title="$t('Cart3')">
                         <div class="inner">{{product.price}}</div>
                     </td>
-                    <td :data-title="text4">
+                    <td :data-title="$t('Cart4')">
                         <div class="inner">{{product.total}}</div>
                     </td>
                 </tr>
@@ -71,22 +68,10 @@
         props: ['order_id'],
         data() {
             return {
-                text1: '',
-                text2: '',
-                text3: '',
-                text4: '',
-                text5: '',
-                text6: '',
             }
         },
         created() {
             this.$store.dispatch('getOrder', this.order_id);
-            this.text1 = this.$store.state.lang.Cart1[LanguneThisJs];
-            this.text2 = this.$store.state.lang.Cart2[LanguneThisJs];
-            this.text3 = this.$store.state.lang.Cart3[LanguneThisJs];
-            this.text4 = this.$store.state.lang.Cart4[LanguneThisJs];
-            this.text5 = this.$store.state.lang.Cart5[LanguneThisJs];
-            this.text6 = this.$store.state.lang.Cart6[LanguneThisJs];
         },
         computed: {
             cart() {
@@ -98,12 +83,7 @@
         },
         methods: {
             Minus(product, index) {
-                this.$swal.fire({
-                    icon: 'error',
-                    text: 'Йде збереження, почекайте!!',
-                    showConfirmButton:false,
-                    closeOnClickOutside: false
-                });
+                this.showShwal('info',this.$t('suc_save'),false);
                 this.$store.commit('AddMinusProduct', product);
                 this.$store.commit('SetTotal');
                 this.$store.dispatch('setReserveAndCart', {order_id: this.order_id}).then(()=>{
@@ -111,15 +91,9 @@
                 })
             },
             Plus(product, index) {
-                this.$swal.fire({
-                    icon: 'error',
-                    text:  'Йде збереження, почекайте!!',
-                    showConfirmButton:false,
-                    closeOnClickOutside: false
-                });
+                this.showShwal('info',this.$t('suc_save'),false);
                 this.$store.commit('AddPlusProduct', product)
                 this.$store.commit('SetTotal');
-
                 this.$store.dispatch('setReserveAndCart', {order_id: this.order_id}).then(()=>{
                     this.$swal.close()
                 })
@@ -127,7 +101,6 @@
         }
     }
 </script>
-
 <style scoped>
     .preloaderCart {
         position: absolute;
@@ -138,7 +111,6 @@
         background: rgba(0, 0, 0, 0.8);
         z-index: 100;
     }
-
     .inner_preloaderCart {
         display: flex;
         justify-content: center;

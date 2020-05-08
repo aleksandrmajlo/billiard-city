@@ -120,6 +120,7 @@
                 priceOrderDiscount: 0,
                 priceOrderTotal: 0,
                 activePause: false,
+                interval:null,// обновление стоимости времени
             }
         },
         computed: {
@@ -147,6 +148,15 @@
         watch: {
             TableCloseActive: function (id, old_id) {
                 this.UpdateActiveTable();
+
+                if(id){
+                    this.interval=setInterval(()=>{
+                        this.IntervalUpdateTable();
+                    },60000);
+                }else{
+                    clearInterval(this.interval);
+                    console.log('clearInterval');
+                }
             }
         },
         mounted() {
@@ -176,14 +186,20 @@
                 $('#PayModal').modal('show');
             },
 
-            UpdateActiveTable() {
+            UpdateActiveTable(popup=true) {
                 if (this.order_id) {
-                    this.swal();
+                    if(popup){
+                        this.swal();
+                    }
+
                     return axios.post('/table/GetTablePrice', {
                         id: this.order_id
                     })
                         .then(response => {
-                            this.$swal.close();
+                            if(popup){
+                                this.$swal.close();
+                            }
+
                             this.startDate = response.data.results.startDate;
                             this.startM = response.data.results.startM;
                             this.customer = response.data.results.customer;
@@ -210,6 +226,9 @@
                 }
 
 
+            },
+            IntervalUpdateTable(){
+                this.UpdateActiveTable(false);
             },
             swal(){
                 this.$swal.fire({

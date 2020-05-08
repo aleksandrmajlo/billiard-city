@@ -18,7 +18,7 @@
         </div>
 
         <div class="rigchtItem">
-            <button class="btn btn-warning pull-right" @click.prevent="PayModal" type="button">{{text1}}</button>
+            <button class="btn btn-warning pull-right" @click.prevent="PayModal" type="button">{{$t('PayModalPay')}}</button>
         </div>
     </div>
 </template>
@@ -29,12 +29,8 @@
         props:['order_id'],
         data() {
             return {
-                text1: '',
                 disabledPrint:false
             }
-        },
-        created() {
-            this.text1 = this.$store.state.lang.PayModalPay[LanguneThisJs];
         },
         methods: {
             ClearOrder() {
@@ -56,7 +52,6 @@
                         console.log(response);
                     })
                     .catch((error)=> {
-                        // handle error
                         console.log(error);
                     })
                     .finally(()=> {

@@ -16,43 +16,53 @@
     <link rel="stylesheet" href="/dist/css/skins/skin-blue.min.css">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-
     <link href="{{ asset('/css/my.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.css"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
     <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+
     <link href="{{ asset('/css/order.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('production/css/app.css') }}" rel="stylesheet">
+
+    {{--cтили верстальщика тупые --}}
+    @php
+        $name = Route::currentRouteName();
+    @endphp
+    <link rel="stylesheet" href="/css/pickmeup.css" type="text/css"/>
+    @if($name!=='stat'&&$name!=='order')
+        <link rel="stylesheet" media="screen" type="text/css" href="/css/demo.css"/>
+    @endif
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
+    {{-- стили верстальщика  --}}
 
     <script>
         var LanguneThisJs = '@php  echo session('lng');@endphp';
     </script>
+    
+    {{-- скрипты верстальщика --}}
+    <script type="text/javascript" src="{{ asset('js/pickmeup.js') }}"></script>
+    {{-- скрипты верстальщика --}}
 
     <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
     <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('js/app.js') }}" defer></script>
 
+    <script src="{{ asset('production/js/app.js') }}" defer></script>
+
+    {{--    старые скрипты --}}
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('js/jquery.maskedinput.min.js') }}"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>
-    <script src='/js/uk.js'></script>
     <script src="{{ asset('js/my.js') }}"></script>
+    {{--    старые скрипты --}}
 
 </head>
-<body class="hold-transition sidebar-mini sidebar-collapse">
-@php
-    App::setLocale(session('lng'));
-@endphp
+<body class="hold-transition sidebar-mini ">
 @if(request()->has('cat'))
     <style>
         tr.catstock {
             display: none !important;
         }
-        tr.cat_{{request()->cat}}        {
+        tr.cat_{{request()->cat}}          {
             display: table-row !important;
         }
     </style>
@@ -61,7 +71,7 @@
     <header class="header__main">
         <a href="/" class="logo decstor">
             <span class="logo-mini"><img src="/img/logo 1.png" alt="logo"></span>
-            <span class="logo-lg"><img src="/img/logo 1.png" alt="logo"><p>BilliardCRM</p></span>
+            <span class="logo-lg"><img src="/img/logo 1.png" alt="logo"><span>BilliardCRM</span></span>
         </a>
         <nav class="navbar navbar-static-top">
             <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
@@ -72,29 +82,13 @@
             </a>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
-                     <li class="dropdown messages-menu hidden-xs">
-                         {{--
-                       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                           <img src="/img/messeg.png" alt="messeg">
-                           <span class="label">0</span>
-                       </a>
-                       <ul class="dropdown-menu">
-                           <li class="header">У вас 0 уведомлений</li>
-                           <li>
-                               <ul class="menu">
-                               </ul>
-                           </li>
-                           <li class="footer"><a href="#">See All Messages</a></li>
-                       </ul>
-                         --}}
-                    </li>
+                    <messages-header></messages-header>
                     <li class="calendar-menu hidden-xs">
                         <clock-header></clock-header>
                     </li>
-                    <li class="time-menu hidden-xs">
-                    </li>
+                    <li class="time-menu hidden-xs"></li>
                     <li class="locale">
-                        <a  class="@if(session('lng') == 'ua') active @endif" href="/sessionLng?lng=ua">
+                        <a class="@if(session('lng') == 'ua') active @endif" href="/sessionLng?lng=ua">
                             <span class="time">UA</span>
                         </a>
                     </li>
@@ -134,16 +128,13 @@
                             <img src="/img/logo 1.png" alt="logo">BilliardCRM</span>
                         </a>
                     </li>
-
                     {{-- 
-                                          <li class="active">
+                        <li class="active">
                         <a href="">
                             <img src="/img/menu1.png" alt="Уведомления"> <span>Уведомления </span>
                         </a>
                     </li>  
                         --}}
-
-
                     <li class="active">
                         <a href="/customers">
                             <img src="/img/menu2.png" alt="База клиентов">
@@ -251,7 +242,7 @@
                         </ul>
                     </li>
                     <li class="active">
-                        <a href="/stat">
+                        <a href="{{route('history_orders')}}">
                             <img src="/img/menu9.png" alt="История заказов">
                             <span>@lang('site.stat')</span>
                         </a>

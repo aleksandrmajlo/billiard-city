@@ -6,6 +6,7 @@
 /.idea
 /.vagrant
 /shwal
+/Verstka
 Homestead.json
 Homestead.yaml
 npm-debug.log

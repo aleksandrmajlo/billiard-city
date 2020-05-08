@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Bars\Ingredient;
 use App\CategoryStock;
 use App\Customer;
-use App\Services\Kofeinyiapparatcount;
 use App\Stock;
 use Illuminate\Http\Request;
 

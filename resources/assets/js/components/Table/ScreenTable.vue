@@ -30,6 +30,7 @@
 
                     <td v-if="table.reserv">
                          <template v-if="table.reserv.activePause">пауза</template>
+                         <template v-else>{{text7}}</template>
                     </td>
                     <td v-else></td>
 
@@ -60,12 +61,6 @@
 
             </table>
         </div>
-        <!--
-        <div class="radio">
-            <label><input type="radio" name="LanguneThis" v-model="LanguneThis" value="ru"/> RU</label>
-            <label><input type="radio" name="LanguneThis" v-model="LanguneThis" value="uk"/>UK</label>
-        </div>
-        -->
 
     </div>
 </template>
@@ -108,27 +103,41 @@
                         uk:'ціна зараз'
                     },
 
+                    text7:{
+                        ru:'открыт',
+                        uk:'відкритий'
+                    },
+
                 },
             }
         },
         computed:{
+
             text1(){
                 return this.lang.text1[this.LanguneThis]
             },
+
             text2(){
                 return this.lang.text2[this.LanguneThis]
             },
+
             text3(){
                 return this.lang.text3[this.LanguneThis]
             },
+
             text4(){
                 return this.lang.text4[this.LanguneThis]
             },
+
             text5(){
                 return this.lang.text5[this.LanguneThis]
             },
+
             text6(){
                 return this.lang.text6[this.LanguneThis]
+            },
+            text7(){
+                return this.lang.text7[this.LanguneThis]
             },
 
         },

@@ -17,7 +17,6 @@
         },
         methods:{
             SetInfo(event){
-
                 let v=event.target.value;
                 axios.post('/order/setInfo',{
                     info:v,
@@ -25,10 +24,5 @@
                 })
             }
         }
-
     }
 </script>
-
-<style scoped>
-
-</style>

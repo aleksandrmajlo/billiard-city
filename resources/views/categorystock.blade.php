@@ -40,12 +40,11 @@
                                         <a class="btn btn-block btn-primary btn-sm addCategory"
                                            style="margin-bottom: 7px;" data-toggle="modal" data-target="#modal-default2"
                                            data-id="{{ $categoryStock->id }}"
-
                                            @if($categoryStock->image)
-                                            data-image="{{ $categoryStock->image }}"
+                                           data-image="{{ $categoryStock->image }}"
                                            @endif
-
-                                           data-title="{{ $categoryStock->title }}">
+                                           data-title="{{ $categoryStock->title }}"
+                                           data-color="{{ $categoryStock->color }}">
                                             @lang('site.edit')
                                         </a>
                                         <form action="{{ url('category' , $categoryStock->id ) }}" method="POST">
@@ -87,9 +86,15 @@
                             <input type="text" name="title" class="form-control" value=""
                                    required/>
                         </div>
+
                         <div class="form-group">
                             <label>@lang('site.image')</label>
                             <input type="file" name="image">
+                        </div>
+
+                        <div class="form-group">
+                            <label>@lang('site.color')</label>
+                            <input type="color" name="color" required>
                         </div>
 
                         <br> <input type='submit' class="btn btn-primary active"/>
@@ -109,13 +114,21 @@
                 <div class="modal-body">
                     <form method="POST" action="{{action('CategoryStockController@edit')}}"
                           enctype="multipart/form-data">
-                           {{ csrf_field() }}
-                            <div class="form-group">
-                               <input type="text" name="title" class="form-control titlecatecory" value="2" required/>
-                            </div>
-                            <div class="form-group ">
-                                 <img src="" class="img-responsive" id="uploadImage">
-                            </div>
+                        {{ csrf_field() }}
+
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" name="title" class="form-control titlecatecory" value="" required/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>@lang('site.color')</label>
+                            <input type="color" name="color" class="form-control colorcategory" value="" required/>
+                        </div>
+
+                        <div class="form-group ">
+                            <img src="" class="img-responsive" id="uploadImage">
+                        </div>
                         <div class="form-group">
                             <label>File change</label>
                             <input type="file" name="image">

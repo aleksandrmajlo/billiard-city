@@ -31,24 +31,11 @@ class OrderService
             $min = (int)$min;
         }
         $tz = config('app.timezone');
-        // тестовый стол или заказ
 
-        if($order->id=="2"){
-            $start='2020-01-11 23:12:02';
-            $startCarbon = new Carbon($start, $tz);
-            $startCarbonReturn = new Carbon($start, $tz);
-            $endTest=new Carbon('2020-01-11 23:40:45',$tz);
+        $startCarbon = new Carbon($start, $tz);
+        $startCarbonReturn = new Carbon($start, $tz);
 
-        }else{
-            $startCarbon = new Carbon($start, $tz);
-            $startCarbonReturn = new Carbon($start, $tz);
-        }
-
-        if ($endTest) {
-            $dateEnd = $endTest;
-        } else {
-            $dateEnd = Carbon::now($tz);
-        }
+        $dateEnd = Carbon::now($tz);
 
         $result = [
             'endDate' => $dateEnd,
@@ -56,9 +43,9 @@ class OrderService
             'endDateBol' => false,
             'free' => false,  //заказ меньше 5 минут
             'startCarbon' => $startCarbonReturn,
-            'setTariffDay'=>false,// установить тариф принудительно для таких промежутков 23,00 и 23,45
+            'setTariffDay' => false,// установить тариф принудительно для таких промежутков 23,00 и 23,45
         ];
-        $result['Total_minutes']=$result['minutes'] = (int)$startCarbon->diffInMinutes($dateEnd, false);
+        $result['Total_minutes'] = $result['minutes'] = (int)$startCarbon->diffInMinutes($dateEnd, false);
         //вычесть паузы
         $pauseMinutes = 0;
         if ($order->pauses) {
@@ -72,7 +59,7 @@ class OrderService
                 $pauseMinutes += (int)$startPause->diffInMinutes($endPause, false);
             }
         }
-        $result['pauseMinutes']=$pauseMinutes;
+        $result['pauseMinutes'] = $pauseMinutes;
         $result['minutes'] = $result['minutes'] - $pauseMinutes;
         if ($result['minutes'] <= $min) {
             $result['free'] = true;
@@ -80,8 +67,8 @@ class OrderService
             $result['endDate'] = $startCarbon->addHour(1);
             // тут добавляем минуты паузы
             $result['endDate'] = $result['endDate']->addMinutes($pauseMinutes);
-            if($dateEnd->hour==23&&$dateEnd->minute<49){
-                $result['setTariffDay']=true;
+            if ($dateEnd->hour == 23 && $dateEnd->minute < 49) {
+                $result['setTariffDay'] = true;
             }
             $result['endDateBol'] = true;
         }
@@ -89,22 +76,22 @@ class OrderService
     }
 
     // подсчет цены
-    static public function getOrderProductPrice($order,$count,$countPause,$endValidate,$minStart=0)
+    static public function getOrderProductPrice($order, $count, $countPause, $endValidate, $minStart = 0)
     {
 
-        $priceTotal=0;
+        $priceTotal = 0;
 
         $priceOrderTotal = 0;
         $priceOrder = 0;
         $priceOrderWithout = 0;
-        $priceProcentOrder=0;
+        $priceProcentOrder = 0;
         $priceOrderDiscount = 0;
-        $priceOrderMinutes=0;
+        $priceOrderMinutes = 0;
 
         $priceProduct = 0;
-        $priceProductsTotal=0;
+        $priceProductsTotal = 0;
         $priceProductsDiscount = 0;
-        $priceProcentProducts=0;
+        $priceProcentProducts = 0;
 
 
         /*
@@ -114,56 +101,55 @@ class OrderService
         if ($order->customer_id) {
             $customer = Customer::where('id', $order->customer_id)->first();
         }
-        if(!$endValidate['free']){
+        if (!$endValidate['free']) {
             //*********** Цена продуктов *********************
             if (!$order->bars->isEmpty()) {
                 foreach ($order->bars as $k => $bar) {
                     $priceProduct += $bar->count * $bar->stock->price;
                 }
-                $priceProductsTotal=$priceProduct;
-                if($customer&&$customer->skidka_bar){
-                    $priceProcentProducts=$customer->skidka_bar;
-                    $priceProductsDiscount=self::roundFloat($priceProduct*$customer->skidka_bar/100);
-                    $priceProductsTotal=self::roundFloat($priceProduct-$priceProductsDiscount);
+                $priceProductsTotal = $priceProduct;
+                if ($customer && $customer->skidka_bar) {
+                    $priceProcentProducts = $customer->skidka_bar;
+                    $priceProductsDiscount = self::roundFloat($priceProduct * $customer->skidka_bar / 100);
+                    $priceProductsTotal = self::roundFloat($priceProduct - $priceProductsDiscount);
 
                 }
             }
             // цена заказа
-            if($endValidate['setTariffDay']&&$endValidate['minutes']<60){
+            if ($endValidate['setTariffDay'] && $endValidate['minutes'] < 60) {
                 // если промежуток с 23,00  по 23,45
-                $priceOrderTotal=$priceOrder=$minStart;
-            }else{
-                $priceOrderTotal=$priceOrder=self::roundFloat(array_sum($count));
+                $priceOrderTotal = $priceOrder = $minStart;
+            } else {
+                $priceOrderTotal = $priceOrder = self::roundFloat(array_sum($count));
             }
             // ******************пауза**************************
             // если есть пауза и цена заказа  больше минимальной
-            if(!empty($countPause)&&$priceOrderTotal>$minStart){
-                $priceOrderTotal=$priceOrder=self::roundFloat($priceOrder-array_sum($countPause));
+            if (!empty($countPause) && $priceOrderTotal > $minStart) {
+                $priceOrderTotal = $priceOrder = self::roundFloat($priceOrder - array_sum($countPause));
             }
 
             //******************************** скидка ********************
-            $skidkaAll=false;
-            if($customer &&$customer->skidka==100){
-                $skidkaAll=true;
-                $priceOrderTotal=$priceOrder=$priceOrderDiscount=0;
-                $priceProcentOrder=100;
-            }
-            elseif($customer && $endValidate['minutes'] > 60 && $customer->skidka > 0) {
+            $skidkaAll = false;
+            if ($customer && $customer->skidka == 100) {
+                $skidkaAll = true;
+                $priceOrderTotal = $priceOrder = $priceOrderDiscount = 0;
+                $priceProcentOrder = 100;
+            } elseif ($customer && $endValidate['minutes'] > 60 && $customer->skidka > 0) {
                 // получить сумму от 60 минут
-                $priceOrderWithout=$priceOrder-array_sum(array_slice($count,0,60));
-                $priceProcentOrder=$customer->skidka;
-                $priceOrderDiscount = self::roundFloat($priceOrderWithout * $customer->skidka/ 100);
-                $priceOrderTotal=self::roundFloat($priceOrder-$priceOrderDiscount);
+                $priceOrderWithout = $priceOrder - array_sum(array_slice($count, 0, 60));
+                $priceProcentOrder = $customer->skidka;
+                $priceOrderDiscount = self::roundFloat($priceOrderWithout * $customer->skidka / 100);
+                $priceOrderTotal = self::roundFloat($priceOrder - $priceOrderDiscount);
             }
             // проверим на минимум еще раз
-            if($priceOrderTotal<$minStart&&!$skidkaAll){
-                $priceOrderTotal=$priceOrder=$minStart;
+            if ($priceOrderTotal < $minStart && !$skidkaAll) {
+                $priceOrderTotal = $priceOrder = $minStart;
             }
 
-            $priceTotal= self::roundFloat($priceProductsTotal +$priceOrderTotal );
-            $priceOrderMinutes =  self::roundFloat(array_sum($count)/count($count));
-
+            $priceTotal = self::roundFloat($priceProductsTotal + $priceOrderTotal);
+            $priceOrderMinutes = self::roundFloat(array_sum($count) / count($count));
         }
+
         return $relust = [
             'priceOrderTotal' => $priceOrderTotal,// сумма к оплате
             'priceOrder' => $priceOrder,          // сумма за заказ стода без скидок
@@ -177,8 +163,8 @@ class OrderService
             'priceProductsDiscount' => $priceProductsDiscount,// скидки на продукты
             'priceProcentProducts' => $priceProcentProducts,// процент на продукты
 
-            'priceTotal' =>$priceTotal,//цена за весь заказ
-            'customer'=>$customer
+            'priceTotal' => $priceTotal,//цена за весь заказ
+            'customer' => $customer
         ];
     }
 
@@ -215,10 +201,10 @@ class OrderService
             $varo[] = $var[$k];
         }
         $sum[] = 1;
-        $count[] = [];
+        $count = [];
         // массивы цен перебираем
         $k = 0;
-        $minStart=[];
+        $minStart = [];
         foreach ($tablePrices as $tablePrice) {
             $range[] = range($tablePrice->start, $tablePrice->end);
             $price[] = $tablePrice->price;
@@ -230,19 +216,19 @@ class OrderService
                             'var' => $vars
                         ]
                     );
-                    $minStart[]=$minpay;
+                    $minStart[] = $minpay;
                     $sum[] = 1;
                     $count[] = 1 * round($minpay / 60, 2);
                 }
             }
             $k++;
         }
-        $minStartValue=min($minStart);
+        $minStartValue = min($minStart);
         // паузы
         $pauses = Pause::where('order_id', $order->id)->get();
         $countPause = [];
-        $json_pauses=[];
-        $activePause=false;
+        $json_pauses = [];
+        $activePause = false;
 
         foreach ($pauses as $pause) {
             if (isset($pause->end_pause)) {
@@ -280,13 +266,12 @@ class OrderService
                     $k++;
                 }
 
-                $json_pauses[]=[
-                    'startM'=>$startM,
-                    'endM'=>$endM,
-                    'minpause_this'=>$minpause_this
+                $json_pauses[] = [
+                    'startM' => $startM,
+                    'endM' => $endM,
+                    'minpause_this' => $minpause_this
                 ];
-            }
-            else {
+            } else {
                 $minpause[] = floor((strtotime(Carbon::now()) - strtotime($pause->start_pause)) / 60);
                 $s_pause1 = $pause->start_pause;
                 $s_pause2 = Carbon::now();
@@ -322,21 +307,21 @@ class OrderService
                     }
                     $k++;
                 }
-                $json_pauses[]=[
-                    'startM'=>$startM,
-                    'minpause_this'=>false
+                $json_pauses[] = [
+                    'startM' => $startM,
+                    'minpause_this' => false
                 ];
-                $activePause=$pause->id;
+                $activePause = $pause->id;
             }
         }
         /*
          * цена продукта и стола  в одном месте
          */
-        $PriceResults = OrderService::getOrderProductPrice($order, $count,$countPause, $endValidate,$minStartValue);
-        if(is_null($PriceResults['customer'])){
-            $customer=['name'=>'Гість'];
-        }else{
-            $customer=$PriceResults['customer'];
+        $PriceResults = OrderService::getOrderProductPrice($order, $count, $countPause, $endValidate, $minStartValue);
+        if (is_null($PriceResults['customer'])) {
+            $customer = ['name' => 'Гість'];
+        } else {
+            $customer = $PriceResults['customer'];
         }
 
         return [
@@ -344,21 +329,23 @@ class OrderService
             'priceOrderDiscount' => $PriceResults['priceOrderDiscount'],
             'priceProcentOrder' => $PriceResults['priceProcentOrder'],
             'priceOrderTotal' => $PriceResults['priceTotal'],
-            'startDate'=>$startDate,
-            'startM' =>$startM,
-            'customer'  =>$customer,
+            'startDate' => $startDate,
+            'startM' => $startM,
+            'customer' => $customer,
             'minutes' => $endValidate['minutes'],
-            'priceOrderMinutes'=>$PriceResults['priceOrderMinutes'],
-            'pauses'=>$json_pauses,
-            'activePause'=>$activePause
+            'priceOrderMinutes' => $PriceResults['priceOrderMinutes'],
+            'pauses' => $json_pauses,
+            'activePause' => $activePause
         ];
 
     }
+
     /*
      * заокругление
      */
-     static function roundFloat($float){
-         return round($float,2);
-     }
+    static function roundFloat($float)
+    {
+        return round($float, 2);
+    }
 
 }

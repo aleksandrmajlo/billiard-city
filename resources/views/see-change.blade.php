@@ -82,7 +82,7 @@
                                                              {{$order->amount}} грн.
                                                     @endif
                                                     @if($order->type_bar == 1)
-                                                            {{$order->barprice}} грн.
+                                                            {{$order->amount}} грн.
                                                     @endif
 
                                                 @endif

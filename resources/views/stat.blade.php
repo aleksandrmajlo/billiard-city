@@ -3,173 +3,134 @@
     App::setLocale(session('lng'));
 @endphp
 @section('content')
-    <section class="content-header">
-        <h1>
-            @lang('site.stat')
-        </h1>
-        <div class="row" style="margin-top: 10px;">
-            <div class=" col-12  col-xs-12">
-                <div class="box">
-                    <form method="get" action="{{action('StatisticsController@index')}}">
 
-                        <div class="row" style="padding: 10px;">
-
-                            <div class=" col-12  col-xs-12">
-                                <div class="col-3 col-xs-12 col-md-1 ">
-                                    <select class="form-control" name="type">
-                                        <option value="0"
-                                                @if(isset($_GET['type']) && $_GET['type'] == 0) selected @endif>Тип
-                                        </option>
-                                        <option value="1"
-                                                @if(isset($_GET['type']) && $_GET['type'] == 1) selected @endif>Бар
-                                        </option>
-                                        <option value="2"
-                                                @if(isset($_GET['type']) && $_GET['type'] == 2) selected @endif>
-                                            Бильярдна
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-xs-12 col-md-2 ">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input placeholder="от"  name="ot" autocomplete="off"
-                                               type="date"
-                                               class="form-control datepicker-here" data-date-format="yyyy-mm-dd"
-                                               data-time-format="hh:ii" data-timepicker="true"
-                                               data-position="bottom left" value="{{ $_GET['ot'] ?? '' }}">
+    <div class="user statPageUser">
+        <div class="user__title">
+            <h2> @lang('site.stat')</h2>
+            <div class="filter-block filter-order">
+                <h4>@lang('orders.filter')</h4>
+                <form method="get" action="{{action('StatisticsController@index')}}" class="filter-form">
+                    <div class="row">
+                        @if($isAdmin)
+                            <div class="col-md-7">
+                                <div class="overflowHidden">
+                                    <div class="col-xs-4 col-xs-xs-xs-12 left-pad">
+                                        <label>@lang('site.rabotnik')</label>
                                     </div>
-                                </div>
-
-                                <div class="col-12 col-xs-12 col-md-2 ">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input placeholder="от" name="do" autocomplete="off"
-                                               type="date"
-                                               class="form-control datepicker-here" data-date-format="yyyy-mm-dd"
-                                               data-time-format="hh:ii" data-timepicker="true"
-                                               data-position="bottom left" value="{{ $_GET['do'] ?? '' }}">
-                                    </div>
-                                </div>
-
-
-                                <div class="col-12 col-xs-12 col-md-2 ">
-                                    <div class="input-group">
-                                        <select class="form-control" name="work">
-                                            <option value="0">@lang('site.rabotnik')</option>
+                                    <div class="col-xs-8 col-xs-xs-xs-12">
+                                        <select name="user_id">
+                                            <option value="0">@lang('orders.all')</option>
                                             @foreach($workers as $worker)
-                                                <option value="{{ $worker->id }}">{{  $worker->name }}</option>
+                                                <option @if($req_user==$worker->id) selected
+                                                        @endif value="{{ $worker->id }}">{{  $worker->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-
-
-                                <div class="col-12 col-xs-12 col-md-2 ">
-                                    <div class="input-group">
-                                        <select class="form-control js-example-basic-single" id="sel1"
-                                                style="width: 150px;" name="customer">
-                                            <option value="0">@lang('site.client')</option>
-                                            @foreach($customers as $customer)
-                                                <option class="form-control"
-                                                        value="{{ $customer->id }}">{{ $customer->phone }}
-                                                    ({{ $customer->name }})
-                                                </option>
-                                            @endforeach
+                                <div class="overflowHidden">
+                                    <div class="col-xs-4 col-xs-xs-xs-12 left-pad"><label>Тип</label></div>
+                                    <div class="col-xs-8 col-xs-xs-xs-12">
+                                        <select name="type">
+                                            <option value="0">@lang('orders.all')</option>
+                                            <option value="1"
+                                                    @if(isset($_GET['type']) && $_GET['type'] == 1) selected @endif>Бар
+                                            </option>
+                                            <option value="2"
+                                                    @if(isset($_GET['type']) && $_GET['type'] == 2) selected @endif>
+                                                Бильярдна
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
-
-
-                                <div class="col-3 col-xs-12 col-md-2 ">
-                                    <select class="form-control" name="stil">
-                                        <option value="0">Стiл</option>
-                                        @foreach($tables as $table)
-                                            <option class="form-control"
-                                                    value="{{ $table->id }}">{{ $table->title }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-
-                                <div class="col-12 col-xs-12 col-md-1 ">
-                                    <div class="input-group">
-                                        <input type="submit" style="color: white"
-                                               class="btn btn-success btn-block btn-default btn-lg" value=">">
-                                    </div>
-                                </div>
-                                <label><input type="checkbox" value="1" name="billgreen"> показати тільки нічні столи
-
-
-                                </label>
-                    </form>
-
-                </div>
-            </div>
-
-    </section>
-    <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-body">
-                        <div class="table-container">
-                            <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Тип</th>
-                                        <th>Стiл</th>
-                                        <th>@lang('site.date_start')</th>
-                                        <th>@lang('site.date_end')</th>
-                                        <th>@lang('site.rabotnik')</th>
-                                        <th>@lang('site.summa')</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($orders as $order)
-                                        <tr>
-                                            <td>
-                                                {{ $order->id }}
-                                            </td>
-                                            <td>
-                                                @if($order->type_billiards == 1) більярдна @endif @if($order->type_bar == 1)
-                                                    бар @endif
-                                            </td>
-                                            <td>{{$order->tableId->title ?? '-'}}</td>
-                                            <td>{{ $order->start }}</td>
-                                            <td>{{ $order->closed ?? "не закриті" }}</td>
-                                            <td>
-                                                @if(isset($order->user_id))
-                                                    @php
-                                                        $user = App\User::where('id', '=', $order->user_id)->first();
-                                                    @endphp
-                                                    {{$user->name ?? 'нема' }}
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(is_null($order->closed))
-                                                    не закриті
-                                                @else
-                                                    {{ $order->barprice }} грн.
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <a href="/info/{{ $order->id }}">>>></a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
                             </div>
+                        @endif
+                        <div class="col-md-5">
+
+                            <div class="col-xs-4 col-xs-xs-xs-12 left-pad">
+                                <label>@lang('orders.date_from_to')</label>
+                            </div>
+                            <div class="col-xs-8 col-xs-xs-xs-12 right-pad">
+                                <input class="order-time" value="{{request()->get('date_start')}}" name="date_start"
+                                       type="date" placeholder="20.12.2019">
+                                <input class="order-time" value="{{request()->get('date_end')}}" name="date_end"
+                                       type="date" placeholder="20.01.2020">
+                            </div>
+                            <div class="col-xs-4 col-xs-xs-xs-12 left-pad">
+                                <label>@lang('orders.time_from_to')</label>
+                            </div>
+
+                            <div class="col-xs-8 col-xs-xs-xs-12 right-pad">
+                                <input class="order-time" value="{{request()->get('time_start')}}" name="time_start"
+                                       type="time" placeholder="23:50">
+                                <input class="order-time" value="{{request()->get('time_end')}}" name="time_end"
+                                       type="time" placeholder="09:50">
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="buttons">
+                                    <a href="{{route('history_orders')}}" type="reset">@lang('act.reset')</a>
+                                    <button type="submit">@lang('act.send')</button>
+                                </div>
+                            </div>
+
                         </div>
-                        {{ $orders->appends($_GET)->links() }}
-                        <div style="text-align: right">@if(isset($ordersSum))<h2> {{ $ordersSum   }}   </h2>@endif</div>
+
+
                     </div>
-                </div>
+                </form>
             </div>
         </div>
-    </section>
+        <div class="blue liken invoic hidden">
+            <form method="get" name="searchform" id="searchform" action="">
+                <input name="" type="text" placeholder=''>
+                <button type="submit"><img src="img/search.png" alt="search"></button>
+            </form>
+        </div>
+        <div class="user_table acts__table">
+            <table>
+
+                <tr class="td-one">
+                    <td>id</td>
+                    <td>Тип</td>
+                    <td>@lang('site.date_start')</td>
+                    <td>@lang('site.date_end')</td>
+                    <td>@lang('site.rabotnik')</td>
+                    <td>@lang('site.summa')</td>
+                    <td></td>
+                </tr>
+                @foreach($orders as $order)
+                    <tr>
+                        <td>{{$order->id}}</td>
+                        <td>{{$order->type}}</td>
+                        <td>{{ $order->start }}</td>
+                        @if(is_null($order->closed))
+                            <td>@lang('orders.not_close')</td>
+                        @else
+                            <td>{{$order->closed}}</td>
+                        @endif
+                        <td>
+                            @if($order->user)
+                                {{$order->user->name}}
+                            @endif
+
+                        </td>
+                        <td> {{ $order->amount }}</td>
+                        <td>
+                            <a href="/info/{{$order->id}}"><img src="/images/page-next.svg"></a>
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
+        @include('pagination.default', ['paginator' => $orders])
+        {{--        {{ $orders->appends($_GET)->links() }}--}}
+        <div>
+            <div style="text-align: right">
+                @if(isset($ordersSum))
+                    <h3> {{ $ordersSum   }}</h3>
+                @endif
+            </div>
+        </div>
+
+    </div>
+
 @endsection

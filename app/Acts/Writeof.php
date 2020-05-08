@@ -9,12 +9,12 @@ class Writeof extends Model
     
     public function stocks()
     {
-        return $this->belongsToMany('App\Stock')->withPivot('count')->withPivot('cause')->orderBy('title');
+        return $this->belongsToMany('App\Stock')->withTrashed()->withPivot('count')->withPivot('cause')->orderBy('title');
     }
 
     public function ingredients()
     {
-        return $this->belongsToMany('App\Bars\Ingredient')->withPivot('count')->withPivot('cause');
+        return $this->belongsToMany('App\Bars\Ingredient')->withTrashed()->withPivot('count')->withPivot('cause');
     }
 
     public function user(){

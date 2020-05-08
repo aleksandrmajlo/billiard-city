@@ -21,11 +21,7 @@ use DB;
 
 class ChangeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
         $user_id = Auth::id();
@@ -53,23 +49,10 @@ class ChangeController extends Controller
         $workers = User::all();
         $tables = Table::all();
 
-        foreach ($changes as $change){
-//            dump($change->id);
-//            dump($change->total);
-
-        }
-//        dd();
-
         return view('change', compact('changes', 'workers', 'tables'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     * создание смены
-     */
-
+    // открытие смены !!!!!!!!!!!!!нерабочее для бармена точно !!!!!!!!!!!!!!!
     public function create(Request $request)
     {
 
@@ -84,6 +67,7 @@ class ChangeController extends Controller
                 }
             }
         }
+        /*
         if (Auth::user()->hasRole('barmen')) {
 
             $changes = Change::where('stop', '=', null)->get();
@@ -96,6 +80,7 @@ class ChangeController extends Controller
                 }
             }
         }
+        */
 
         $change = new Change;
         $change->user_id = $request->user_id;
@@ -106,8 +91,6 @@ class ChangeController extends Controller
         $change->save();
 
         /*
-         * создаем акты ********************************
-         */
         if (Auth::user()->hasRole('barmen')) {
             $act = new Act;
             $act->user_id = $request->user_id;
@@ -137,13 +120,14 @@ class ChangeController extends Controller
 
             // создание акта расходные накладные
             ActService::CreateConsumableinvoice($change);
-            /*
-             * создаем акты end ************************************
-            */
         }
+        */
+
 
         return redirect('/')->with('status', 'зміна відкрита!');
     }
+
+
 
     // закрытие смены !!!!!!!!!!!!!нерабочее для бармена точно !!!!!!!!!!!!!!!
     public function closeChange(Request $request)
@@ -154,6 +138,7 @@ class ChangeController extends Controller
         $change->stop = Carbon::now()->format('Y-m-d H:i:s');
         $change->save();
 
+        /*
         if (Auth::user()->hasRole('barmen')) {
             $act = new Act;
             $act->user_id = $change->user_id;
@@ -184,6 +169,8 @@ class ChangeController extends Controller
             Kofeinyiapparatcount::add($request->kofeinyi_apparat);
 
         }
+        */
+
         return redirect('/')->with('status', 'Close change!');
     }
 

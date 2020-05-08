@@ -7,11 +7,11 @@
 
         <div class="col-sm-7 widthNone">
             <div class="board_block">
-                <div class="board_title">@lang('table.opentable')</div>
+                <div id="opentableTitle" class="hidden board_title">@lang('table.opentable')</div>
                 <open-table></open-table>
             </div>
             <div class="board_block">
-                <div class="board_title">@lang('table.exittable')</div>
+                <div  id="freetableTable" class="hidden board_title">@lang('table.exittable')</div>
                 <free-table></free-table>
             </div>
         </div>

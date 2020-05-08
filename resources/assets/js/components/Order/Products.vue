@@ -25,8 +25,7 @@
         methods: {
             AddCart(product){
                 this.$swal.fire({
-                    icon: 'error',
-                    // title: 'Oops...',
+                    icon: 'info',
                     text:  'Йде збереження, почекайте!!',
                     showConfirmButton:false,
                     closeOnClickOutside: false

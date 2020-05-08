@@ -43,52 +43,6 @@ class OrderController extends Controller
      */
     public function create()
     {
-
-        /*
-
-        $stocks = Stock::where('published', 1)
-            ->where('count', '>', 0)
-            ->orWhere('unlimited', '=', 1)
-            ->orderBy('title', 'ASC')
-            ->get();
-        $products=[];
-        $kofeinyi_apparat_category_id=config('category.kofeinyi_apparat_category_id');
-        foreach ($stocks as $stock){
-            if(count($stock->ingredients)>0){
-                $ar=[];
-                foreach ($stock->ingredients as $ingredient){
-                    $ar[]=(int)floor($ingredient->count/$ingredient->pivot->count);
-                }
-                $min=min($ar);
-                if($min>0){
-                    $products[]=(object) [
-                        'title'=>$stock->title,
-                        'id'=>$stock->id,
-                        'count'=>$min,
-                    ];
-                }
-            }
-            else{
-                $count=$stock->count;
-                if($stock->categorySee->id==$kofeinyi_apparat_category_id){
-                    $count="кава";
-                }
-                $products[]=(object) [
-                    'title'=>$stock->title,
-                    'id'=>$stock->id,
-                    'count'=>$count,
-                ];
-            }
-        }
-        $order = '';
-        $customers = Customer::all();
-        return view('admin.order.create', compact(
-            'order',
-            'products', 'customers'));
-
-        */
-
-
         //******************* новый код *******************************************
 
         if (Auth::user()) {
@@ -122,37 +76,11 @@ class OrderController extends Controller
         return view('order-bar', compact('products'));
     }
 
-    //старая  страница создания стола 
-    public function createOrderTable()
-    {
-        $reservTable[] = 0;
-        $reserv = Reservation::where('book', null)
-            ->where('booking_before', null)
-            ->get();
-
-        if (count($reserv) > 0) {
-            foreach ($reserv as $reser) {
-                $reservTable[] = $reser->id_table;
-            }
-        }
-        $tables = Table::whereNotIn('id', $reservTable)->get();
-
-        if (count($tables) <= 0) {
-            return redirect('/open-table')->with('status', 'Всі столи зайняті');
-        }
-
-        $customers = Customer::all();
-        $order = '';
-        return view('admin.order.create_table', compact('order', 'tables', 'customers'));
-    }
-
     /**
      * сохранение заказа
      */
     public function store(Request $request)
     {
-
-
         foreach ($request->all() as $k => $item) {
             if (strpos($k, 'product') !== false) {
                 $products[] = $item;
@@ -162,7 +90,6 @@ class OrderController extends Controller
             }
         }
         $kofeinyi_apparat_category_id = config('category.kofeinyi_apparat_category_id');
-
         // обновление количества продуктов или инградиентов при открытии бара
         foreach ($products as $k => $product) {
             $stock = Stock::find($product);
@@ -225,13 +152,10 @@ class OrderController extends Controller
             $bar->count = $counts[$k];
             $bar->save();
         }
-
         // обновляем кол-во продуктов с инградиентами
         ActService::UpdateProductCount();
-
         return redirect('/open-bar')->with('status', 'Замовлення створено!');
     }
-
 
     public function storeSmall(Request $request)
     {
@@ -243,21 +167,16 @@ class OrderController extends Controller
                 $counts[] = $item;
             }
         }
-
         foreach ($products as $k => $product) {
             $price = Stock::where('id', '=', $product)->firstOrFail();
             $pr[] = $price->price * $counts[$k];
-
             // count -
             $newCount = $price->count - $counts[$k];
-
-
             if ($price->unlimited == null) {
                 if ($newCount < 0) {
                     return redirect('/open-table')->with('status', 'Недостатньо товарів на складі!');
                 }
             }
-
             if ($newCount < 0) {
                 $newCount = 0;
             }
@@ -285,98 +204,9 @@ class OrderController extends Controller
         return Redirect::back()->with('status', 'Доданно!');
     }
 
-    /*
-     * добавление стола старая ---------------
-     */
-    public function storeOrderTable(Request $request)
-    {
-        app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $request->table]);
-        $tableReservCheck = Order::where('table_id', '=', $request->table)
-            ->where('type_billiards', '=', 1)
-            ->where('status', '=', null)
-            ->first();
-        if (isset($tableReservCheck)) {
-            if ($tableReservCheck->close == null) {
-                return redirect('/open-table')->with('status', 'стіл зайнятий!');
-            }
-        }
-
-        $s1 = strtotime($request->booking_before);
-        $s2 = strtotime($request->booking_from);
-
-        $startM = date("H:i", $s1);
-        $endM = date("H:i", $s2);
-
-        $startB = Tariff::minuts($endM) + date("N", strtotime($request->booking_from)) * 24 * 60;
-        $endB = Tariff::minuts($startM) + date("N", strtotime($request->booking_before)) * 24 * 60;
-
-
-        $tablePrices = Tariff::where('table_id', '=', $request->table)
-            ->get();
-
-        $vars = range($startB, $endB);
-        // массивы цен перебираем
-        $k = 0;
-        foreach ($tablePrices as $tablePrice) {
-            $range[] = range($tablePrice->start, $tablePrice->end);
-            $price[] = $tablePrice->price;
-            foreach ($vars as $var) {
-                if (in_array($var, $range[$k])) {
-                    $sum[] = 1;
-                    $count = round(array_sum($sum) * ($price[$k] / 60));
-                }
-
-
-            }
-            $k++;
-        }
-        if (empty($count)) {
-            dd('Сетка тарифов не заполнена');
-        }
-
-        $customer = $request->customer;
-        if (intval($customer) == -1) {
-            $customer = null;
-        }
-
-        $reservation = new Reservation();
-        $reservation->id_table = $request->table;
-        $reservation->id_user = Auth::user()->id;
-        $reservation->id_customers = $customer;
-        $reservation->booking_from = Carbon::now();
-        $reservation->booking_before = null;
-        $reservation->sum_booking = null;
-        $reservation->save();
-
-        if (Auth::user()) {
-            $user = Auth::user()->id;
-            $change = Change::where('user_id', $user)
-                ->where('stop', null)
-                ->first();
-        }
-
-        $orderCreate = new Order();
-        $orderCreate->table_id = $request->table;
-        $orderCreate->user_id = Auth::user()->id;
-        $orderCreate->customer_id = $customer;
-        $orderCreate->reservation_id = $reservation->id;
-        $orderCreate->amount = 0;
-        if ($change && count($change) > 0) {
-            $orderCreate->changes_id = $change->id;
-        }
-        $orderCreate->start = Carbon::now();
-        $orderCreate->type_billiards = 1;
-        $orderCreate->type_bar = 0;
-        $orderCreate->save();
-
-
-        return redirect('/open-table')->with('status', 'Додано333!');
-    }
-
     // для бара редирект
     public function closeBar(Request $request)
     {
-
         return redirect('/open-bar')->with('status', 'Закрито!');
     }
 
@@ -387,42 +217,25 @@ class OrderController extends Controller
         return redirect('/open-table')->with('status', 'Замовлення закрите!');
     }
 
-    // /info о заказе
-    public function orderBarClosedAdmin($id)
+    // страница  Відкритий бар
+    public function openOrder(Request $request)
     {
-
-        $pauseId = Pause::where('order_id', $id)->get();
-        $products = Bar::where('order_id', '=', $id)
+        $userAuth = Auth::id();
+        $products = Stock::where('published', '=', 1)
+            ->where('count', '>', 0)
+            ->orWhere('unlimited', '=', 1)
+            ->where('published', 1)
+            ->orderBy('title', 'ASC')
             ->get();
-        $orderId = Order::where('id', '=', $id)
-            ->first();
-        $customerid = $orderId->customer_id;
-        $orderId = $id;
-        $orderId2 = Order::where('id', '=', $id)
-            ->first();
-        $schet = 1;
-        $products = Bar::where('order_id', '=', $id)
+        $orders = Order::where('type_bar', 1)
+            ->where('closed', '=', null)
+            ->orderBy('created_at', 'desc')
             ->get();
-        $resrv = Reservation::where('id', '=', $orderId2->reservation_id)
-            ->first();
-        $summabill = '';
-        $min = '';
-        $schettable = 22;
-        if ($resrv) {
-            $summabill = $resrv->sum_booking;
-            $min = $resrv->min;
-            $schettable = 1;
+        if ($request->has('status')) {
+            return redirect('/open-bar')->with('status', 'Замовлення створено!');
         }
-        $pricesum = [];
-        return view('order-bar-closed', compact('products',
-            'orderId',
-            'pricesum',
-            'customerid',
-            'orderId2',
-            'schet', 'schettable',
-            'min', 'summabill', 'pauseId'));
+        return view('open_order', compact('orders', 'products'));
     }
-
 
     // закрытие заказа бара форма
     public function orderBarClosed($id)
@@ -481,14 +294,12 @@ class OrderController extends Controller
             $varo[] = $var[$k];
         }
         $count = [];
-
         // массивы цен перебираем
         $k = 0;
         $minStart = [];
         foreach ($tablePrices as $tablePrice) {
             $range[] = range($tablePrice->start, $tablePrice->end);
             $price[] = $tablePrice->price;
-
             foreach ($vars as $var) {
                 if (in_array($var, $range[$k])) {
                     $minpay = app()->call('App\Http\Controllers\OrderController@minPay', [
@@ -497,14 +308,13 @@ class OrderController extends Controller
                             'var' => $vars
                         ]
                     );
-
                     $minStart[] = $minpay;
                     $count[] = 1 * round($minpay / 60, 2);
                 }
             }
             $k++;
         }
-        $minStartValue=min($minStart);
+        $minStartValue = min($minStart);
         // паузы
         $pauses = Pause::where('order_id', $order->id)->get();
         $countPause = [];

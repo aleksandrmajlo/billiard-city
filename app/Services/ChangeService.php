@@ -53,10 +53,12 @@ class ChangeService
            foreach ($order_months as $order_month){
                if(!is_null($order_month->status)){
                    if($order_month->type_billiards==1){
-                       $table_month+=$order_month->barprice;
+//                       $table_month+=$order_month->barprice;
+                       $table_month+=$order_month->amount;
                    }
                    if($order_month->type_bar==1){
-                       $bar_month+=$order_month->barprice;
+//                       $bar_month+=$order_month->barprice;
+                       $bar_month+=$order_month->amount;
                    }
                }
            }

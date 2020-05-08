@@ -62,7 +62,8 @@
                                         </div>
                                     </div>
                                     <div class="itemFilter">
-                                        <button type="submit" class="btn btn-primary">@lang('act.compareButton')</button>
+                                        <button type="submit"
+                                                class="btn btn-primary">@lang('act.compareButton')</button>
                                     </div>
                                 </div>
                             </form>
@@ -95,7 +96,8 @@
                 <div class="row">
                     <div class="col-xs-12 mt-10">
                         <doc-print id="print" header="@lang('act.act') "></doc-print>
-                        <a class="btn btn-info" target="_blank" href="/doc/compareexport?act1={{$act1->id}}&act2={{$act2->id}}">@lang('act.excel')</a>
+                        <a class="btn btn-info" target="_blank"
+                           href="/doc/compareexport?act1={{$act1->id}}&act2={{$act2->id}}">@lang('act.excel')</a>
                     </div>
                     <div class="col-xs-12 mt-10">
                         <div class="box">
@@ -144,6 +146,7 @@
                                                 @include('doc.compare_stock')
                                             @endforeach
                                         @endif
+
                                         @if($showApparat)
                                             <tr>
                                                 <td colspan="3" class="text-center">
@@ -157,6 +160,7 @@
                                                 </td>
                                             </tr>
                                         @endif
+
 
                                         </tbody>
                                     </table>

@@ -121,7 +121,6 @@
                                        style=" display: none; margin-top: 10px; width: 80%;  "
                                        placeholder="Телефон клієнта (09928830**)" value="" class="form-control gdd"
                                        required min="1000000">
-
                                 <div class="rads" style="display: none">
                                     <input type="radio" id="contactChoice2"
                                            name="typesms" value="1" checked>

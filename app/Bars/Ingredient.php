@@ -3,9 +3,14 @@
 namespace App\Bars;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ingredient extends Model
 {
+
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     public function stocks()
     {

@@ -3,12 +3,12 @@
         <table class="table order-final-priсe" align="center">
             <tbody>
             <tr>
-                <td>{{text2}}</td>
+                <td>{{$t('PayModalPrice')}}</td>
                 <td>{{price}} ₴</td>
-                <td>{{text4}}</td>
+                <td>{{$t('PayModalTotal')}}</td>
             </tr>
             <tr>
-                <td>{{text3}}</td>
+                <td>{{$t('PayModalDiscount')}}</td>
                 <td>{{skidka}}%</td>
                 <td class="total-price">{{total}} ₴</td>
             </tr>
@@ -20,13 +20,6 @@
 <script>
     export default {
         name: "Total",
-        data(){
-            return {
-                text2:'',
-                text3: '',
-                text4: '',
-            }
-        },
         computed: {
 
             price(){
@@ -40,14 +33,6 @@
             },
 
         },
-        created(){
-            this.text2 = this.$store.state.lang.PayModalPrice[LanguneThisJs];
-            this.text3 = this.$store.state.lang.PayModalDiscount[LanguneThisJs];
-            this.text4 = this.$store.state.lang.PayModalTotal[LanguneThisJs];
-        },
-        methods:{
-
-        }
     }
 </script>
 

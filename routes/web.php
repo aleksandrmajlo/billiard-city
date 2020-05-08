@@ -12,9 +12,13 @@ Route::get('/tv', 'TV\TVController@ScreenTable');
 // получение столов для телевизора
 Route::get('/GetScreenTables', 'TV\TVController@GetScreenTables');
 
+//запись данных с лендинга
+Route::post('/booking_ajax/Lending', 'Booking\BookingAjax@Lending');
+
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function() {
+Route::group(['middleware' => 'auth'], function () {
+
     Route::get('/', 'HomeController@index')->name('home');
 
     // Routs only admin
@@ -59,7 +63,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     });
 
-    Route::get('/info/{id}', 'OrderController@orderBarClosedAdmin')->name('orderBarClosedAdmin');
+
     Route::get('/dis/{id}', 'DiscountController@userDiscount')->name('userDiscount');
     Route::get('/change/{id}', 'ChangeController@seeChange')->name('seeChange');
     Route::post('/generateCode', 'SmsController@generateCode')->name('generateCode');
@@ -67,22 +71,26 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('/sessionLng', 'HomeController@sessionLng')->name('sessionLngorders-storeSmall');
 
-    // User manager and barmen
-    Route::delete('/book-delite/{id}', 'ReservationController@destroyBooking');
+    // страница смены
     Route::get('/change', 'ChangeController@index')->name('change');
-    Route::get('/stat', 'StatisticsController@index')->name('stat');
-    Route::get('/orders', 'OrderController@index')->name('orders');
+
+    // история заказов
+    Route::get('/history_orders', 'StatisticsController@index')->name('history_orders');
+    // информация о заказе
+    Route::get('/info/{id}', 'StatisticsController@OrderInfo')->name('order');
+
+    // непонятный роут
+//    Route::get('/orders', 'OrderController@index')->name('orders');
+
     Route::get('/orders-create', 'OrderController@create')->name('orderscreate');
     Route::post('/orders-store', 'OrderController@store')->name('ordersstore');
     Route::post('/orders-edit', 'OrderController@edit')->name('ordersedit');
     Route::post('/orders-close', 'OrderController@close')->name('ordersclose');
 
-    // открытие стола старое ------
-    Route::get('/orders-table-create', 'OrderController@createOrderTable')->name('orderstablecreate');
+
     Route::get('/order-closed/{id}', 'OrderController@orderBarClosed')->name('orderBarClosed');
 
-    // закрытие стола старое ---------
-    Route::get('/orderbil-closed/{id}', 'OrderController@orderBillClosed')->name('orderBillClosed');
+
     Route::any('/pause', 'OrderController@pauseBill')->name('pauseBill');
     Route::post('/orders-bill-closed-order', 'OrderController@orderBillClosedOrder')->name('orderBillClosedOrder');
     Route::post('/orders-store-closed-order', 'OrderController@orderBarClosedOrder')->name('orderBarClosedOrder');
@@ -100,34 +108,58 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/change-create', 'ChangeController@create')->name('changecreate');
     Route::post('/change-close', 'ChangeController@closeChange')->name('changeclosechange');
 
-    Route::get('/booking', 'ReservationController@index')->name('booking');
+    // бронирование **************************************************
+    Route::get('/booking', 'BookingController@index')->name('booking');
+    Route::group(['prefix' => 'booking_ajax', 'namespace' => 'Booking'], function () {
+        //получение столов товаров
+        Route::get('/tables', 'BookingAjax@tables');
+        //получение брони
+        Route::post('/bookings', 'BookingAjax@bookings');
+        //получение брони для календаря
+        Route::get('/calendar_bookings', 'BookingAjax@calendar_bookings');
+        //поиск брони
+        Route::post('/searchBooking', 'BookingAjax@searchBooking');
+        //удаление бронирования
+        Route::post('/removeBooking', 'BookingAjax@removeBooking');
+        // cохрание брони
+        Route::post('/saveBooking', 'BookingAjax@saveBooking');
+        //добавление нового стола
+        Route::post('/addNewbooking', 'BookingAjax@addNewbooking');
+    });
+    // бронирование **************************************************
 
-    //все столы старое -------
-    Route::get('/open-table', 'ReservationController@openTable')->name('openTable');
+    // страница  Відкритий бар
+    Route::get('/open-bar', 'OrderController@openOrder')->name('openOrder');
 
-    Route::get('/open-bar', 'ReservationController@openOrder')->name('openOrder');
     Route::get('/customers-create', 'CustomerController@create')->name('customerscreate');
     Route::get('/customers-edit', 'CustomerController@edit')->name('customersedit');
     Route::get('/customer/{id}', 'CustomerController@see')->name('customersee');
     Route::post('/customers-store', 'CustomerController@store')->name('customersstore');
     Route::delete('/table/{id}', 'TableController@destroy');
-    Route::get('/reserv-table-create', 'ReservationController@reservTable')->name('reservTable');
-    Route::post('/reserv-table-add', 'ReservationController@reservTableCreate')->name('reservTableCreate');
-    Route::get('/booking/{id}', 'ReservationController@reservTableSee')->name('reservTableSee');
 
 
     //  мои роуты ***********************************
     Route::get('/printTest', 'Order\Order@printTest');
     Route::get('/aprint', 'PrintController@index');
     Route::post('/aprint', 'PrintController@update');
-    Route::get('/open_order', 'OrdermyController@open_order');
-    Route::get('/close_order', 'OrdermyController@close_order');
 
-    Route::group(['prefix' => 'bars', 'namespace' => 'Bars'], function(){
+    // открытие смены
+    Route::get('/open_order', 'Change\OpenBarmen@open_change')->name('open_change');
+    //закрытие смены
+    Route::get('/close_order', 'Change\CloseBarmen@close_change')->name('close_change');
+    //получение данных для закрытия и открытия смены(пока только барменом)
+    Route::group(['prefix' => 'сhange_data', 'namespace' => 'Change'], function () {
+        //получение категорий товаров
+        Route::get('/category', 'CloseBarmen@category');
+        Route::post('/Submit', 'CloseBarmen@Submit');
+        Route::post('/OpenSubmit', 'OpenBarmen@Submit');
+    });
+
+    Route::group(['prefix' => 'bars', 'namespace' => 'Bars'], function () {
         Route::resource('/ingredient', 'IngredientController');
     });
 
-    Route::group(['prefix' => 'doc', 'namespace' => 'Docs'], function(){
+    Route::group(['prefix' => 'doc', 'namespace' => 'Docs'], function () {
 
         Route::get('/act', 'ActController@index');
         Route::get('/act/{id}', 'ActController@show');
@@ -152,20 +184,17 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('/getProducts', 'WriteofController@getProducts');
         Route::get('/writeof/export/{id}', 'WriteofController@export');
 
-
     });
 
-    Route::group(['prefix' => 'ajax', 'namespace' => 'Ajax'], function(){
+    Route::group(['prefix' => 'ajax', 'namespace' => 'Ajax'], function () {
         Route::get('/priceorder', 'OrderAjax@priceorder');
-        Route::post('orderCloseValidate', 'OrderAjax@orderCloseValidate');
-        // закрытие смены барменом
-        Route::post('orderClose', 'OrderAjax@orderClose');
+
         Route::post('ingredient', 'IngredientAjax@get');
         // получить пользователей для подсказки
         Route::get('CusstomerGet', 'CusstomerAjax@get');
     });
 
-    Route::group(['prefix' => 'order', 'namespace' => 'Order'], function(){
+    Route::group(['prefix' => 'order', 'namespace' => 'Order'], function () {
         Route::get('/CategoriesGet', 'Order@CategoriesGet');
         Route::post('/ProductCategoryGet', 'Order@ProductCategoryGet');
         Route::post('/SearchProduts', 'Order@SearchProduts');
@@ -174,17 +203,25 @@ Route::group(['middleware' => 'auth'], function() {
         // оплата стола
         Route::post('/PayTable', 'Order@PayTable');
 
+        // получить клиентов
         Route::post('/GetUsers', 'Order@GetUsers');
-        Route::post('/Reserve', 'Order@Reserve');
+        // получить информацию о заказе
+        Route::get('/InfoOrders', 'OrderInfo@InfoOrders');
+
+        //сохранить отредактированный заказ
+        Route::post('/ReadOrders', 'OrderInfo@ReadOrders');
+
+        Route::post('/Reserve', 'Order@Reserve')->name('AddReserve');
         // получить продукты в заказе
         Route::post('/getOrder', 'Order@getOrder');
         Route::post('/SendPrint', 'Order@SendPrint');
         // запись инфы
         Route::post('/setInfo', 'Order@setInfo');
+        //
     });
 
     //столы
-    Route::group(['prefix' => 'table', 'namespace' => 'Table'],function (){
+    Route::group(['prefix' => 'table', 'namespace' => 'Table'], function () {
 
         Route::get('/open_table', 'TableController@index')->name('open_table');
         Route::get('/getTables', 'TableController@getTables');
@@ -194,14 +231,12 @@ Route::group(['middleware' => 'auth'], function() {
         Route::post('/SetPause', 'TableController@SetPause');
         // открытие стола
         Route::post('/AddTable', 'TableController@AddTable');
-
+        // проверить или менеджер открыл смену
+        Route::post('/openChangeId', 'TableController@openChangeId');
 
     });
 
-
     //  мои роуты  end **************************************************
-
-
     Route::get('/public/avatars/{filename}', function ($filename) {
         $path = storage_path('app/public/avatars/' . $filename);
         if (!File::exists($path)) {

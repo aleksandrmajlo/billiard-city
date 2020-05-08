@@ -20,7 +20,6 @@ use App\Pause;
 use App\Change;
 use Illuminate\Support\Facades\Auth;
 
-
 class TableController extends Controller
 {
 
@@ -50,15 +49,16 @@ class TableController extends Controller
             if (in_array($table->id, $reservTable)) {
                 // то есть стол в работе
                 $order = Order::where('table_id', $table->id)->where('closed', '=', null)->first();
-                
-                $json_tables[] = [
-                    'id' => $table->id,
-                    'number' => $table->number,
-                    'name' => $table->name,
-                    'image' => $table->image,
-                    'free' => false,
-                    'order_id' => $order->id,
-                ];
+                if($order){
+                    $json_tables[] = [
+                        'id' => $table->id,
+                        'number' => $table->number,
+                        'name' => $table->name,
+                        'image' => $table->image,
+                        'free' => false,
+                        'order_id' => $order->id,
+                    ];
+                }
             } else {
                 // свободен
                 $json_tables[] = [
@@ -125,6 +125,7 @@ class TableController extends Controller
         $reservation->sum_booking = null;
         $reservation->save();
 
+        $change=null;
         if (Auth::user()) {
             $user = Auth::user()->id;
             $change = Change::where('user_id', $user)
@@ -138,19 +139,42 @@ class TableController extends Controller
         $orderCreate->customer_id = $customer;
         $orderCreate->reservation_id = $reservation->id;
         $orderCreate->amount = 0;
-        if ($change && count($change) > 0) {
+        if ($change) {
             $orderCreate->changes_id = $change->id;
         }
         $orderCreate->start = Carbon::now();
         $orderCreate->type_billiards = 1;
         $orderCreate->type_bar = 0;
         $orderCreate->save();
-
         return response()->json([
                 'suc' => true,
             ]
         );
 
+
+    }
+
+    // проверить или менеджер открыл смену
+    public function openChangeId(){
+        $userAuthId = Auth::user()->id;
+        $openChangeId=false;
+        $isAdmin=false;
+        if(Auth::user()->hasRole('manager')){
+            $openChange = Change::where('stop', '=', null)
+                ->where('user_id', '=', $userAuthId)
+                ->orderBy('created_at', 'desc')
+                ->first();
+            if($openChange)$openChangeId=true;
+        }
+        if(Auth::user()->hasRole('admin')){
+            $isAdmin=true;
+        }
+
+        return response()->json([
+                'openChangeId' => $openChangeId,
+                'isAdmin' => $isAdmin,
+            ]
+        );
 
     }
 

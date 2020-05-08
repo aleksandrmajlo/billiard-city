@@ -102,7 +102,6 @@ class ConsumableinvoiceController extends Controller
                     }
                     foreach ($order->bars as $bar) {
                         if (!$category) {
-                            if($bar->stock&&$bar->stock->id){
                                 $products[] = [
                                     'id' => $bar->stock->id,
                                     'title' => $bar->stock->title,
@@ -110,8 +109,8 @@ class ConsumableinvoiceController extends Controller
                                     'price' => $bar->stock->price,
                                     'discount' => $skidka
                                 ];
-                            }
                         } elseif ($category == $bar->stock->categorySee->id) {
+
                             $products[] = [
                                 'id' => $bar->stock->id,
                                 'title' => $bar->stock->title,
@@ -221,13 +220,15 @@ class ConsumableinvoiceController extends Controller
                         }
                     }
                     foreach ($order->bars as $bar) {
-                        $products[] = [
-                            'id' => $bar->stock->id,
-                            'title' => $bar->stock->title,
-                            'count' => $bar->count,
-                            'price' => $bar->stock->price,
-                            'discount' => $skidka
-                        ];
+                        if($bar->stock&&$bar->stock->id){
+                            $products[] = [
+                                'id' => $bar->stock->id,
+                                'title' => $bar->stock->title,
+                                'count' => $bar->count,
+                                'price' => $bar->stock->price,
+                                'discount' => $skidka
+                            ];
+                        }
                     }
                 }
             }

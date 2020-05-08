@@ -8,12 +8,12 @@ class Purchaseinvoice extends Model
 {
     public function ingredients()
     {
-        return $this->belongsToMany('App\Bars\Ingredient')->withPivot('count');
+        return $this->belongsToMany('App\Bars\Ingredient')->withTrashed()->withPivot('count');
     }
 
     public function stocks()
     {
-        return $this->belongsToMany('App\Stock')->withPivot('count');
+        return $this->belongsToMany('App\Stock')->withTrashed()->withPivot('count');
     }
 
     public function user(){
