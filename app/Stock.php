@@ -36,5 +36,4 @@ class Stock extends Model
     {
         return $this->belongsToMany('App\Acts\Purchaseinvoice')->withPivot('count');
     }
-
 }

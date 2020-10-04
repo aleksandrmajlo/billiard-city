@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers\Ajax;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Http\Request;
 class CusstomerAjax extends Controller
 {
    public function get(){
@@ -18,4 +18,12 @@ class CusstomerAjax extends Controller
            'customer' => $customer,
        ], 200);
    }
+
+   public function setSidebarToggle(Request $request){
+       session(['SidebarToggle' => $request->type]);
+       return response()->json([
+           'success'=>true,
+       ]);
+   }
+
 }

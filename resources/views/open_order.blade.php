@@ -39,7 +39,9 @@
                       <tbody>
                       @foreach($orders as $order)
                         <tr>
-                          <td><a href="/bar/{{ $order->id }}" target="_blank">{{ $order->id }}</a></td>
+                          <td>
+                            <a href="/bar/{{ $order->id }}" target="_blank">{{ $order->id }}</a>
+                          </td>
                           <td>
                             @if($order->customer_id == 0)
                               Гість

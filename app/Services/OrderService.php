@@ -20,7 +20,7 @@ use App\Tariff;
 
 class OrderService
 {
-    // для незакрітого заказа получить время
+    // для незакритого заказа получить время
     static public function validateTime($order, $endTest = false)
     {
         $start = $order->start;

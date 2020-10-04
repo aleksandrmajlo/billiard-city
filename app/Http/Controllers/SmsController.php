@@ -7,12 +7,12 @@ use App\User;
 use Illuminate\Http\Request;
 
 
-define("SMSC_LOGIN", "billiardcity");			// логин клиента
-define("SMSC_PASSWORD", "090c8d82d0c0c9efbecc4eebb0b7845e3872a0ad");	// пароль
-define("SMSC_POST", 0);					// использовать метод POST
-define("SMSC_HTTPS", 0);				// использовать HTTPS протокол
-define("SMSC_CHARSET", "windows-1251");	// кодировка сообщения: utf-8, koi8-r или windows-1251 (по умолчанию)
-define("SMSC_DEBUG", 0);				// флаг отладки
+define("SMSC_LOGIN", "billiardcity");            // логин клиента
+define("SMSC_PASSWORD", "090c8d82d0c0c9efbecc4eebb0b7845e3872a0ad");    // пароль
+define("SMSC_POST", 0);                    // использовать метод POST
+define("SMSC_HTTPS", 0);                // использовать HTTPS протокол
+define("SMSC_CHARSET", "windows-1251");    // кодировка сообщения: utf-8, koi8-r или windows-1251 (по умолчанию)
+define("SMSC_DEBUG", 0);                // флаг отладки
 define("SMTP_FROM", "api@smsc.ua");     // e-mail адрес отправителя
 
 class SmsController extends Controller
@@ -20,44 +20,42 @@ class SmsController extends Controller
     private $socket;
     private $sequence_number = 1;
 
-    static function generateCode(Request $request) {
+    static function generateCode(Request $request)
+    {
 
         $phones = $request->phones;
         $code = rand(1000, 9999);
         $message = $code;
-
-        if($request->typesms == 1) {
+        if ($request->typesms == 1) {
             $format = 9;
         } else {
             $format = 1;
         }
-
-        $ajax=false;
-        if($request->has('ajaxmy')){
-            $ajax=true;
+        $ajax = false;
+        if ($request->has('ajaxmy')) {
+            $ajax = true;
         }
-        if($ajax){
-            $id_sms=SmsController::send_sms($phones, $message, $code,  0, 0,0, $format,false,'',[],$ajax);
+        if ($ajax) {
+            $id_sms = SmsController::send_sms($phones, $message, $code, 0, 0, 0, $format, false, '', [], $ajax);
             return response()->json([
                 'success' => true,
-                'id_sms'=> $id_sms
+                'id_sms' => $id_sms
             ], 200);
-        }else{
-            SmsController::send_sms($phones, $message, $code,  0, 0,0, $format,false,'',[],$ajax);
-        }
-}
 
-    static function send_sms($phones, $message, $code, $translit = 0, $time = 0, $id = 0, $format, $sender = false, $query = "", $files = array(),$ajax=false)
+        } else {
+            SmsController::send_sms($phones, $message, $code, 0, 0, 0, $format, false, '', [], $ajax);
+        }
+    }
+
+    static function send_sms($phones, $message, $code, $translit = 0, $time = 0, $id = 0, $format, $sender = false, $query = "", $files = array(), $ajax = false)
     {
         static $formats = array(1 => "flash=1", "push=1", "hlr=1", "bin=1", "bin=2", "ping=1", "mms=1", "mail=1", "call=1", "viber=1", "soc=1");
-
-        if($format == 9) {
+        if ($format == 9) {
             $m = SmsController::_smsc_send_cmd("send", "cost=3&phones=" . urlencode($phones) . "&mes=" . urlencode($message) .
-                "&translit=$translit&id=$id&mes=code&call=1"  .
+                "&translit=$translit&id=$id&mes=code&call=1" .
                 ($sender === false ? "" : "&sender=" . urlencode($sender)) .
                 ($time ? "&time=" . urlencode($time) : "") . ($query ? "&$query" : ""), $files);
         } else {
-
             $m = SmsController::_smsc_send_cmd("send", "cost=3&phones=" . urlencode($phones) . "&mes=" . urlencode($message) .
                 "&translit=$translit&id=$id" . ($format > 0 ? "&" . $formats[$format] : "") .
                 ($sender === false ? "" : "&sender=" . urlencode($sender)) .
@@ -73,47 +71,47 @@ class SmsController extends Controller
 
         $saveSms = new Sms();
         $saveSms->id_sms = $m[0];
-        if($format == 9) {
+        if ($format == 9) {
             $saveSms->code = $m[4];
         } else {
             $saveSms->code = $code;
         }
         $saveSms->type = 'register';
         $saveSms->save();
-
-        if($ajax){
+        if ($ajax) {
             return $m[0];
-        }else{
+        } else {
             echo $m[0];
         }
     }
 
-    public function checkCode(Request $request) {
-        $ajax=false;
-        if($request->has('ajaxmy')){
-            $ajax=true;
+    public function checkCode(Request $request)
+    {
+        $ajax = false;
+        if ($request->has('ajaxmy')) {
+            $ajax = true;
         }
         //$checkCode = Sms::where('id_sms', '=', $request->cod)->first();
-        $checkCode = Sms::where('id_sms', '=', $request->cod)->orderBy('id','desc')->first();
-        if($ajax){
-            if($checkCode->code == $request->codes) {
-                $res= 1;
-                if($request->has('order_id')){
+        $checkCode = Sms::where('id_sms', '=', $request->cod)->orderBy('id', 'desc')->first();
+        if ($ajax) {
+            if ($checkCode->code == $request->codes) {
+                $res = 1;
+                if ($request->has('order_id')) {
                     // если код правильный код то обновляем заказ
-                    $order=\App\Order::find($request->order_id);
-                    $order->customer_id=$request->user;
+                    $order = \App\Order::find($request->order_id);
+                    $order->customer_id = $request->user;
                     $order->save();
                 }
             } else {
-                $res= 2;
+                $res = 2;
             }
             return response()->json([
                 'success' => true,
-                'res'=>$res
+                'res' => $res
             ], 200);
 
-        }else{
-            if($checkCode->code == $request->codes) {
+        } else {
+            if ($checkCode->code == $request->codes) {
                 echo 1;
             } else {
                 echo 2;
@@ -121,14 +119,44 @@ class SmsController extends Controller
         }
 
     }
-
-
-// SMTP версия функции отправки SMS
-
+    // SMTP версия функции отправки SMS
     static function send_sms_mail($phones, $message, $translit = 0, $time = 0, $id = 0, $format = 0, $sender = "")
     {
         return mail("send@send.smsc.ua", "", SMSC_LOGIN . ":" . SMSC_PASSWORD . ":$id:$time:$translit,$format,$sender:$phones:$message", "From: " . SMTP_FROM . "\nContent-Type: text/plain; charset=" . SMSC_CHARSET . "\n");
     }
+
+    //Отправка кода логин
+    public function generateCodeLogin(Request $request)
+    {
+        $phone = $request->phone;
+        $user_count = User::where('phone', $phone)->count();
+        if ($user_count) {
+            $digits = 6;
+            $random_number = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
+            $user = User::where('phone', $phone)->select('phone')->first();
+            // получить исключенные логины
+            $loginSelected=config('auth.loginSelected');
+            if(isset($loginSelected[$phone])){
+                return response()->json([
+                    'suc' => true,
+                    'id_sms'=>-1
+                ]);
+            }
+            // получить исключенные логины end
+            $format = 1;
+            $ajax = true;
+            $id_sms = SmsController::send_sms($user->phone, $random_number, $random_number, 0, 0, 0, $format, false, '', [], $ajax);
+            return response()->json([
+                'suc' => true,
+                'id_sms'=>$id_sms
+            ]);
+        } else {
+            return response()->json(['suc' => false, 'notUser' => true]);
+        }
+
+    }
+
+
 
 // Функция получения стоимости SMS
 //

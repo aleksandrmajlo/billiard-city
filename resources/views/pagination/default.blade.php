@@ -1,6 +1,6 @@
 <?php
-
 $link_limit = 10;
+
 ?>
 @if ($paginator->lastPage() > 1)
     <div style="overflow: hidden;">
@@ -31,7 +31,7 @@ $link_limit = 10;
             @endfor
             <li class="{{ ($paginator->currentPage() == $paginator->lastPage()) ? ' disabled' : '' }}">
                 <a class="next" href="{{ $paginator->url($paginator->lastPage()) }}">
-                    <span>Вперед</span> <img src="img/next.png" alt="next">
+                    <span>Вперед</span> <img src="/img/next.png" alt="next">
                 </a>
             </li>
         </ul>

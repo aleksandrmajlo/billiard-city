@@ -14,7 +14,7 @@ class BarController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**

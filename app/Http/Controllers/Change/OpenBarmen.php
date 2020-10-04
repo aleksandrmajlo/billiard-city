@@ -50,6 +50,7 @@ class OpenBarmen extends Controller
             // это зачем непонятно
             // перестраховка от
             $changes = Change::where('stop', '=', null)->get();
+
             foreach ($changes as $change) {
                 $userChange = DB::select('select * from users_roles where user_id = ?', array($change->user_id));
                 if ($userChange[0]->role_id == 3) {
@@ -86,8 +87,8 @@ class OpenBarmen extends Controller
                         $ing = Ingredient::find($product['id']);
                         if (floatval($product['result']) !== floatval($ing->count)) {
                             $ingredients[] = [
-                                'thisCount' => round($ing->count, 2),
-                                'oldCount' => round($product['result'], 2),
+                                'thisCount' => round($product['result'], 2),
+                                'oldCount' => round($ing->count, 2),
                                 'title' => $ing->title
                             ];
                         }
@@ -98,8 +99,8 @@ class OpenBarmen extends Controller
                         $st = Stock::find($product['id']);
                         if (floatval($product['result']) !== floatval($st->count)) {
                             $stocks[] = [
-                                'thisCount' => round($st->count, 2),
-                                'oldCount' => round($product['result'], 2),
+                                'thisCount' =>round($product['result'], 2),
+                                'oldCount' =>  round($st->count, 2),
                                 'title' => $st->title
                             ];
                         }
@@ -114,6 +115,7 @@ class OpenBarmen extends Controller
             $kofeinyiapparat->count = $request->kofeinyi_apparat;
             $kofeinyiapparat->act_id = $act->id;
             $kofeinyiapparat->save();
+
             //обновление общего кол-ва кофе
             Kofeinyiapparatcount::add($request->kofeinyi_apparat);
 

@@ -1,7 +1,8 @@
 <template>
-    <a @click.prevent="send"  class="btn btn-info">Друк </a>
+    <button @click.prevent="send"  class="worker__button worker__print" v-cloak>
+        <img src="/img/print.png" alt="colendar"><span>{{$t('print')}}</span>
+    </button>
 </template>
-
 <script>
     import print from 'print-js'
     export default {

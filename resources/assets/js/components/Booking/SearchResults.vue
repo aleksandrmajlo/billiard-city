@@ -3,7 +3,9 @@
         <div class="user_top user_top-righit">
             <form @submit.prevent>
                 <input v-model="search" type="text" placeholder=''>
-                <button @click="searchBooking" type="submit"><img src="/img/search.png" alt="search"></button>
+                <button @click="searchBooking" type="submit">
+                    <img src="/img/search.png" alt="search">
+                </button>
             </form>
             <button @click.prevent="addBooking" class="append">Добавити</button>
         </div>
@@ -36,9 +38,13 @@
             }
         },
         created(){
-            let today = new Date().toISOString().substr(0, 10);
-            this.getBookings(today);
-            this.date_start=today;
+            let today = new Date();
+            let Year=today.getFullYear();
+            let Month=today.getMonth()+1;
+            let day=today.getDate();
+
+            this.getBookings(Year+'-'+Month+"-"+day);
+            this.date_start=Year+'-'+Month+"-"+day;
             // обновить список брони
             eventBus.$on('updateBookings', (ar_date=false) => {
                 if(ar_date){
@@ -46,7 +52,6 @@
                     this.date_end=ar_date.date_end;
                     this.searchActive=false;
                 }
-
                 if(this.searchActive){
                     this.searchBooking();
                 }else{
@@ -79,7 +84,7 @@
                 if(this.search!==""){
                     this.searchActive=true;
                     $('.pmu_button').removeClass('active');
-                    pickmeup('.range').set_date([new Date]);
+                    // pickmeup('.range').set_date([new Date]);
                     axios
                         .post("/booking_ajax/searchBooking",{search:this.search})
                         .then(response => {

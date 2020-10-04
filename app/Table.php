@@ -9,10 +9,12 @@ class Table extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
     public function tariff()
     {
         return $this->hasMany('App\Tariff');
     }
+
     // номер стола
     /*
     public function getNumerAttribute()
@@ -22,7 +24,7 @@ class Table extends Model
         return $arr[0];
     }
     */
-    
+
     // название стола без номера
     public function getNameAttribute()
     {
@@ -31,4 +33,6 @@ class Table extends Model
         if (isset($arr[1])) return $arr[1];
         return $title;
     }
+
+
 }

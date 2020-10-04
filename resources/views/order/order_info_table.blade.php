@@ -1,12 +1,11 @@
 @extends('layouts.app')
 @section('content')
     <div class="user">
-
         <div class="user__title">
             <h2>@lang('site.zakaz')</h2>
         </div>
-
         <div class="row">
+
             <div class="col-xs-12 col-sm-6 col-md-7">
                 <div class="filter-block filter-order">
                     <form class="filter-form" >
@@ -21,7 +20,7 @@
                                 <label>@lang('orders.client')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">
+                                <p >
                                     @if($order->customer)
                                         {{$order->customer->fullname}}
                                     @else
@@ -31,11 +30,11 @@
                             </div>
                             <div class="col-xs-3 col-xs-xs-6"><label>@lang('orders.start')</label></div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">{{$order->start}}</p>
+                                <p>{{$order->start}}</p>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6"><label>@lang('orders.discount')</label></div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">
+                                <p >
                                     @if($order->customer&&$order->customer->skidka)
                                         {{$order->customer->skidka}}%
                                     @else
@@ -47,18 +46,18 @@
                                 <label>@lang('orders.end')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">{{$order->closed}}</p>
+                                <p >{{$order->closed}}</p>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
                                 <label>@lang('orders.oplata')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
                                 @if($order->billing)
-                                    <p class="text-nowrap">
+                                    <p >
                                         {{$billing[$order->billing][app()->getLocale()]}}
                                     </p>
                                 @else
-                                    <p class="text-nowrap">
+                                    <p>
                                         -
                                     </p>
                                 @endif
@@ -67,7 +66,7 @@
                                 <label>@lang('orders.chang')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">
+                                <p >
                                     @if($order->change)
                                         {{$order->change->id}}
                                     @endif
@@ -91,21 +90,21 @@
                 </div>
             </div>
 
+            @if($pauses)
             <div class="col-xs-12 col-sm-6 col-md-5">
                 <div class="filter-block filter-order filter-order-two">
                     <h4>@lang('orders.pauses')</h4>
                     <div class="row">
-                        @if($pauses)
                             @foreach($pauses as $key=>$pause)
                                 <div class="col-xs-2"><span>{{$key+1}}</span></div>
                                 <div class="col-xs-10">
                                     <p>@lang('orders.from') {{$pause['start']}} до {{$pause['end']}}</p>
                                 </div>
                             @endforeach
-                        @endif
                     </div>
                 </div>
             </div>
+            @endif
 
         </div>
         <div class="user_table acts__table">
@@ -117,7 +116,6 @@
                     <td>@lang('orders.amout')</td>
                     <td>@lang('orders.summa')</td>
                 </tr>
-
                 @if($order->table)
                         <tr>
                             <td>{{$order->table->id}}</td>
@@ -139,8 +137,7 @@
         </div>
     </div>
     @if($isAdmin)
-        <a href="#x" class="overlay" id="win1"></a>
-        <div class="win">
+        <div class="win" id="readOrderWin">
             <div class="form-user form-user-order">
                 <div class="row">
                     <div class="col-xs-4 col-sm-6">

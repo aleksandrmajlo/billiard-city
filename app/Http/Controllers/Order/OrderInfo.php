@@ -42,6 +42,7 @@ class OrderInfo extends Controller
              'date'=>$date,
              'amount'=>$order->amount,
              'info'=>$order->info,
+             'billing'=>$order->billing
          ] ;
          return response()->json(['users'=>$results,'order'=>$order_res]);
      }
@@ -53,6 +54,7 @@ class OrderInfo extends Controller
           $order->customer_id=$request->customer_id;
           $order->amount=$request->amount;
           $order->info=$request->info;
+          $order->billing=$request->billing;
           $order->start=$request->start_date.' '.$request->start_time;
           $order->closed=$request->end_date.' '.$request->end_time;
           $order->save();

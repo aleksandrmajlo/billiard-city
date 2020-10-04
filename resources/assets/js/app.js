@@ -2,9 +2,10 @@ require('./bootstrap');
 require('./common');
 window.Vue = require('vue');
 
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-Vue.use(VueAxios, axios)
+// загружено через bootstrap.js
+// import axios from 'axios'
+// import VueAxios from 'vue-axios'
+// Vue.use(VueAxios, axios)
 
 // vuex
 import Vuex from 'vuex';
@@ -14,7 +15,6 @@ import store from './store.js';
 export const eventBus = new Vue();
 
 // ******* alert 
-import Vue from 'vue';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 Vue.use(VueSweetalert2);
@@ -41,6 +41,8 @@ import './filter'
 
 // Lang
 import i18n from './lang/i18n'
+
+
 
 // таймер для стола открытого
 Vue.component('TimerTable', require('./components/TimerTable.vue').default);
@@ -83,6 +85,7 @@ Vue.component('TotalTable', require('./components/Ordertable/TotalTable.vue').de
 
 // доки
 Vue.component('WriteofProducts', require('./components/Docs/WriteofProducts.vue').default);
+Vue.component('PurchaseinvoiceCreate', require('./components/Docs/PurchaseinvoiceCreate.vue').default);
 
 // Столы
 Vue.component('OpenTable', require('./components/Table/OpenTable.vue').default);
@@ -99,7 +102,21 @@ Vue.component('OpenBarmen', require('./components/Change/OpenBarmen.vue').defaul
 
 
 Vue.component('ReadOrder', require('./components/Order/ReadOrder.vue').default);
+// телефон маска
+Vue.component('Phone', require('./components/Phone.vue').default);
+// пользователи
+Vue.component('ListCustomers', require('./components/Customers/ListCustomers.vue').default);
+Vue.component('SearchCustomers', require('./components/Customers/SearchCustomers.vue').default);
+Vue.component('AddCustomer', require('./components/Customers/AddCustomer.vue').default);
+Vue.component('ReadCustomer', require('./components/Customers/ReadCustomer.vue').default);
+Vue.component('DeleteCustomer', require('./components/Customers/DeleteCustomer.vue').default);
 
+
+// аналитика
+Vue.component('AttendancAnalitic', require('./components/analytic/AttendancAnalitic.vue').default);
+Vue.component('AttendancfooterAnalitic', require('./components/analytic/AttendancfooterAnalitic.vue').default);
+Vue.component('AttendancCalendar', require('./components/analytic/AttendancCalendar.vue').default);
+Vue.component('AttendancCalendarmobile', require('./components/analytic/AttendancCalendarmobile.vue').default);
 
 const app = new Vue({
     el: '#app',

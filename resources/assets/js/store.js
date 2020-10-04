@@ -43,9 +43,9 @@ let store = {
         // добавляем категорию
         MenyAddCategory(state, category) {
             state.menus = [{
-                'title': 'Меню',
-                'id': -1
-            },
+                    'title': 'Меню',
+                    'id': -1
+                },
                 {
                     'title': category.title,
                     'id': category.id
@@ -57,9 +57,9 @@ let store = {
         MenuClick(state, menu) {
             if (menu.id == -1) {
                 state.menus = [{
-                    'title': 'Меню',
-                    'id': -1
-                }
+                        'title': 'Меню',
+                        'id': -1
+                    }
 
                 ];
                 state.showCategories = true;
@@ -232,25 +232,25 @@ let store = {
 
         // активный стол на добавление
         SetTableAddActive(state, id) {
-            if (id) {
-                state.TableCloseActive = false;
-            }
+
             state.TableAddActive = id;
+            state.TableCloseActive = false;
+
         },
 
         //установить цены скидки стола открытого для модалки
-        SetTableTotaldata(state,data){
-            state.total=data.total;
-            state.skidka=data.skidka;
-            state.price=data.price;
+        SetTableTotaldata(state, data) {
+            state.total = data.total;
+            state.skidka = data.skidka;
+            state.price = data.price;
         }
 
     },
     actions: {
         // получить все категории
         CategoriesGet({
-                          commit
-                      }) {
+            commit
+        }) {
             return axios.get('/order/CategoriesGet')
                 .then(response => {
                     commit('CategoriesSet', response.data);
@@ -258,36 +258,36 @@ let store = {
         },
         // получить продукты даннй категории
         CategoriesProducts({
-                               commit,
-                               state
-                           }, cat_id) {
+            commit,
+            state
+        }, cat_id) {
             let i = state.categories.map(item => parseInt(item.id)).indexOf(parseInt(cat_id));
             let category = state.categories[i];
             commit('MenyAddCategory', category);
             return axios.post('/order/ProductCategoryGet', {
-                cat_id: cat_id
-            })
+                    cat_id: cat_id
+                })
                 .then(response => {
                     commit('ProductCategorySet', response.data);
                 });
 
         },
         SearchProduts({
-                          commit,
-                          state
-                      }, val) {
+            commit,
+            state
+        }, val) {
             return axios.post('/order/SearchProduts', {
-                val: val
-            })
+                    val: val
+                })
                 .then(response => {
                     commit('ProductCategorySet', response.data);
                 });
         },
         // оплата бара
         Pay({
-                commit,
-                state
-            }, arr) {
+            commit,
+            state
+        }, arr) {
             let data = {
                 order_id: arr.order_id,
                 print: arr.print,
@@ -312,11 +312,12 @@ let store = {
                 })
 
         },
+
         // оплата стола
         PayTable({
-                     commit,
-                     state
-                 }, arr) {
+            commit,
+            state
+        }, arr) {
 
             let index = state.tables.map(item => parseInt(item.id)).indexOf(state.TableCloseActive);
             let order_id = state.tables[index].order_id;
@@ -346,9 +347,9 @@ let store = {
         },
         //пользователи
         GetUsers({
-                     commit,
-                     state
-                 }) {
+            commit,
+            state
+        }) {
 
             return axios.post('/order/GetUsers')
                 .then(response => {
@@ -361,9 +362,9 @@ let store = {
         },
         // отправка смс или звонка
         SendSMS({
-                    commit,
-                    state
-                }, data) {
+            commit,
+            state
+        }, data) {
             let ob = {
                 typesms: data.typesms,
                 phones: data.phones,
@@ -382,9 +383,9 @@ let store = {
 
         // проверка кода
         checkCode({
-                      commit,
-                      state
-                  }, data) {
+            commit,
+            state
+        }, data) {
             let i = state.users.map(item => item.value).indexOf(state.user.value);
             data.user = state.users[i].value;
             var TableOrder = false;
@@ -408,19 +409,17 @@ let store = {
                     }, 300)
 
                 })
-                .catch(error => {
-
-                })
+                .catch(error => {})
         },
 
         // получение продуктов первончально при загрузке страницы
         getOrder({
-                     commit,
-                     state
-                 }, order_id) {
+            commit,
+            state
+        }, order_id) {
             return axios.post('/order/getOrder', {
-                order_id: order_id
-            })
+                    order_id: order_id
+                })
                 .then(response => {
                     commit('SetCart', response.data);
                     if (response.data.typeOrder == "type_bar") {
@@ -434,9 +433,9 @@ let store = {
 
         // запрос цены открытого стола
         getTablePrice({
-                          commit,
-                          state
-                      }, order_id) {
+            commit,
+            state
+        }, order_id) {
             return axios.get('/ajax/priceorder' + '?order_id=' + order_id)
                 .then((response) => {
                     commit('SetTotalTable', response.data.results)
@@ -446,9 +445,9 @@ let store = {
 
         // при добавлении сохранение продуктов
         setReserveAndCart({
-                              commit,
-                              state
-                          }, data) {
+            commit,
+            state
+        }, data) {
             let carts = {
                 cart: state.cart,
                 order_id: data.order_id,
@@ -466,9 +465,9 @@ let store = {
 
         // получить  столы
         getTables({
-                      commit,
-                      state
-                  }) {
+            commit,
+            state
+        }) {
             return axios.get('/table/getTables')
                 .then((response) => {
                     commit('SetTables', response.data.tables)

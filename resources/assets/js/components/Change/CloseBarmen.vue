@@ -216,8 +216,9 @@
             };
         },
         created() {
+
             axios
-                .get("/сhange_data/category")
+                .get("/change_data/category")
                 .then(response => {
                     response.data.cats.forEach(element => {
                         this.cats.push(element);
@@ -229,7 +230,7 @@
                     this.kava.count = response.data.kavaCount;
 
                     // для тэста ******************
-                    if('billiard-city.local'==location.hostname){
+                    if('p.billiard-city.local'==location.hostname){
                         this.tt();
                     }
 
@@ -238,6 +239,7 @@
                 })
                 .finally(function () {
                 });
+
         },
         computed: {
             title() {
@@ -269,6 +271,7 @@
                     return false;
                 }
             },
+
             text1() {
                 return this.lang.text1[LanguneThisJs];
             },
@@ -371,7 +374,6 @@
             validateChangeCat() {
                 let empty = false;
                 let discrepancy = false;
-
                 this.products[this.ActiveCategory].forEach((product) => {
                     if (typeof product.result == "undefined" || product.result == "") {
                         empty = true;
@@ -381,7 +383,6 @@
                     }
                     this.setBackgroundColor(product.id)
                 });
-
                 if (empty) {
                     return false;
                 }
@@ -405,7 +406,7 @@
             // отправка формы
             Submit() {
                 if (this.validateSubmit()) {
-                    this.showShwal('info',this.$t('change_send'))
+                    this.showShwal('info',this.$t('change_send'),false)
                     let data = {
                         products: this.products,
                         summa: this.summa,
@@ -413,11 +414,14 @@
                         kofeinyi_apparat: this.kava.result
                     };
                     axios
-                        .post("/сhange_data/Submit", data)
+                        .post("/change_data/Submit", data)
                         .then(response => {
                             location = response.data.url;
+                            this.$swal.close();
                         })
                         .catch(error => {
+                            this.$swal.close();
+                            this.showShwal('error',this.$t('error'));
                         })
                         .finally(function () {
                         });
@@ -427,7 +431,7 @@
                 var self = this;
                 for (var i in this.products) {
                     this.products[i].forEach((product) => {
-                        Vue.set(product, 'result', 60);
+                        Vue.set(product, 'result', 50.11);
                     })
                 }
             }

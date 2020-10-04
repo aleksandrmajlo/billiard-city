@@ -110,18 +110,21 @@ class StatisticsController extends Controller
     public function OrderInfo($id)
     {
         $order = Order::findOrfail($id);
-
         $user = \Illuminate\Support\Facades\Auth::user();
         $isAdmin=false;
         if ($user->hasRole('admin')){
             $isAdmin=true;
         }
         $billing = config('billing');
+        if (!$order->isbar&&$user->hasRole('barmen')){
+            return redirect('/noaccess');
+        }
         if ($order->isbar) {
             return view('order.order_info_bar',
                 compact('id', 'order', 'billing','isAdmin')
             );
-        }else{
+        }
+        else{
             $pauses_s = Pause::where('order_id', $id)->get();
             $pauses=[];
             if($pauses_s){
@@ -141,7 +144,4 @@ class StatisticsController extends Controller
             );
         }
     }
-
-
-
 }

@@ -16,54 +16,47 @@ use Excel;
 
 class ActController extends Controller
 {
+    protected $pageCount = 20;
+
     public function index(Request $request)
     {
 
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
-
             $acts = new Act();
             $acts = Act::orderBy('created_at', 'desc');
-
             if ($request->has('start') && !empty($request->start)) {
-                $start = explode('.', $request->start);
-                $acts = $acts->where('created_at', '>=', date($start[2] . '-' . $start[1] . '-' . $start[0]) . ' 00:00:00');
+                $acts = $acts->where('created_at', '>=', $request->start . ' 00:00:00');
             }
-
             if ($request->has('end') && !empty($request->end)) {
-                $end = explode('.', $request->end);
-                $acts = $acts->where('created_at', '<', date($end[2] . '-' . $end[1] . '-' . $end[0]) . ' 23:59:59');
+                $acts = $acts->where('created_at', '<', $request->end . ' 23:59:59');
             }
             if ($request->has('user_id') && !empty($request->user_id)) {
                 $acts = $acts->where('user_id', '=', $request->user_id);
             }
-
-            $acts = $acts->orderBy('created_at', 'desc')->paginate(10);
+            $acts = $acts->orderBy('created_at', 'desc')->paginate($this->pageCount);
 
         } else {
             $acts = Act::orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate($this->pageCount);
         }
-
         $roleIds = [3];
         $users = \App\User::whereHas('roles', function ($q) use ($roleIds) {
             $q->whereIn('id', $roleIds);
         })->get();
+        $filter_acts = Act::orderBy('created_at', 'desc')->get();
+
         return view('doc/acts', [
-            'acts' => $acts,
+            'filter_acts' => $filter_acts,
+            'acts' => $acts->appends($request->except('page')),
             'users' => $users,
             'this_url' => '/doc/act'
-
         ]);
-
     }
 
     // показать акт
     public function show($id, Request $request)
     {
         $act = Act::findOrFail($id);
-        $cats = CategoryStock::all();
-
-
         $showApparat = true;
         if ($request->has('title')) {
             $showApparat = false;
@@ -71,26 +64,66 @@ class ActController extends Controller
         if ($request->has('type')) {
             $showApparat = false;
         }
-
         if ($request->has('cat') && $request->cat == '20') {
             $showApparat = true;
         } elseif ($request->has('cat') && $request->cat !== '20') {
             $showApparat = false;
         }
 
+
+        // сортировка старт **************************************
+        // desc - стрелка вверх по алфавиту вниз  а..я
+        // asc - стрелка dybp по алфавиту я а
+        $categoryDocSortOrder = session('categoryDocSortOrder', 'desc');
+        if($categoryDocSortOrder=="desc"){
+            $cats = CategoryStock::orderBy('title','desc')->get();
+        }else{
+            $cats = CategoryStock::orderBy('title','asc')->get();
+        }
+        $stocks = $act->stocks->toArray();;
+        $stocks_res = [];
+        $cat_title = [];
+        foreach ($cats as $cat){
+            $stocks_res[$cat->title]=[];
+        }
+        foreach ($stocks as $item) {
+            $title = "";
+            if (isset($cat_title[$item['categorystock_id']])) {
+                $title = $cat_title[$item['categorystock_id']];
+            } else {
+                $cat = CategoryStock::select('title', 'id')->find($item['categorystock_id']);
+                $cat_title[$cat->id] = $cat->title;
+                $title = $cat->title;
+            }
+            $stocks_res[$title][]=[
+                'title' => $item['title'],
+                'category_id' => $item['categorystock_id'],
+                'count' => $item['pivot']['count'],
+                'category_title' => $title,
+            ];
+        }
+        // сортировка end **************************************
+
+        // тип отображение start **************************************
+        $typeDocSortOrder=session('typeDocSortOrder', 'stocks');
+        // тип отображение end **************************************
+
         return view('doc/act', [
             'act' => $act,
+            'stocks' => $stocks_res,
             'cats' => $cats,
             'id' => $id,
             'showApparat' => $showApparat,
-            'urlFilter' => '/doc/act/' . $id
+            'urlFilter' => '/doc/act/' . $id,
+            'categoryDocSortOrder' => $categoryDocSortOrder,
+            'typeDocSortOrder' => $typeDocSortOrder,
         ]);
     }
 
     // сравнение актов
     public function compare(Request $request)
     {
-        $acts = Act::all();
+        $acts = Act::orderBy('created_at', 'desc')->get();
         $comp_results = [
             'ingredients' => [],
             'stocks' => [],
@@ -98,13 +131,10 @@ class ActController extends Controller
         ];
         $act1 = false;
         $act2 = false;
-
-
         if ($request->has('act1') && $request->has('act2')) {
 
             $act1 = Act::find($request->act1);
             $act2 = Act::find($request->act2);
-
             if (count($act1->ingredients) > 0) {
                 foreach ($act1->ingredients as $k => $ingredient) {
                     $count2 = 0;
@@ -137,49 +167,47 @@ class ActController extends Controller
                     ];
                 }
             }
-
-            /*
-            $kofeinyi_apparat1 = 0;
+            $kofeinyiapparat1 = 0;
+            $kofeinyiapparat2 = 0;
             if ($act1->kofeinyiapparat) {
-                $kofeinyi_apparat1 = $act1->kofeinyiapparat->count;
+                $kofeinyiapparat1 = $act1->kofeinyiapparat->count;
             }
 
-            $kofeinyi_apparat2 = 0;
             if ($act2->kofeinyiapparat) {
-                $kofeinyi_apparat2 = $act2->kofeinyiapparat->count;
+                $kofeinyiapparat2 = $act2->kofeinyiapparat->count;
             }
-            $comp_results['kofeinyi_apparat'] = [$kofeinyi_apparat1, $kofeinyi_apparat2];
-            */
 
+            $comp_results['kofeinyi_apparat'] = [
+                $kofeinyiapparat1,
+                $kofeinyiapparat2
+            ];
         }
         $cats = CategoryStock::all();
-
 
         $showApparat = true;
         if ($request->has('title')) {
             $showApparat = false;
         }
-
         if ($request->has('type')) {
             $showApparat = false;
         }
-
-
         if ($request->has('cat') && $request->cat == '20') {
             $showApparat = true;
         } elseif ($request->has('cat') && $request->cat !== '20') {
             $showApparat = false;
         }
-
-
+        // тип отображение start **************************************
+        $typeDocSortOrder=session('typeDocSortOrder', 'stocks');
+        // тип отображение end **************************************
         return view('doc.compare', [
-            'acts' => $acts,
+            'filter_acts' => $acts,
             'cats' => $cats,
             'comp_results' => $comp_results,
             'act1' => $act1,
             'act2' => $act2,
             'showApparat' => $showApparat,
-            'urlFilter' => '/doc/compare?act1=' . $request->act1 . '&act2=' . $request->act2
+            'urlFilter' => '/doc/compare?act1=' . $request->act1 . '&act2=' . $request->act2,
+            'typeDocSortOrder' => $typeDocSortOrder,
         ]);
     }
 
@@ -304,5 +332,16 @@ class ActController extends Controller
 
         }
     }
+
+    //установить порядок сортировки категорий
+    public function setCategoryDocSortOrder(Request $request){
+        session(['categoryDocSortOrder' => $request->sort]);
+        return back();
+    }
+    // установить тип отображения
+    public function setTypeDocSortOrder(Request $request){
+        session(['typeDocSortOrder' => $request->type]);
+        return back();
+   }
 
 }

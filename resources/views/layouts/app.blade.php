@@ -8,7 +8,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Billiards CRM</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
     <link rel="stylesheet" href="/css/auto-complete.css">
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
@@ -16,57 +15,24 @@
     <link rel="stylesheet" href="/dist/css/skins/skin-blue.min.css">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <link href="{{ asset('/css/my.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('/css/my.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
     <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
-
-    <link href="{{ asset('/css/order.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('/css/order.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('production/css/app.css') }}" rel="stylesheet">
-
-    {{--cтили верстальщика тупые --}}
-    @php
-        $name = Route::currentRouteName();
-    @endphp
-    <link rel="stylesheet" href="/css/pickmeup.css" type="text/css"/>
-    @if($name!=='stat'&&$name!=='order')
-        <link rel="stylesheet" media="screen" type="text/css" href="/css/demo.css"/>
-    @endif
+    {{--
+      cтили верстальщика
+      /css/demo.css подключать отдельно  в контэнтэ
+     --}}
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
     {{-- стили верстальщика  --}}
-
     <script>
         var LanguneThisJs = '@php  echo session('lng');@endphp';
     </script>
-    
-    {{-- скрипты верстальщика --}}
-    <script type="text/javascript" src="{{ asset('js/pickmeup.js') }}"></script>
-    {{-- скрипты верстальщика --}}
-
-    <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-
-    <script src="{{ asset('production/js/app.js') }}" defer></script>
-
-    {{--    старые скрипты --}}
-    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.maskedinput.min.js') }}"></script>
-    <script src="{{ asset('js/my.js') }}"></script>
-    {{--    старые скрипты --}}
-
 </head>
-<body class="hold-transition sidebar-mini ">
-@if(request()->has('cat'))
-    <style>
-        tr.catstock {
-            display: none !important;
-        }
-        tr.cat_{{request()->cat}}          {
-            display: table-row !important;
-        }
-    </style>
-@endif
+<body class="hold-transition sidebar-mini @if($SidebarToggle) sidebar-collapse @endif ">
+<a href="#x" class="overlay overlayDoc" id="win1"></a>
 <div class="wrapper" id="app">
     <header class="header__main">
         <a href="/" class="logo decstor">
@@ -74,7 +40,7 @@
             <span class="logo-lg"><img src="/img/logo 1.png" alt="logo"><span>BilliardCRM</span></span>
         </a>
         <nav class="navbar navbar-static-top">
-            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+            <a href="#" id="SidebarToggle" class="sidebar-toggle" data-toggle="push-menu" role="button">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -181,11 +147,12 @@
                             <ul class="treeview-menu">
                                 <li><a href="/table">@lang('site.add_table')</a></li>
                                 <li><a href="/tarif">@lang('site.add_tariff')</a></li>
-                                <li><a href="/user"> @lang('site.add_user')</a></li>
+                                <li><a href="/users"> @lang('site.add_user')</a></li>
                                 <li><a href="/discount">@lang('site.discount')</a></li>
                                 <li><a href="/cupon">@lang('site.coupons')</a></li>
                                 <li><a href="/socket">@lang('site.Socket')</a></li>
                                 <li><a href="/aprint">@lang('site.Print')</a></li>
+                                <li><a href="/apitokens">@lang('site.TitleApi')</a></li>
                             </ul>
                         </li>
                     @endif
@@ -210,18 +177,14 @@
                             <img src="/img/menu8.png" alt="Документы">
                             <span>@lang('act.title')</span>
                             <span class="pull-right-container">
-													<i class="fa fa-angle-left pull-right"></i>
-												</span>
+							   <i class="fa fa-angle-left pull-right"></i>
+							</span>
                         </a>
                         <ul class="treeview-menu">
                             @if( $user->hasRole('admin'))
                                 <li>
                                     <a href="/doc/act">
                                         <span>@lang('act.acts')</span></a>
-                                </li>
-                                <li>
-                                    <a href="/doc/compare">
-                                        <span>@lang('act.actSr')</span></a>
                                 </li>
                             @endif
                             <li>
@@ -249,19 +212,29 @@
                     </li>
 
                     <li class="active">
-                        <a href="/change">
+                        <a href="/changes">
                             <img src="/img/menu10.png" alt="Смена">
                             <span>@lang('site.change')</span>
                         </a>
                     </li>
-                    {{--
-                      <li class="active">
+
+                      <li  class="treeview">
                         <a href="">
                             <img src="/img/menu11.png" alt="Аналитика">
-                            <span>Аналитика</span>
+                            <span>@lang('site.analytics')</span>
+                            <span class="pull-right-container">
+							   <i class="fa fa-angle-left pull-right"></i>
+							</span>
                         </a>
+                          <ul class="treeview-menu">
+                              <li>
+                                  <a href="/analytic/attendance">
+                                      <span>@lang('site.analytic_attendance')</span>
+                                  </a>
+                              </li>
+                          </ul>
                     </li>
-                    --}}
+
                 @endif;
             </ul>
         </section>
@@ -272,5 +245,23 @@
         </section>
     </div>
 </div>
+
+    {{-- перенеcено в компонент Booking --}}
+    {{-- скрипты верстальщика --}}
+    {{-- <script type="text/javascript" src="{{ asset('js/pickmeup.js') }}"></script> --}}
+    {{-- скрипты верстальщика --}}
+
+    <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+    <script src="{{ asset('production/js/app.js') }}" ></script>
+    {{--    старые скрипты --}}
+    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.maskedinput.min.js') }}"></script>
+    <script src="{{ asset('js/my.js') }}"></script>
+    {{--    старые скрипты --}}
+
+
 </body>
 </html>

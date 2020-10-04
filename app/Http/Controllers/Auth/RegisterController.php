@@ -37,7 +37,7 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -53,37 +53,29 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \App\User
      */
     protected function create(array $data)
     {
 
         $path = $data['avatar']->store('public/avatars');
-
         $users = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'phone' => $data['phone'],
             'password' => bcrypt($data['password']),
             'avatar' => $path,
         ]);
-
-
-         $user = DB::insert('insert into users_roles (user_id, role_id) values (?, ?)', [$users->id, $data['roles']]);
-
+        $user = DB::insert('insert into users_roles (user_id, role_id) values (?, ?)', [$users->id, $data['roles']]);
         return $users;
     }
 
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
-
         event(new Registered($user = $this->create($request->all())));
-
         //The auto login code has been removed from here.
-
         return redirect($this->redirectPath());
     }
-
-//    $this->guard()->login($user);
 }

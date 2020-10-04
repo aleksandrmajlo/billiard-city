@@ -13,9 +13,10 @@ use Excel;
 
 class PurchaseinvoiceController extends Controller
 {
+
+    protected $pageCount=20;
     public function index(Request $request)
     {
-
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
             $purchaseinvoices = new Purchaseinvoice();
             $purchaseinvoices = Purchaseinvoice::orderBy('created_at', 'desc');
@@ -30,31 +31,28 @@ class PurchaseinvoiceController extends Controller
             if ($request->has('user_id') && !empty($request->user_id)) {
                 $purchaseinvoices = $purchaseinvoices->where('user_id', '=', $request->user_id);
             }
-
-            $purchaseinvoices = $purchaseinvoices->orderBy('created_at', 'desc')->paginate(10);
+            $purchaseinvoices = $purchaseinvoices->orderBy('created_at', 'desc')->paginate($this->pageCount);
 
         } else {
             $purchaseinvoices = Purchaseinvoice::orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate($this->pageCount);
         }
-
-        $roleIds = [3];
+        $roleIds = [3,2];
         $users = \App\User::whereHas('roles', function ($q) use ($roleIds) {
             $q->whereIn('id', $roleIds);
         })->get();
-
         return view('doc.purchaseinvoices', [
-            'purchaseinvoices' => $purchaseinvoices,
+            'purchaseinvoices' => $purchaseinvoices->appends($request->except('page')),
             'users' => $users,
             'this_url' => '/doc/purchaseinvoice'
         ]);
     }
-
     public function show($id){
         $purchaseinvoice=Purchaseinvoice::findOrFail($id);
         return view('doc.purchaseinvoice',[
             'purchaseinvoice'=>$purchaseinvoice,
-            'id'=>$id
+            'id'=>$id,
+            'this_url' => '/doc/purchaseinvoice/'.$id
         ]);
     }
 
@@ -77,21 +75,22 @@ class PurchaseinvoiceController extends Controller
         $purchaseinvoice = new Purchaseinvoice;
         $purchaseinvoice->user_id=$user->id;
         $purchaseinvoice->save();
-
         if($request->has('id_ingredients')){
             foreach ($request->id_ingredients as $k=>$id_ingredient){
-                $purchaseinvoice->ingredients()->attach($id_ingredient,['count'=>$request->count_ingredients[$k]]);
+                $purchaseinvoice->ingredients()->attach($id_ingredient,[
+                    'count'=>$request->count_ingredients[$k]]
+                );
             }
         }
         if($request->has('id_stocks')){
             foreach ($request->id_stocks as $k=>$id_stock){
-                $purchaseinvoice->stocks()->attach($id_stock,['count'=>$request->count_stocks[$k]]);
+                $purchaseinvoice->stocks()->attach($id_stock,[
+                    'count'=>$request->count_stocks[$k]
+                ]);
             }
         }
-
         // обновляем продукты и ингадиенты
         \App\Services\PurchaseinvoiceService::UpdateStockIngr($purchaseinvoice->id);
-
         return redirect('doc/purchaseinvoice')->with('success', true);
 
     }

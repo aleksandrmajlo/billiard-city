@@ -1,9 +1,5 @@
 @extends('layouts.app')
-@php
-    App::setLocale(session('lng'));
-@endphp
 @section('content')
-
     <div class="user statPageUser">
         <div class="user__title">
             <h2> @lang('site.stat')</h2>
@@ -45,7 +41,6 @@
                             </div>
                         @endif
                         <div class="col-md-5">
-
                             <div class="col-xs-4 col-xs-xs-xs-12 left-pad">
                                 <label>@lang('orders.date_from_to')</label>
                             </div>
@@ -58,7 +53,6 @@
                             <div class="col-xs-4 col-xs-xs-xs-12 left-pad">
                                 <label>@lang('orders.time_from_to')</label>
                             </div>
-
                             <div class="col-xs-8 col-xs-xs-xs-12 right-pad">
                                 <input class="order-time" value="{{request()->get('time_start')}}" name="time_start"
                                        type="time" placeholder="23:50">
@@ -73,8 +67,6 @@
                             </div>
 
                         </div>
-
-
                     </div>
                 </form>
             </div>
@@ -87,7 +79,6 @@
         </div>
         <div class="user_table acts__table">
             <table>
-
                 <tr class="td-one">
                     <td>id</td>
                     <td>Тип</td>
@@ -95,6 +86,7 @@
                     <td>@lang('site.date_end')</td>
                     <td>@lang('site.rabotnik')</td>
                     <td>@lang('site.summa')</td>
+                    <td>@lang('site.summaDiscount')</td>
                     <td></td>
                 </tr>
                 @foreach($orders as $order)
@@ -111,9 +103,17 @@
                             @if($order->user)
                                 {{$order->user->name}}
                             @endif
-
                         </td>
-                        <td> {{ $order->amount }}</td>
+                        <td>
+                            @if(is_null($order->fullamount))
+                                {{ $order->amount }}
+                            @else
+                               {{ $order->fullamount }}
+                            @endif
+                        </td>
+                        <td>
+                            {{ $order->amount }}
+                        </td>
                         <td>
                             <a href="/info/{{$order->id}}"><img src="/images/page-next.svg"></a>
                         </td>
@@ -122,7 +122,6 @@
             </table>
         </div>
         @include('pagination.default', ['paginator' => $orders])
-        {{--        {{ $orders->appends($_GET)->links() }}--}}
         <div>
             <div style="text-align: right">
                 @if(isset($ordersSum))
@@ -130,7 +129,5 @@
                 @endif
             </div>
         </div>
-
     </div>
-
 @endsection

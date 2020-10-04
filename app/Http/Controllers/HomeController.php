@@ -8,6 +8,7 @@ use App\Money;
 use App\Order;
 use App\Reservation;
 use App\Stock;
+use App\Table;
 use App\User;
 use ConsoleTVs\Charts\Builder\Chart;
 use Illuminate\Http\Request;
@@ -34,7 +35,6 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-
         if (empty(Session::get('lng'))) {
             if (\Illuminate\Support\Facades\Auth::user()) {
                 $userLang = Auth::user()->language;
@@ -92,11 +92,17 @@ class HomeController extends Controller
             ->paginate(10000);
 
 
-        // резерв
 
+        // резерв
+        $thisData = Carbon::now();
+        $thisData7 = Carbon::now();
+        $thisData7 = $thisData7->addDays(7);
         $reservs = Reservation::where('book', '!=', null)
-                               ->where('booking_from', '>=',date('Y-m-d').' 00:00:00')
+                               ->where('booking_from', '>=',$thisData->format('Y-m-d H:i:s'))
+                               ->where('booking_from', '<=',$thisData7->format('Y-m-d H:i:s'))
+                               ->orderBy('booking_from')
                                ->get();
+
         // пользователь
         $barmen=false;
         if(Auth::user()->hasRole('barmen')){

@@ -1,8 +1,6 @@
 @extends('layouts.app')
-@php
-    App::setLocale(session('lng'));
-@endphp
 @section('content')
+    <link rel="stylesheet" media="screen" type="text/css" href="/css/demo.css"/>
     <div>
         <div class="user">
             <div class="row">

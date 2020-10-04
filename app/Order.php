@@ -56,35 +56,6 @@ class Order extends Model
             return true;
         }
     }
-
-    /*
-    // сумма для даного заказа общая
-    public function getBarpriceAttribute()
-    {
-        $total = 0;
-        $bar_products = \App\Bar::where('order_id', '=', $this->id)
-            ->get();
-        if ($this->type_bar == 1) {
-            if ($bar_products) {
-                foreach ($bar_products as $bar_product) {
-                    $total += $bar_product->count * $bar_product->stock->price;
-                }
-                if (!is_null($this->customer_id)) {
-                    $customer = \App\Customer::where('id', $this->customer_id)->first();
-                    if ($customer && !is_null($customer->skidka_bar)) {
-                        $m1 = $total * $customer->skidka_bar / 100;
-                        $total = round(($total -  $m1), 2);
-                    }
-                }
-            }
-        }
-        if ($this->type_billiards == 1) {
-            return $this->amount;
-        }
-        return $total;
-    }
-    */
-
     public function change()
     {
         return $this->belongsTo('App\Change', 'changes_id');
@@ -120,16 +91,27 @@ class Order extends Model
         }
         
     }
-
     public   function user()
     {
         return $this->belongsTo('App\User');
     }
-
     public   function customer()
     {
         return $this->belongsTo('App\Customer');
     }
+    //резерв
+    public   function reservation()
+    {
+        return $this->belongsTo('App\Reservation');
+    }
 
+    // активные столы
+    public function scopeTableactive($query)
+    {
+        return $query->where('type_bar', 1)
+            ->where('closed', '=', null)
+            ->orderBy('created_at', 'desc');
+
+    }
     
 }

@@ -9,6 +9,7 @@ return [
     'detali'=>'Подробиці',
     'show_act'=>'Відкрити акт',
     'send'=>'Фільтрувати',
+    'filtr'=>'Фільтр',
     'reset'=>'Очистити',
     'start'=>'Початок',
     'end'=>'Кінець',
@@ -33,5 +34,5 @@ return [
     'thisCount'=>'Вказана кількість',
     'kofeinyi_apparat'=>'Кавовий апарат',
     'order_OrderForced'=>'Закрити примусово',
-    'excel'=>'Єкспорт в excel',
+    'excel'=>'Експорт в excel',
 ];

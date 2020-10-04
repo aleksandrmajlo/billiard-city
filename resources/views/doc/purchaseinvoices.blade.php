@@ -1,77 +1,51 @@
 @extends('layouts.app')
 @php App::setLocale(session('lng'));@endphp
 @section('content')
-
-    <section class="content-header">
-        <h1 class="mb-10">
-            @lang('purchaseinvoice.title')
-        </h1>
-    </section>
-
-    @if (\Session::has('success'))
-        <div class="alert alert-success">
-            @lang('purchaseinvoice.created')
-        </div>
-    @endif
-
-    @include('doc.filter')
-    <div class="container-fluid">
+    <div class="user">
         <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-body">
-                        <a href="{{url('doc/purchaseinvoiceCreate')}}" class="btn btn-primary">@lang('purchaseinvoice.new')</a>
-                    </div>
+            <div class="col-xs-6 col-xs-xs-12">
+                <div class="user__title">
+                    <h2>@lang('purchaseinvoice.title')</h2>
+                    @if (\Session::has('success'))
+                        <div class="alert alert-success">
+                            @lang('purchaseinvoice.created')
+                        </div>
+                    @endif
+                    @include('doc.filter')
                 </div>
             </div>
         </div>
+        <div class="blue liken">
+            <a href="#win1" class="overhead__buttom modalShow">
+                <img src="/img/user-plus.png" alt="user-plus">
+                <span> @lang('purchaseinvoice.new')</span>
+            </a>
+        </div>
+        <div class="user_table acts__table">
+            <table>
+                <tr class="td-one">
+                    <td>
+                        ID
+                    </td>
+                    <td>
+                        @lang('act.date')
+                    </td>
+                    <td>
+                        @lang('act.worker')
+                    </td>
+                </tr>
+                @foreach($purchaseinvoices as $act)
+                    <tr>
+                        <td>
+                            <a href="{{url('/doc/purchaseinvoice/'.$act->id)}}">{{$act->id}}</a>
+                        </td>
+                        <td>{{$act->created_at}}</td>
+                        <td>{{$act->user->name}}</td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
+        @include('pagination.default', ['paginator' => $purchaseinvoices])
     </div>
-
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        @if($purchaseinvoices)
-                            <div class="box-body">
-                                    <div class="table-responsive">
-                                        <table id="ActsTable" class="table table-bordered table-striped">
-                                            <thead>
-                                            <tr>
-                                                <td>
-                                                </td>
-                                                <td>
-                                                    @lang('act.date')
-                                                </td>
-                                                <td>
-                                                    @lang('act.worker')
-                                                </td>
-                                                <td>
-                                                    @lang('act.detali')
-                                                </td>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @foreach($purchaseinvoices as $act)
-                                                <tr>
-                                                    <td>{{$act->id}}</td>
-                                                    <td>{{$act->created_at}}</td>
-                                                    <td>{{$act->user->name}}</td>
-                                                    <td>
-                                                        <a class="btn " href="{{url('/doc/purchaseinvoice/'.$act->id)}}"> @lang('act.show_act')</a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            </tbody>
-                                        </table>
-                                </div>
-                                {{ $purchaseinvoices->appends($_GET)->links() }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    @include('doc.purchaseinvoiceCreatePopup')
 @endsection

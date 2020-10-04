@@ -21,42 +21,56 @@ use DB;
 
 class ChangeController extends Controller
 {
+    protected $countPage = 20;
 
     public function index(Request $request)
     {
-        $user_id = Auth::id();
         $user = Auth::user();
-        $changes = Change::orderBy('created_at', 'desc')
-            ->where('user_id', '=', $user_id)
-            ->paginate(10);
+        $isAdmin = false;
+        $req_user = false;
         if ($user->hasRole('admin')) {
-            $changes = Change::orderBy('created_at', 'desc')
-                ->paginate(10);
+            $isAdmin = true;
             if ($request->all()) {
                 $changes = new Change();
-                if (isset($request->ot)) {
-                    $changes = $changes->where('start', '>=', $request->ot);
+                if (isset($request->start)) {
+                    $start = explode('.', $request->start);
+                    $changes = $changes->where('start', '>=',$request->start . ' 00:00:00');
                 }
-                if (isset($request->do)) {
-                    $changes = $changes->where('stop', '<=', $request->do);
+                if (isset($request->stop)) {
+                    $changes = $changes->where('stop', '<=', $request->stop . ' 23:59:59');
                 }
-                if (isset($request->work) && $request->work != 0) {
-                    $changes = $changes->where('user_id', $request->work);
+                if (isset($request->user_id) && $request->user_id !== "0") {
+                    $req_user = $request->user_id;
+                    $changes = $changes->where('user_id', '=', $request->user_id);
                 }
-                $changes = $changes->paginate(20);
+                $changes = $changes->orderBy('created_at', 'desc')->paginate($this->countPage);
+
+            } else {
+                $changes = Change::orderBy('created_at', 'desc')->paginate($this->countPage);
+//                $changes = Change::paginate($this->countPage);
             }
+        } else {
+
+            $changes = Change::orderBy('created_at', 'desc')
+                ->where('user_id', '=', $user->id)
+                ->paginate($this->countPage);
+
         }
         $workers = User::all();
-        $tables = Table::all();
+        return view('change.index',[
+            'changes'=>$changes->appends($request->except('page')),
+            'workers'=>$workers,
+            'req_user'=>$req_user,
+            'isAdmin' =>$isAdmin
+        ]);
 
-        return view('change', compact('changes', 'workers', 'tables'));
     }
 
     // открытие смены !!!!!!!!!!!!!нерабочее для бармена точно !!!!!!!!!!!!!!!
-    public function create(Request $request)
+    public function store(Request $request)
     {
-
         if (Auth::user()->hasRole('manager')) {
+
             $changes = Change::where('stop', '=', null)->get();
             foreach ($changes as $change) {
                 $userChange = DB::select('select * from users_roles where user_id = ?', array($change->user_id));
@@ -66,69 +80,88 @@ class ChangeController extends Controller
                     $change->save();
                 }
             }
-        }
-        /*
-        if (Auth::user()->hasRole('barmen')) {
+            $user_id=Auth::user()->id;
 
-            $changes = Change::where('stop', '=', null)->get();
-            foreach ($changes as $change) {
-                $userChange = DB::select('select * from users_roles where user_id = ?', array($change->user_id));
-                if ($userChange[0]->role_id == 3) {
-                    $change = Change::find($change->id);
-                    $change->stop = Carbon::now()->format('Y-m-d H:i:s');
-                    $change->save();
-                }
+            $change = new Change;
+            $change->user_id = $user_id;
+            $change->summa_start = $request->summa_start;
+            $change->summa_end = null;
+            $change->start = Carbon::now()->format('Y-m-d H:i:s');
+            $change->stop = null;
+            $change->save();
+            return redirect('/')->with('status', 'зміна відкрита!');
+
+        }
+
+
+    }
+
+    public function show($id)
+    {
+        $change = Change::findOrFail($id);
+        $orders = Order::where('user_id', $change->user_id)
+            ->where('changes_id', $change->id)
+            ->paginate(10);
+        return view('change.show', compact(
+            'change',
+            'orders'
+        ));
+    }
+
+    public function change_open(Request $request)
+    {
+
+        if (Auth::user()->hasRole('manager')) {
+            return view('change.open_manager', [
+            ]);
+        } elseif (Auth::user()->hasRole('barmen')) {
+            return view('change.open_barmen');
+        } else {
+            abort('404');
+        }
+
+    }
+
+    public function closeBarmenFormView(Request $request)
+    {
+        if ($request->has('id')) {
+            $change = \App\Change::find($request->id);
+            if (!is_null($change->stop)) {
+                return redirect('/')->with('status', 'Cмена уже закрыта');
             }
+            if (Auth::user()->hasRole('manager')) {
+                return view('change.close_manager', [
+                    'id' => $request->id
+                ]);
+            } elseif (Auth::user()->hasRole('barmen')) {
+                return view('change.close_barmen');
+            } else {
+                abort('404');
+            }
+        } else {
+            abort('404');
         }
-        */
+    }
 
-        $change = new Change;
-        $change->user_id = $request->user_id;
-        $change->summa_start = $request->summa_start;
-        $change->summa_end = null;
-        $change->start = Carbon::now()->format('Y-m-d H:i:s');
-        $change->stop = null;
+    public function closeChangeManagerView(Request $request)
+    {
+        return view('change.close_manager', [
+            'id' => $request->id
+        ]);
+    }
+
+    public function closeChangeManager(Request $request)
+    {
+
+        $change = Change::find($request->id);
+        $change->summa_end = $request->summa_end;
+        $change->stop = Carbon::now()->format('Y-m-d H:i:s');
         $change->save();
-
-        /*
-        if (Auth::user()->hasRole('barmen')) {
-            $act = new Act;
-            $act->user_id = $request->user_id;
-            $act->change_id = $change->id;
-            $act->save();
-            if ($request->has('ingredients')) {
-                foreach ($request->ingredients as $k => $ingredient) {
-                    $ing = Ingredient::find($ingredient);
-                    $act->ingredients()->save($ing, ['count' => $request->count_ingredients[$k]]);
-                }
-            }
-            if ($request->has('stocks')) {
-                foreach ($request->stocks as $k => $stock) {
-                    $st = Stock::find($stock);
-                    $act->stocks()->save($st, ['count' => $request->count_stocks[$k]]);
-                }
-            }
-            ActService::UpdateStockIngr($act->id);
-            ActService::CreateValidate($request->all(), $act->id,$change->id);
-
-            $kofeinyiapparat = new Kofeinyiapparat();
-            $kofeinyiapparat->count = $request->kofeinyi_apparat;
-            $kofeinyiapparat->act_id = $act->id;
-            $kofeinyiapparat->save();
-            //обновление общего кол-ва кофе
-            Kofeinyiapparatcount::add($request->kofeinyi_apparat);
-
-            // создание акта расходные накладные
-            ActService::CreateConsumableinvoice($change);
-        }
-        */
-
-
-        return redirect('/')->with('status', 'зміна відкрита!');
+        return redirect('/')->with('status', 'Close change!');
     }
 
 
-
+    /*
     // закрытие смены !!!!!!!!!!!!!нерабочее для бармена точно !!!!!!!!!!!!!!!
     public function closeChange(Request $request)
     {
@@ -137,44 +170,8 @@ class ChangeController extends Controller
         $change->summa_end = $request->summa_end;
         $change->stop = Carbon::now()->format('Y-m-d H:i:s');
         $change->save();
-
-        /*
-        if (Auth::user()->hasRole('barmen')) {
-            $act = new Act;
-            $act->user_id = $change->user_id;
-            $act->change_id = $change->id;
-            $act->type = 2;
-            $act->save();
-            if ($request->has('ingredients')) {
-                foreach ($request->ingredients as $k => $ingredient) {
-                    $ing = Ingredient::find($ingredient);
-                    $act->ingredients()->save($ing, ['count' => $request->count_ingredients[$k]]);
-                }
-            }
-            if ($request->has('stocks')) {
-                foreach ($request->stocks as $k => $stock) {
-                    $st = Stock::find($stock);
-                    $act->stocks()->save($st, ['count' => $request->count_stocks[$k]]);
-                }
-            }
-            ActService::UpdateStockIngr($act->id);
-            // создание акта расходные накладные
-//            ActService::CreateConsumableinvoice($change);
-
-            $kofeinyiapparat = new Kofeinyiapparat();
-            $kofeinyiapparat->count = $request->kofeinyi_apparat;
-            $kofeinyiapparat->act_id = $act->id;
-            $kofeinyiapparat->save();
-            //обновление общего кол-ва кофе
-            Kofeinyiapparatcount::add($request->kofeinyi_apparat);
-
-        }
-        */
-
         return redirect('/')->with('status', 'Close change!');
     }
-
-
     public function seeChange($id)
     {
         $change = Change::findOrFail($id);
@@ -197,5 +194,7 @@ class ChangeController extends Controller
             'amountCountChange'
         ));
     }
+    */
+
 
 }

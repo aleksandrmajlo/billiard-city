@@ -23,6 +23,7 @@
         mounted() {
             if (this.pause == "-1") {
                 window.setInterval(() => {
+                    /*
                     var TimezoneOffset = 2; // указать нужное смещение по Гринвичу, сюда вписывать ваш часовой пояс (+2)
                     var localTime = new Date();
                     var ms =
@@ -31,6 +32,9 @@
                         TimezoneOffset * 3600000;
                     var time = new Date(ms);
                     this.now = Math.trunc(time.getTime() / 1000);
+
+                     */
+                    this.now =Math.trunc(new Date().getTime() / 1000)
                 }, 1000);
             }
         },

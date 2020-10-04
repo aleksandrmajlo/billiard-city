@@ -1,75 +1,59 @@
 @extends('layouts.app')
-@php App::setLocale(session('lng'));@endphp
 @section('content')
-    <section class="content-header">
-        <h1 class="mb-10">
-            @lang('writeof.title')
-        </h1>
-    </section>
-    @if (\Session::has('success'))
-        <div class="alert alert-success">
-            @lang('writeof.created')
-        </div>
-    @endif
-    @include('doc.filter')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-body">
-                        <a href="{{url('doc/writeof/create')}}" class="btn btn-primary">
-                            @lang('writeof.new')
-                        </a>
-                    </div>
+    <div class="user">
+        <div class="row mb-20">
+            <div class="col-xs-6 col-xs-xs-12">
+                <div class="user__title">
+                    <h2>@lang('writeof.title')</h2>
+                    @if (\Session::has('success'))
+                        <div class="alert alert-success">
+                            @lang('writeof.created')
+                        </div>
+                    @endif
+                    @include('doc.filter')
                 </div>
             </div>
         </div>
-    </div>
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        @if($purchaseinvoices)
-                            <div class="box-body">
-                                <div class="table-responsive">
-                                    <table id="ActsTable" class="table table-bordered table-striped">
-                                        <thead>
-                                        <tr>
-                                            <td>
-                                            </td>
-                                            <td>
-                                                @lang('act.date')
-                                            </td>
-                                            <td>
-                                                @lang('act.worker')
-                                            </td>
-                                            <td>
-                                                @lang('act.detali')
-                                            </td>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($purchaseinvoices as $act)
-                                            <tr>
-                                                <td>{{$act->id}}</td>
-                                                <td>{{$act->created_at}}</td>
-                                                <td>{{$act->user->name}}</td>
-                                                <td>
-                                                    <a class="btn " href="{{url('/doc/writeof/'.$act->id)}}"> @lang('act.show_act')</a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {{ $purchaseinvoices->appends($_GET)->links() }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
+        <div class="blue liken">
+            <a href="#win1" class="overhead__buttom modalShow">
+                <img src="/img/user-plus.png" alt="user-plus">
+                <span> @lang('writeof.new')</span>
+            </a>
+           <!--
+            <form method="get" name="searchform" id="searchform" action="">
+                <input name="" type="text" placeholder=''>
+                <button type="submit"><img src="/img/search.png" alt="search"></button>
+            </form>
+            -->
+        </div>
+
+
+        <div class="user_table acts__table">
+            <table>
+                <tr class="td-one">
+                    <td>
+                        ID
+                    </td>
+                    <td>
+                        @lang('act.date')
+                    </td>
+                    <td>
+                        @lang('act.worker')
+                    </td>
+                </tr>
+                @foreach($purchaseinvoices as $act)
+                    <tr>
+                        <td>
+                            <a class="btn " href="{{url('/doc/writeof/'.$act->id)}}">{{$act->id}}</a>
+                        </td>
+                        <td>{{$act->created_at}}</td>
+                        <td>{{$act->user->name}}</td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
+        @include('pagination.default', ['paginator' => $purchaseinvoices])
+    </div>
+    @include('doc.writeofCreatePopup')
 @endsection

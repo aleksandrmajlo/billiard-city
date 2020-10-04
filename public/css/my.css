@@ -17,6 +17,7 @@
 span.select2-selection.select2-selection--single {
 	min-width: 150px !important;
 }
+
 #sock td {
 	padding: 10px;
 	border-bottom: 1px solid silver;
@@ -27,12 +28,13 @@ span.select2-selection.select2-selection--single {
 }
 
 a:hover {
-    cursor: pointer !important;
+	cursor: pointer !important;
 }
+
 .select2-container--default .select2-selection--single .select2-selection__arrow {
 	height: 26px;
 	position: absolute;
-	top: 10px  !important;
+	top: 10px !important;
 	right: 1px;
 	width: 20px;
 }
@@ -60,15 +62,9 @@ a:hover {
 }
 
 .select2-container {
-
 	width: 100% !important;
-
 }
 
-
-/*#id2 {
-	font-size: 10px;
-}*/
 .col-xs-12 {
 	padding-bottom: 5px;
 }
@@ -109,17 +105,19 @@ a:hover {
 	border-color: #367fa9;
 	color: white;
 	margin: 0 0 10px 10px;
-    font-size: 12px;
-    height: auto!important;
+	font-size: 12px;
+	height: auto !important;
 }
+
 #id3 {
 	background-color: #f39c12;
 	border-color: #e08e0b;
 	color: white;
 	font-size: 12px;
-    height: auto!important;
-    margin: 0 0 10px 10px;
+	height: auto !important;
+	margin: 0 0 10px 10px;
 }
+
 label {
 	margin-top: 7px;
 }
@@ -132,10 +130,8 @@ div#fb-root {
 	color: red;
 }
 
-
 @media screen and (max-width: 900px) {
-	.table-container
-	{
+	.table-container {
 		width: 100%;
 		overflow-y: auto;
 		_overflow: auto;
@@ -143,13 +139,6 @@ div#fb-root {
 	}
 }
 
-body {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size: 14px;
-	line-height: 1.42857143;
-	color: #333;
-	background-color: #fff;
-}
 .form-control {
 	display: block;
 	width: 100%;
@@ -162,12 +151,12 @@ body {
 	background-image: none;
 	border: 1px solid #ccc;
 	border-radius: 4px;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-	-webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-	transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
 }

@@ -105,8 +105,8 @@ class CloseBarmen extends Controller
                         $ing = Ingredient::find($product['id']);
                         if(floatval($product['result'])!==floatval($ing->count)){
                             $ingredients[]=[
-                                'thisCount' => round($ing->count,2),
-                                'oldCount' => round($product['result'],2),
+                                'thisCount' =>  round($product['result'],2),
+                                'oldCount' =>round($ing->count,2),
                                 'title' => $ing->title
                             ];
                         }
@@ -117,8 +117,8 @@ class CloseBarmen extends Controller
                         $st = Stock::find($product['id']);
                         if(floatval($product['result'])!==floatval($st->count)){
                             $stocks[]=[
-                                'thisCount' => round($st->count,2),
-                                'oldCount' => round($product['result'],2),
+                                'thisCount' => round($product['result'],2),
+                                'oldCount' => round($st->count,2),
                                 'title' => $st->title
                             ];
                         }
@@ -146,6 +146,7 @@ class CloseBarmen extends Controller
                 'success' => true,
                 'url' => env('APP_URL'),
             ], 200);
+
         }
 
     }

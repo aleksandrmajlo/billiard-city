@@ -4,15 +4,15 @@
             <div class="col-md-10">
                 <div class="inventory">
                     <div class="inventory_title">
-                        <h1>{{text1}} - {{title}}</h1>
+                        <h1>{{$t('InventoryOpenChange')}} - {{title}}</h1>
                         <span :style="{borderColor:borderColorActivePage}">{{ActivePage}}</span>
                     </div>
                     <div class="inventory_table">
                         <table>
                             <tr>
-                                <td>{{text2}}</td>
-                                <td v-if="show_count_sklad">{{text3}}</td>
-                                <td>{{text4}}</td>
+                                <td>{{$t('Cart1')}}</td>
+                                <td v-if="show_count_sklad">{{$t('NaSklade')}}</td>
+                                <td>{{$t('Actually')}}</td>
                             </tr>
 
                             <tr v-for="(product,index) in products[ActiveCategory]"
@@ -36,8 +36,6 @@
                                            @input="setCount(product.id,$event)"/>
                                 </td>
                             </tr>
-
-
                         </table>
                     </div>
                     <div class="batton_block">
@@ -69,19 +67,16 @@
                     </ul>
                 </div>
             </div>
-
         </div>
-
-
         <div class="row" v-show="LastStep">
             <div class="col-md-10">
                 <div class="inventory">
                     <div class="inventory_table two">
                         <table>
                             <tr>
-                                <td>{{text2}}</td>
-                                <td v-if="show_count_sklad">{{text3}}</td>
-                                <td>{{text4}}</td>
+                                <td>{{$t('Cart1')}}</td>
+                                <td v-if="show_count_sklad">{{$t('NaSklade')}}</td>
+                                <td>{{$t('Actually')}}</td>
                             </tr>
                             <tr id="kava_tr">
                                 <td>
@@ -116,7 +111,7 @@
                             <tr>
                                 <td><img src="/img/table-many.png" alt=""></td>
                                 <td>{{text7}}</td>
-                                <td>{{text4}}</td>
+                                <td>{{$t('Actually')}}</td>
                             </tr>
                             <tr>
                                 <td>
@@ -170,25 +165,6 @@
                 ChangeId: false,
                 summa: '',
                 lang: {
-                    text1: {
-                        ru: "Инвентаризация (открытие смены)",
-                        ua: "Інвентаризація (відкриття зміни)"
-                    },
-
-                    text2: {
-                        ru: "Наименование",
-                        ua: "Найменування"
-                    },
-
-                    text3: {
-                        ru: "На складе",
-                        ua: "На складі"
-                    },
-
-                    text4: {
-                        ru: "Фактически",
-                        ua: "Фактично"
-                    },
 
                     text5: {
                         ru: "ДАЛЕЕ",
@@ -214,12 +190,13 @@
                         ru: "Открыть смену",
                         ua: "Відкрити зміну"
                     },
+
                 }
             };
         },
         created() {
             axios
-                .get("/сhange_data/category")
+                .get("/change_data/category")
                 .then(response => {
                     response.data.cats.forEach(element => {
                         this.cats.push(element);
@@ -230,11 +207,11 @@
                     this.summaChange = response.data.summaChange;
                     this.ChangeId = response.data.ChangeId;
                     this.kava.count = response.data.kavaCount;
-
                     // для тэста ******************
-                    if('billiard-city.local'==location.hostname){
+                    if('p.billiard-city.local'==location.hostname){
                         this.tt();
                     }
+
                 })
                 .catch(error => {
                 })
@@ -271,18 +248,7 @@
                     return false;
                 }
             },
-            text1() {
-                return this.lang.text1[LanguneThisJs];
-            },
-            text2() {
-                return this.lang.text2[LanguneThisJs];
-            },
-            text3() {
-                return this.lang.text3[LanguneThisJs];
-            },
-            text4() {
-                return this.lang.text4[LanguneThisJs];
-            },
+
             text5() {
                 return this.lang.text5[LanguneThisJs];
             },
@@ -380,7 +346,7 @@
             // отправка формы
             Submit() {
                 if (this.validateSubmit()) {
-                    this.showShwal('info',this.$t('change_send'));
+                    this.showShwal('info',this.$t('change_send'),false);
                     let data = {
                         products: this.products,
                         summa: this.summa,
@@ -388,13 +354,18 @@
                         kofeinyi_apparat: this.kava.result
                     };
                     axios
-                        .post("/сhange_data/OpenSubmit", data)
+                        .post("/change_data/OpenSubmit", data)
                         .then(response => {
                             location = response.data.url;
+                            this.$swal.close();
+
                         })
                         .catch(error => {
+                            this.$swal.close();
+                            this.showShwal('error',this.$t('error'));
                         })
                         .finally(function () {
+
                         });
                 }
             },
@@ -403,7 +374,7 @@
                 var self = this;
                 for (var i in this.products) {
                     this.products[i].forEach((product) => {
-                        Vue.set(product, 'result', 50);
+                        Vue.set(product, 'result', 50.11);
                     })
                 }
             }

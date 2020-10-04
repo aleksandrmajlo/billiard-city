@@ -1,38 +1,37 @@
 @extends('layouts.app')
-@php
-    App::setLocale(session('lng'));
-@endphp
 @section('content')
-
     {{-- старый код --}}
     <div class="row">
         <div class="col-sx-12">
             <div class="shift">
                 @if($manager || $barmen)
                     @if($openChangeId == null)
-                        <form action="{{route('open_change')}}" method="get">
-                            <input type="hidden" name="user_id" value="{{Auth::user()->id}}">
-                            <button class="analytic compare__buttom mini"> @lang('act.open_smena')</button>
-                        </form>
+                            <a href="{{route('change_open')}}" class="analytic compare__buttom mini"> @lang('act.open_smena')</a>
                     @endif
                 @endif
                 @if(isset($openChangeSumStart))
                     @if($manager || $barmen)
                         @if($openChangeId != null)
                             @if($openChangeId != null)
-                                <form action="{{route('close_change')}}" method="get">
-                                    <button class="analytic compare__buttom mini"> @lang('act.close_smena')</button>
-                                    <input type="hidden" name="id" value="{{$openChangeId}}">
-                                </form>
+                                @if($manager)
+                                        <form action="{{route('closeManagerForm')}}" method="get">
+                                            <button class="analytic compare__buttom mini"> @lang('act.close_smena')</button>
+                                            <input type="hidden" name="id" value="{{$openChangeId}}">
+                                        </form>
+                                @elseif($barmen)
+                                        <form action="{{route('closeBarmenForm')}}" method="get">
+                                            <button class="analytic compare__buttom mini"> @lang('act.close_smena')</button>
+                                            <input type="hidden" name="id" value="{{$openChangeId}}">
+                                        </form>
+                                @endif
+
                             @endif
                         @endif
                     @endif
                 @endif
-
             </div>
         </div>
     </div>
-
     {{-- старый код end --}}
     <div class="row">
         <div class="col-sm-3 col-sm-push-9 col-md-4 col-md-push-8">
@@ -60,12 +59,11 @@
                         </div>
                     </div>
                 @endif
-
                 @if(!$barmen)
                     <div class="col-xs-xs-12 col-xs-6 col-sm-12">
                         <div class="info__block orange__bg">
                             <div class="info__block-title">
-                                <p class="title"><img src="img/snooker.png" alt="Billiard">Billiard</p>
+                                <p class="title"><img src="/img/snooker.png" alt="Billiard">Billiard</p>
                             </div>
                             <div class="info__block-info">
                                 <p><span>{{$change_stat['table_count']}}</span><span
@@ -81,8 +79,6 @@
                         </div>
                     </div>
                 @endif
-
-
                 <div class="col-xs-xs-12 col-xs-6 col-sm-12 hidden-sm hidden-xs">
                     <div class="info__block blue__bg ">
                         <div class="info__block-title">
@@ -95,10 +91,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
         <div class="col-sm-9 col-sm-pull-3 col-md-8 col-md-pull-4">
             @if(!$manager)
                 <div class="table_block blue">
@@ -125,9 +119,7 @@
                                                     </div>
                                                 </a>
                                             @else
-
                                             @endif
-
                                         </td>
                                         <td>
                                             <a href="/order-closed/{{$order->id}}">
@@ -151,7 +143,6 @@
 
                 </div>
             @endif
-
             @if(!$barmen)
                 {{--столы!!!!!!--}}
                 <div class="table_block orange">
@@ -171,7 +162,7 @@
                                                         @else
                                                         pause="-1"
                                                         @endif
-                                                        date="{{Carbon\Carbon::parse($open_table->start )->timestamp}}">
+                                                        date="{{Carbon\Carbon::parse($open_table->start)->timestamp}}">
                                                 </timer-table>
                                                 <span class="openText">@lang('table.open')</span>
                                             </div>
@@ -192,7 +183,6 @@
 
                         </table>
                     </div>
-
                     @if(!is_null($openChangeId))
                         <a class="btn-plus" href="{{route('open_table')}}"><img src="/img/btn-plus.png" alt="btn"></a>
                     @endif
@@ -225,7 +215,10 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td><img src="/img/user.png" alt="number"></td>
+                                    <td>
+                                        <img src="/img/user.png" alt="number">
+                                        {{$reserv->name}} {{$reserv->lastname}}
+                                    </td>
                                     <td><img src="/img/colendar-s.png"
                                              alt="number">{{ Carbon\Carbon::parse($reserv->booking_from )->format('d-m-Y') }}
                                     </td>

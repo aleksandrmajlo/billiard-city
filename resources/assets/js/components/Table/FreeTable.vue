@@ -26,11 +26,7 @@
                 this.openChangeId=response.data.openChangeId;
                 this.isAdmin=response.data.isAdmin;
                 if(!this.openChangeId&&!this.isAdmin){
-                    this.$swal.fire({
-                        icon: 'error',
-                        text: 'Необхідно відкрити зміну',
-                        showConfirmButton: false,
-                    });
+                    this.showShwal('info',this.$t('open_change_error'))
                 }
             })
         },

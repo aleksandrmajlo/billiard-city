@@ -77,7 +77,7 @@ class OrderController extends Controller
     }
 
     /**
-     * сохранение заказа
+     * сохранение заказа для бара
      */
     public function store(Request $request)
     {
@@ -122,14 +122,12 @@ class OrderController extends Controller
         }
         $pr[] = $stock->price * (int)$counts[$k];
 
-
         if (Auth::user()) {
             $user = Auth::user()->id;
             $change = Change::where('user_id', $user)
                 ->where('stop', null)
                 ->first();
         }
-
         $orderCreate = new Order();
         $orderCreate->user_id = Auth::user()->id;
         $orderCreate->customer_id = $request->customer;
@@ -402,15 +400,6 @@ class OrderController extends Controller
          */
         $PriceResults = OrderService::getOrderProductPrice($order, $count, $countPause, $endValidate, $minStartValue);
 
-        /*
-        $LogData['minutes'] = [];
-        $tz = config('app.timezone');
-        foreach ($LogData['price'] as $k => $item) {
-            $startCarbon = new Carbon($s1, $tz);
-            $thisTime = $startCarbon->addMinutes($k);
-            $LogData['minutes'][] = $thisTime->format('H:i');
-        }
-        */
 
         return view('order.orderClosed',
             [
@@ -448,16 +437,15 @@ class OrderController extends Controller
 
 
     // само закрытие заказа бара
+    // Вроде не рабочее !!!!!!!!!!!!!!!!!!!!!!!!
     public function orderBarClosedOrder(Request $request)
     {
-
         if (Auth::user()) {
             $user = Auth::user()->id;
             $change = Change::where('user_id', $user)
                 ->where('stop', null)
                 ->first();
         }
-
         $orderUpdate = Order::find($request->id);
         $orderUpdate->status = 1;
         $orderUpdate->info = $request->info;

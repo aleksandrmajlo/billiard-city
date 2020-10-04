@@ -32,7 +32,6 @@ class TableController extends Controller
     // получение всех столов
     public function getTables()
     {
-
         $tables = Table::orderBy('posiiton', 'desc')->get();
         $reservTable[] = 0;
         $reserv = Reservation::where('book', null)
@@ -108,14 +107,11 @@ class TableController extends Controller
     // открытие стола
     public function AddTable(Request $request)
     {
-
         app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $request->table]);
-
         $customer = null;
         if ($request->user == 'client') {
             $customer = $request->client;
         }
-
         $reservation = new Reservation();
         $reservation->id_table = $request->table;
         $reservation->id_user = Auth::user()->id;

@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     $('#addIngredientForm').submit(function (e) {
         e.preventDefault();
         let formData = new FormData(this);
@@ -13,7 +12,6 @@ $(document).ready(function () {
                 alert('Ошибка.Попробуйте позже')
             });
     });
-
     if ($('#IngredientTable').length) {
         if (LanguneThisJs == 'ua') {
             var url = "//cdn.datatables.net/plug-ins/1.10.20/i18n/Ukrainian.json";
@@ -32,7 +30,6 @@ $(document).ready(function () {
             }, ]
         });
     };
-
     if ($('.DataTable').length) {
         if (LanguneThisJs == 'ua') {
             var url = "//cdn.datatables.net/plug-ins/1.10.20/i18n/Ukrainian.json";
@@ -46,33 +43,9 @@ $(document).ready(function () {
             "pageLength": 50,
         });
     };
-
     if ($('.select2').length) {
         $('.select2').select2();
     }
-
-
-    // добавить составляющую
-    $('#addProdIng').click(function (e) {
-        e.preventDefault();
-        let $html = $('#invoiceItemtmpl').html();
-        $('#addPurchaseinvoiceItem').append($html);
-        $('#addPurchaseinvoiceItem .select2Din').select2();
-    });
-
-    // добавить продукт
-    $('#addProd').click(function (e) {
-        e.preventDefault();
-        let $html = $('#productItemtmpl').html();
-        $('#addPurchaseProduct').append($html);
-        $('#addPurchaseProduct .select2Din').select2();
-    });
-
-    $('body').on('click', '.removeItem', function (event) {
-        event.preventDefault();
-        $(this).parents('.addPurchaseinvoiceItem').remove();
-    });
-
     if ($('.selectCustomer').length) {
         $('.selectCustomer').select2();
         $('.selectCustomer').change(function () {
@@ -87,8 +60,6 @@ $(document).ready(function () {
             $('#phons').val(v);
         })
     }
-
-
     //****************** заказ на странице  столов ***********************************
     $('#SmsModalShow').click(function (e) {
         e.preventDefault();
@@ -100,14 +71,81 @@ $(document).ready(function () {
     })
     //****************** заказ на странице  столов end***********************************
 
+
+
+})
+
+$(document).ready(function () {
+
+    if ($('[name="act1"]').length) {
+        let $act1 = $('[name="act1"]');
+        $act1.change(function (e) {
+            let selected = $('option:selected', $act1);
+            let title = '№' + selected.attr('value') + ' от ' + selected.data('date');
+            $('.act1_title').text(title).removeClass('hidden');
+            $('.act1_user').text(selected.data('user')).removeClass('hidden');
+            $('.act1_change').text(selected.data('change')).removeClass('hidden');
+        }).trigger('change')
+    }
+
+    if ($('[name="act2"]').length) {
+        let $act2 = $('[name="act2"]');
+        $act2.change(function (e) {
+            let selected = $('option:selected', $act2);
+            let title = '№' + selected.attr('value') + ' от ' + selected.data('date');
+            $('.act2_title').text(title).removeClass('hidden');
+            $('.act2_user').text(selected.data('user')).removeClass('hidden');
+            $('.act2_change').text(selected.data('change')).removeClass('hidden');
+        }).trigger('change')
+    }
+
+
+});
+
+$(document).ready(function () {
+
+    $('.categoryDocSortOrder').click(function (e) {
+        e.preventDefault();
+        let sort = $(this).data('sort');
+        $('[name="sort"]').val(sort);
+        document.getElementById('categoryDocSortOrderForm').submit();
+    });
+
+    $('.typeDocSortOrder').click(function (e) {
+        e.preventDefault();
+        let sort = $(this).data('sort');
+        $('[name="type"]').val(sort);
+        document.getElementById('typeDocSortOrderForm').submit();
+    });
+
     //модалка
     $('.modalShow').click(function (e) {
         e.preventDefault();
-        $('#win1').addClass('target')
-    })
-    $('#closeWin,#win1').click(function (e) {
-        e.preventDefault();
-        $('#win1').removeClass('target');
+        $('.overlayDoc').addClass('target');
+        $('#readOrderWin').addClass('target');
     })
 
-})
+    $('a[href="#win1"].liken__buttom').click(function (e) {
+        e.preventDefault();
+        $('.overlayDoc').addClass('target');
+        $('#compareActWin').addClass('target');
+    });
+
+    $('#closeCompareActWin,.overlayDoc,#closeWin').click(function (e) {
+        e.preventDefault();
+        $('.overlayDoc').removeClass('target');
+        $('#compareActWin').removeClass('target');
+        $('#readOrderWin').removeClass('target');
+    });
+
+    // cайт бар
+    $('#SidebarToggle').click(function () {
+        setTimeout(() => {
+            let bodyClass = $('body').hasClass('sidebar-collapse');
+            axios.post('/ajax/setSidebarToggle', {
+                type: bodyClass
+            })
+        }, 50);
+    })
+
+});

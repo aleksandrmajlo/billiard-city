@@ -12,9 +12,7 @@ class SettingsComposer
 {
     public function compose(View $view)
     {
-        $customers = Customer::all();
-        $view->with('header_customers',$customers);
-
-
+          $SidebarToggle=session('SidebarToggle',false);
+          $view->with('SidebarToggle',$SidebarToggle);
     }
 }

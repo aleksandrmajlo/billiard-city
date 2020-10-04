@@ -1,154 +1,113 @@
 <template>
-    <div class="conteerProduct">
-        <h2>Продукт</h2>
-
-        <div class="itemCont">
-            <div class="item " v-for="(item,ind) in items" :key="ind">
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label>Продукт</label>
-                        <select class="form-control"
-                                @input="setProduct('stock', $event,ind)"
-                                name="stocks[]" required>
-                            <option disabled selected value>Вибрати</option>
-                            <option v-for="stock in stocks" :value="stock.id">{{stock.title}}</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Кол.</label>
-                        <input required
-                               @input="setKol('stock', $event,ind)"
-                               :value="item.count_stocks"
-                               name="count_stocks[]"
-                               class="form-control" type="number" step="0.01" min="1"/>
-                        <span v-if="!item.valid" class="text-danger">Максимально:{{item.count}}</span>
-                    </div>
-                    <div class="form-group col-md-5">
-                        <div class="form-group">
-                            <label>Причина</label>
-                            <select class="form-control" name="stock_causes[]">
-                                <!--<option disabled selected value>Вибрати</option>-->
-                                <option v-for="cause in causes" :value="cause">{{cause}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" name="stock_causeTexts[]"
-                                      placeholder="Cвоя причина"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-1">
-                        <a href="#" class="remove" @click.prevent="remove('stock',ind)">
-                            <i class="fa fa-trash"></i>
-                        </a>
-                    </div>
+    <div>
+        <div class="row" v-for="(item,ind) in items" :key="ind+'stock'">
+            <div class="col-xs-6 col-sm-8 col-xs-xs-xs-12 sto">
+                <div class="col-sm-6 col-xs-12 select_doc_container">
+                    <label>Продукт</label>
+                    <select
+                            class="select_doc"
+                            @input="setProduct('stock', $event,ind)"
+                            name="stocks[]" required>
+                        <option disabled selected value>{{$t('Choose')}}</option>
+                        <option v-for="stock in stocks" :value="stock.id">{{stock.title}}</option>
+                    </select>
                 </div>
+                <div class="col-sm-6 col-xs-12 absal"><label>{{$t('Cart2')}}</label>
+                    <input required
+                           @input="setKol('stock', $event,ind)"
+                           :value="item.count_stocks"
+                           name="count_stocks[]"
+                           class="reason-inp" type="number" step="0.01" min="0" />
+                    <span v-if="!item.valid" class="text-danger">Максимально:{{item.count}}</span>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-4 col-xs-xs-xs-12 sto">
+                <label>Причина</label>
+                <select class="reason-select" name="stock_causes[]">
+                    <option v-for="cause in causes" :value="cause">{{cause}}</option>
+                </select>
+                <input type="text" name="stock_causeTexts[]" :placeholder="$t('CauseOther')" class="reason-inp">
+                <button  @click.prevent="remove('stock',ind)" class="delite"><img src="/img/delite.png" alt="delite"></button>
+            </div>
+        </div>
+        <div class="row" v-for="(item,index2) in item_ings" :key="index2+'ing'">
+            <div class="col-xs-6 col-sm-8 col-xs-xs-xs-12 sto">
+                <div class="col-sm-6 col-xs-12 select_doc_container">
+                    <label>{{$t('IngsTitle')}}</label>
+                    <select
+                            class="select_doc"
+                            @input="setProduct('ing', $event,index2)"
+                            name="ings[]" required>
+                        <option disabled selected value>{{$t('Choose')}}</option>
+                        <option v-for="ing in ings" :value="ing.id">{{ing.title}}</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-xs-12 absal">
+                    <label>{{$t('Cart2')}}</label>
+                    <input required
+                           @input="setKol('ing', $event,index2)"
+                           :value="item.count_ings"
+                           name="count_ings[]"
+                           class="reason-inp" type="number" step="0.01" min="0" />
+                    <span v-if="!item.valid" class="text-danger">Максимально:{{item.count}}</span>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-4 col-xs-xs-xs-12 sto">
+                <label>Причина</label>
+                <select class="reason-select" name="ing_causes[]">
+                    <option v-for="cause in causes" :value="cause">{{cause}}</option>
+                </select>
+                <input type="text" name="ing_causeTexts[]" :placeholder="$t('CauseOther')" class="reason-inp">
+                <button  @click.prevent="remove('ing',index2)" class="delite"><img src="/img/delite.png" alt="delite"></button>
             </div>
         </div>
 
-        <div class="btnCont">
-            <a class="btn btn-default" @click.prevent="add('stock')">Добавити</a>
-        </div>
-         <hr>
-        <h2>{{Text_ings}}</h2>
-        <div class="itemCont">
-            <div class="item " v-for="(item,index2) in item_ings" :key="index2">
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label>{{Text_ing}}</label>
-                        <select class="form-control"
-                                @input="setProduct('ing', $event,index2)"
-                                name="ings[]" required>
-                            <option disabled selected value>Вибрати</option>
-                            <option v-for="ing in ings" :value="ing.id">{{ing.title}}</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Кол.</label>
-                        <input required
-                               @input="setKol('ing', $event,index2)"
-                               :value="item.count_ings"
-                               name="count_ings[]"
-                               class="form-control" type="number" step="0.01" min="1"/>
-                        <span v-if="!item.valid" class="text-danger">Максимально:{{item.count}}</span>
-                    </div>
-                    <div class="form-group col-md-5">
-                        <div class="form-group">
-                            <label>Причина</label>
-                            <select class="form-control" name="ing_causes[]">
-                                <!--<option disabled selected value>Вибрати</option>-->
-                                <option v-for="cause in causes" :value="cause">{{cause}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" name="ing_causeTexts[]"
-                                      placeholder="Cвоя причина"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-1">
-                        <a href="#" class="remove" @click.prevent="remove('ing',index2)">
-                            <i class="fa fa-trash"></i>
-                        </a>
-                    </div>
-                </div>
+        <div class="row">
+            <div class="col-xs-12 reason-btn">
+                <input class="add_component" type="submit" @click.prevent="add('stock')" :value="$t('AddProduct')">
+                <input class="add_component" type="submit" @click.prevent="add('ing')" :value="$t('AddIng')">
+                <input class="create_invoice" type="submit"  :value="$t('CreateInvoice')">
             </div>
         </div>
-        <div class="btnCont">
-            <a class="btn btn-default" @click.prevent="add('ing')">Добавити</a>
-        </div>
-
-
     </div>
 </template>
 <script>
     export default {
-        name: "WriteofProducts",
+        name: "WriteofProducts.vue",
         data() {
             return {
                 items: [],
                 item_ings: [],
                 stocks: [],
                 ings: [],
-
                 causes: [],
-                lang: {
-
-                    Text_ings: {
-                        'ru': 'Составляющие',
-                        'ua': 'Складові'
-                    },
-
-                    Text_ing: {
-                        'ru': 'Составляющая',
-                        'ua': 'Складова'
-                    },
-
-                }
             }
         },
-        computed: {
-
-            Text_ings() {
-                return this.lang.Text_ings[LanguneThisJs]
-            },
-            Text_ing() {
-                return this.lang.Text_ing[LanguneThisJs]
-            },
-
-        },
         created() {
+
             axios.get('/doc/getProducts')
                 .then(response => {
+                    console.info(response.data);
+
+                    response.data.stocks.forEach(function(el,index){
+                        response.data.stocks[index].count=parseFloat(el.count)
+                    });
                     this.stocks = response.data.stocks;
+                    response.data.ings.forEach(function(el,index){
+                        response.data.ings[index].count=parseFloat(el.count)
+                    });
                     this.ings = response.data.ings;
                     this.causes = response.data.causes;
+
                 })
                 .catch(error => {
+                    this.showShwal('error', this.$t('error'))
                 })
                 .finally(function () {
                 });
         },
-        methods: {
-            add(type) {
+        methods:{
+            add(type){
                 if (type == 'stock') {
                     this.items.push({
                         count_stocks: "",
@@ -167,7 +126,12 @@
                         count: 0
                     });
                 }
-
+                setTimeout(()=>{
+                    $('.select_doc').select2();
+                })
+            },
+            submit(){
+                console.info('submit')
             },
             //установить продукт
             setProduct(type, event, index) {
@@ -175,12 +139,10 @@
                 if ('stock' == type) {
                     this.items[index].stocks = v;
                 }
-
                 if ('ing' == type) {
                     this.item_ings[index].ings = v;
                 }
                 this.validate(type, index);
-
             },
             setKol(type, event, index) {
                 let v = event.target.value;
@@ -193,15 +155,12 @@
                 this.validate(type, index);
             },
             remove(type, index) {
-
                 if ('stock' == type) {
                     this.items.splice(index, 1);
                 }
-
                 if ('ing' == type) {
                     this.item_ings.splice(index, 1);
                 }
-
             },
             //валидация
             validate(type, index) {
@@ -242,17 +201,29 @@
     }
 </script>
 <style scoped>
-    .item {
-        margin-bottom: 10px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid;
+    .delite{
+        position: absolute;
+        top: 50%;
+    }
+    input.add_component[type="submit"]{
+        width:auto !important;
+        padding-left:10px;
+        padding-right:10px;
+        margin-right:0 !important;
+    }
+    input.create_invoice{
+        margin-left: 30px;
+    }
+    @media (max-width: 654px){
+        input.add_component[type="submit"]{
+            width:100% !important;
+            padding-left:0;
+            padding-right:0;
+        }
+        input.create_invoice{
+            width:100% !important;
+            margin-left: 0;
+        }
     }
 
-    .btnCont {
-        margin-bottom: 20px;
-    }
-
-    a.remove {
-        font-size: 26px;
-    }
 </style>

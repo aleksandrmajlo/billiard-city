@@ -15,8 +15,8 @@
         @foreach($results['ingredients'] as $ingredient)
             <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">{{$ingredient['title']}}</td>
-                <td style="border: 1px solid black;">{{$ingredient['thisCount']}}</td>
                 <td style="border: 1px solid black;">{{$ingredient['oldCount']}}</td>
+                <td style="border: 1px solid black;">{{$ingredient['thisCount']}}</td>
             </tr>
         @endforeach
     @endif
@@ -24,8 +24,8 @@
         @foreach($results['stocks'] as $stock)
             <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">{{$stock['title']}}</td>
-                <td style="border: 1px solid black;">{{$stock['thisCount']}}</td>
                 <td style="border: 1px solid black;">{{$stock['oldCount']}}</td>
+                <td style="border: 1px solid black;">{{$stock['thisCount']}}</td>
 
             </tr>
         @endforeach

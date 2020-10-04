@@ -3,8 +3,10 @@
 // Variables
 // @import "variables";
 // Bootstrap
+@import '../../../public/css/my.css';
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "~vue-search-select/dist/VueSearchSelect.css";
+@import '../../../public/css/order.css';
 
 .example-modal .modal {
     position: relative;
@@ -37,8 +39,6 @@
     }
 }
 
-.orderClosedConteer {}
-
 @media (max-width: 1395px) {
     .tr_button {
         .buttonOpenTableConteer {
@@ -70,7 +70,6 @@
     flex-wrap: wrap;
 }
 
-
 .itemAct {
     width: 50%;
 }
@@ -90,9 +89,7 @@
     min-width: 250px;
 }
 
-
 .addPurchaseinvoiceHeader {
-
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -124,7 +121,6 @@
 }
 
 @media screen and (max-width: 768px) {
-
     .addPurchaseinvoiceHeader {
         display: none;
     }
@@ -151,16 +147,16 @@
     }
 }
 
-formItemInp .borderBottom {
-    border-bottom: 1px solid;
-}
-
 .mt-10 {
     margin-top: 10px;
 }
 
 .mb-10 {
     margin-bottom: 10px !important;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
 }
 
 .tooltip {
@@ -246,7 +242,6 @@ formItemInp .borderBottom {
 
     &.popover {
         $color: #ffffff;
-        // box-shadow: inherit !important;
         border: 1px solid rgb(0, 142, 191) !important;
         padding-top: 12px;
         padding-bottom: 12px;
@@ -287,7 +282,6 @@ formItemInp .borderBottom {
     }
 }
 
-
 .vs__input {
     display: block;
     width: 100%;
@@ -310,7 +304,6 @@ formItemInp .borderBottom {
 }
 
 .modalCustom {
-
     .modal-my {
         max-width: 545px;
     }
@@ -348,8 +341,6 @@ formItemInp .borderBottom {
 .order-menu {
     position: relative;
 }
-
-@media (max-width: 767px) {}
 
 @media screen and (max-width: 480px) {
     .modalCustom {
@@ -431,7 +422,6 @@ table.tables {
     align-items: center;
 
     .timerBlock {
-
         div {
             display: inline-block;
         }
@@ -473,7 +463,6 @@ li.locale {
         }
     }
 }
-
 
 // table *****************************************************************************************8
 div.board_col.active {
@@ -658,15 +647,264 @@ ul.pagination {
     [type="date"] {}
 
     [type="time"] {
-        // min-width: 100px;
         margin-left: 10px;
     }
 }
 
 #PayModal .modal-content .modal-body .type .item.active {
     border-color: #F2994A !important;
+    border-width: 2px;
 }
 
 .win {
     z-index: 1000 !important;
+}
+
+a.ResetLink {
+    width: 165px;
+    height: 40px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    border: none;
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgb(242, 153, 74);
+    line-height: 40px;
+    text-align: center;
+
+    &:hover {
+        text-decoration: none;
+        color: rgb(255, 255, 255);
+    }
+
+}
+
+.form-user.acts__form {
+    select {
+        width: 100%;
+        height: 30px;
+        background: rgb(255, 255, 255);
+        border-radius: 50px;
+        border: none;
+        margin-bottom: 10px;
+        padding-left: 20px;
+        box-sizing: border-box;
+    }
+}
+
+.actOne {
+    .worker-button {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+
+        a.worker__button.worker__export {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .actOne {
+        .worker-button {
+            text-align: center;
+
+            a.worker__button {
+                width: auto !important;
+                min-width: 200px;
+
+            }
+
+            button {
+                margin-top: 0 !important;
+            }
+        }
+    }
+
+    .dateConteer {
+        flex-wrap: wrap;
+        min-width: inherit !important;
+
+        [type="date"] {
+            width: auto;
+        }
+
+        [type="time"] {
+            width: auto;
+        }
+    }
+
+}
+
+@media (max-width: 480px) {
+    .actOne {
+        .worker-button {
+            text-align: center;
+
+            a.worker__button {}
+
+            button {
+                margin-top: 0 !important;
+            }
+        }
+    }
+}
+
+.filter-block.filter-worker p {
+    height: auto !important;
+}
+
+.heigthAuto {
+    height: auto !important;
+}
+
+.typeDocSortOrderStocks,
+.categoryDocSortOrderDESC {
+    img {
+        transform: rotate(180deg);
+    }
+}
+
+#readOrderWin.target,
+#compareActWin.target {
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.form-user.form-user-edit {
+    background: rgb(236, 240, 245);
+    padding: 20px;
+}
+
+input.isInvalid {
+    border: 1px solid rgb(255, 0, 0) !important;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+.board_table table tr td p {
+    margin-left: 5px;
+}
+
+// .form-user.acts__form.over__form {
+.maxHeigth {
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.select_doc_container {
+    .select2-selection.select2-selection--single {
+        height: 30px !important;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        margin-bottom: 0 !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 0 !important;
+    }
+}
+
+.legent_item {
+    width: 30px;
+    height: 20px;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.analyticWrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 50px;
+
+    .analyticItem {
+        display: flex;
+        align-items: center;
+        border: 1px solid rgb(71, 142, 204);
+        box-sizing: border-box;
+        box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0);
+        padding: 10px 12px;
+
+        select {
+            display: inline-block;
+            margin-left: 5px;
+        }
+    }
+
+    a {
+        margin-left: 10px;
+    }
+}
+
+.charts {
+    width: 70%;
+
+}
+
+.analitic__table.user_table table.tables tr:first-child td {
+    width: auto !important;
+}
+
+@media (max-width: 768px) {
+    .analyticWrap {
+        .analyticItem {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+@media (max-width: 454px) {
+    .charts {
+        width: 100%;
+    }
+}
+
+// **************************************************
+.YesBooking {
+    position: relative;
+
+    &:before {
+        content: attr(data-count);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        font-size: 15px;
+        line-height: 20px;
+        text-align: center;
+        color: rgb(0, 0, 255) !important;
+        font-weight: bold;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
+#app.wrapper {
+    height: 100vh !important;
+
+    &>aside {
+        position: fixed;
+        height: calc(100vh - 58px);
+        overflow-y: auto;
+
+        .sidebar {
+            // height: 100vh !important;
+            // padding-bottom: 0 !important;
+        }
+    }
 }

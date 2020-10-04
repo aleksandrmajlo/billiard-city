@@ -110,7 +110,19 @@ class Order extends Controller
                 ->where('stop', null)
                 ->first();
         }
+
         $orderUpdate = \App\Order::find($request->order_id);
+        $total = self::AddProduct($orderUpdate, $request->cart, $request->skidka);
+        // полная сумма
+        $orderUpdate->fullamount = $total['fullamount'];
+        // cумма со скидкой
+        $orderUpdate->amount = $total['total'];
+        // процент скидки
+        $orderUpdate->procent = (int)$request->skidka;
+        if ($request->user) {
+            $orderUpdate->customer_id = $request->user['value'];
+        }
+
         $orderUpdate->status = 1;
         $orderUpdate->billing = $request->billing;
         if ($change) {
@@ -125,7 +137,8 @@ class Order extends Controller
         if ($money) {
             $money->sum_bar = $orderUpdate->amount;
             $money->save();
-        } else {
+        }
+        else {
             $money = new Money;
             $money->sum_bar = $orderUpdate->amount;;
             $money->order = $orderUpdate->id;
@@ -155,7 +168,7 @@ class Order extends Controller
                 ->first();
         }
         // проверка на паузы
-        // если активна то стол не закрываем
+        // если активна то выключить свет
         $pauses = \App\Pause::where('order_id', $request->order_id)->get();
         $pause_active=false;
         if ($pauses) {
@@ -171,7 +184,11 @@ class Order extends Controller
         $orderUpdate = \App\Order::find($request->order_id);
         $orderUpdate->status = 1;
         $orderUpdate->billing = $request->billing;
+
         $orderUpdate->amount = $prices['priceOrderTotal'];
+        $orderUpdate->procent = $prices['priceProcentOrder'];
+        $orderUpdate->fullamount = $prices['priceOrder'];
+
         if ($change) {
             $orderUpdate->changes_id = $change->id;
         }
@@ -180,7 +197,11 @@ class Order extends Controller
 
         if(!$pause_active){
             // выключаем свет
-            app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $orderUpdate->table_id]);
+            try {
+                app()->call('App\Http\Controllers\SocketController@turnOn', ['id_table' => $orderUpdate->table_id]);
+            }catch (Exception $e){
+
+            }
         }
 
         $money = new Money;
@@ -219,6 +240,7 @@ class Order extends Controller
             }
         }
         $total = 0;
+        $fullamount=0;
         foreach ($products as $product) {
             $bar = new \App\Bar();
             $bar->product_id = $product['id'];
@@ -227,6 +249,7 @@ class Order extends Controller
             $bar->save();
             $total += $product['price'] * $product['count'];
         }
+        $fullamount=$total;
         if ($skidka) {
             $sumSkidka = $skidka * $total / 100;
             $total = $total - $sumSkidka;
@@ -235,7 +258,7 @@ class Order extends Controller
         ActService::UpdateProductCount();
 
         $total = OrderService::roundFloat($total);
-        return $total;
+        return ['fullamount'=>$fullamount,'total'=>$total];
     }
 
     // получить всех клиентов
@@ -543,7 +566,14 @@ class Order extends Controller
         // обновляем продукты в заказе....
         $order = \App\Order::find($order_id);
         $total = self::AddProduct($order, $request->cart, $request->skidka);
-        $order->amount = $total;
+
+        // полная сумма
+        $order->fullamount = $total['fullamount'];
+        // cумма со скидкой
+        $order->amount = $total['total'];
+        // процент скидки
+        $order->procent = (int)$request->skidka;
+
         if ($request->user) {
             $order->customer_id = $request->user['value'];
         }

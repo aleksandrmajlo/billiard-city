@@ -11,41 +11,33 @@ use Excel;
 
 class ConsumableinvoiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $pageCount=20;
     public function index(Request $request)
     {
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
             $consumableinvoices = Consumableinvoice::orderBy('created_at', 'desc');
             if ($request->has('start') && !empty($request->start)) {
-                // $start = explode('.', $request->start);
                 $consumableinvoices = $consumableinvoices->where('created_at', '>=', $request->start . ' 00:00:00');
             }
             if ($request->has('end') && !empty($request->end)) {
-                // $end = explode('.', $request->end);
                 $consumableinvoices = $consumableinvoices->where('created_at', '<', $request->end . ' 23:59:59');
             }
             if ($request->has('user_id') && !empty($request->user_id)) {
                 $consumableinvoices = $consumableinvoices->where('user_id', '=', $request->user_id);
             }
-            $consumableinvoices = $consumableinvoices->orderBy('created_at', 'desc')->paginate(10);
+            $consumableinvoices = $consumableinvoices->orderBy('created_at', 'desc')->paginate($this->pageCount);
         } else {
             $consumableinvoices = Consumableinvoice::orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate($this->pageCount);
         }
-        $roleIds = [3];
+        $roleIds = [3,2];
         $users = \App\User::whereHas('roles', function ($q) use ($roleIds) {
             $q->whereIn('id', $roleIds);
         })->get();
-
-
         return view(
             'doc.consumableinvoices',
             [
-                'consumableinvoices' => $consumableinvoices,
+                'consumableinvoices' => $consumableinvoices->appends($request->except('page')),
                 'users' => $users,
                 'this_url' => '/doc/consumableinvoice'
             ]
@@ -110,7 +102,6 @@ class ConsumableinvoiceController extends Controller
                                     'discount' => $skidka
                                 ];
                         } elseif ($category == $bar->stock->categorySee->id) {
-
                             $products[] = [
                                 'id' => $bar->stock->id,
                                 'title' => $bar->stock->title,
@@ -123,7 +114,15 @@ class ConsumableinvoiceController extends Controller
                 }
             }
             $productRes = [];
+            $title=null;
+            if($request->has('title')){
+                $title=mb_strtolower($request->title);
+            }
             foreach ($products as $product) {
+                if($title){
+                    $pos = strpos(mb_strtolower($product['title']), $title);
+                    if ($pos === false) continue;
+                }
                 if (isset($productRes[$product['id']])) {
                     if (isset($productRes[$product['id']][$product['discount']])) {
                         $productRes[$product['id']][$product['discount']]['count'] = $product['count'] + $productRes[$product['id']][$product['discount']]['count'];
@@ -144,6 +143,7 @@ class ConsumableinvoiceController extends Controller
                         'total' => 0
                     ];
                 }
+
             }
             foreach ($productRes as $i => $prs) {
                 foreach ($prs as $k => $pr) {

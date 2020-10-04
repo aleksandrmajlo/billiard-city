@@ -16,15 +16,18 @@ class Act extends Model
         return $this->belongsToMany('App\Stock')->withTrashed()->withPivot('count')->orderBy('title');
     }
 
-    public function change(){
+    public function change()
+    {
         return $this->belongsTo('App\Change');
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo('App\User');
     }
 
-    public function kofeinyiapparat(){
+    public function kofeinyiapparat()
+    {
         return $this->hasOne('App\Bars\Kofeinyiapparat');
     }
 }

@@ -201,9 +201,11 @@ a:focus {
     float: left;
     background-color: transparent;
     background-image: none;
-    padding: 19px 15px 10px;
+    /*padding: 19px 15px 10px;*/
+    padding: 11px 15px 11px;
     font-family: fontAwesome;
     color: #15499F;
+    line-height: 1.428571429;
 }
 
 .header__main .sidebar-toggle:before {
@@ -2623,6 +2625,7 @@ a.close-tab {
     margin-left: 10px;
 }
 
+a.analytic,
 button.analytic {
     border: 1px solid #478ECC;
     box-sizing: border-box;
@@ -5453,7 +5456,8 @@ span.tdbutton {
 
     #PayModal .modal-content .modal-body .type .item {
         width: 118px;
-        height: 80px;
+        /*height: 80px;*/
+        height: auto;
         font-size: 14px;
     }
 
@@ -6506,13 +6510,13 @@ span.tdbutton {
     }
 
     .absal {
-        position: absolute;
-        z-index: 0;
-        left: 114px;
+        /*position: absolute;*/
+        /*z-index: 0;*/
+        /*left: 114px;*/
     }
 
     .form-user.acts__form.over__form form .absal label {
-        opacity: 0;
+        /*opacity: 0;*/
     }
 
     .over__form form {

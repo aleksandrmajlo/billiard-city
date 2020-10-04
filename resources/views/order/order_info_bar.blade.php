@@ -21,7 +21,7 @@
                                 <label>@lang('orders.client')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">
+                                <p >
                                     @if($order->customer)
                                         {{$order->customer->fullname}}
                                     @else
@@ -31,11 +31,11 @@
                             </div>
                             <div class="col-xs-3 col-xs-xs-6"><label>@lang('orders.start')</label></div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">{{$order->start}}</p>
+                                <p >{{$order->start}}</p>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6"><label>@lang('orders.discount')</label></div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">
+                                <p >
                                     @if($order->customer)
                                         {{$order->customer->skidka_bar}}%
                                     @else
@@ -47,18 +47,19 @@
                                 <label>@lang('orders.end')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">{{$order->closed}}</p>
+                                <p >{{$order->closed}}</p>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
                                 <label>@lang('orders.oplata')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
+
                                 @if($order->billing)
-                                    <p class="text-nowrap">
+                                    <p >
                                         {{$billing[$order->billing][app()->getLocale()]}}
                                     </p>
                                 @else
-                                    <p class="text-nowrap">
+                                    <p >
                                         -
                                     </p>
                                 @endif
@@ -67,7 +68,7 @@
                                 <label>@lang('orders.chang')</label>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
-                                <p class="text-nowrap">
+                                <p >
                                     @if($order->change)
                                         {{$order->change->id}}
                                     @endif
@@ -123,8 +124,7 @@
         </div>
     </div>
     @if($isAdmin)
-        <a href="#x" class="overlay" id="win1"></a>
-        <div class="win">
+        <div class="win"  id="readOrderWin">
             <div class="form-user form-user-order">
                 <div class="row">
                     <div class="col-xs-4 col-sm-6">

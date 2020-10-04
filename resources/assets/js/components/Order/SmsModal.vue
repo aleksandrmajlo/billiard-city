@@ -12,12 +12,13 @@
                     <div class="phoneBlock">
                         <div class="form-group">
                             <div v-if="error" class="alert alert-warning" role="alert">{{$t('SmsCodeError')}}</div>
-                            <model-select :options="users" v-model="user" :placeholder="$t('SmsModalSMS')"></model-select>
+                            <model-select :options="users" v-model="user" :placeholder="$t('SmsModalPhone')"></model-select>
                         </div>
                     </div>
                     <div class="buttonBlock">
                         <div class="itemBtton leftItem">
-                            <a class="btn btn-primary" href="#" @click.prevent="SMS(2)">{{$t('SmsModalPhone')}}</a>
+
+                            <a class="btn btn-primary" href="#" @click.prevent="SMS(2)">{{$t('SmsModalSMS')}}</a>
                         </div>
                         <div class="itemBtton rightItem">
                             <a class="btn btn-primary" href="#" @click.prevent="SMS(1)">{{$t('SmsModalBell')}}</a>

@@ -12,58 +12,62 @@
             </tr>
             <tr>
                 <td>номер замовлення</td>
-                <td><img src="/img/number.png" alt="namber"></td>
+                <td>
+                    <img src="/img/number.png" alt="namber">
+                </td>
                 <td>
                     <p>{{order_id}}</p>
                 </td>
             </tr>
             <tr>
                 <td>дата відкриття</td>
-                <td><img src="/img/colendar-s.png" alt="colendar"></td>
+                <td><img src="/img/colendar-s.png" alt="colendar"> </td>
                 <td>
                     <p>{{startDate}}</p>
                 </td>
             </tr>
             <tr>
-                <td>час відкриття</td>
-                <td><img src="/img/clock.png" alt="clock"></td>
+                <td>час відкриття </td>
+                <td><img src="/img/clock.png" alt="clock"> </td>
                 <td>
-                    <p> {{startM}}</p>
+                    <p>{{startM}}</p>
                 </td>
             </tr>
             <tr>
-                <td>Відвідувач</td>
-                <td><img src="/img/contact.png" alt="contact"></td>
+                <td>Відвідувач </td>
+                <td><img src="/img/contact.png" alt="contact"> </td>
                 <td>
-                    <p>{{customer.name}}</p>
+                    <p> {{customer.name}}</p>
                 </td>
             </tr>
             <tr>
-                <td>Стіл відкритий</td>
-                <td><img src="/img/clock.png" alt="clock"></td>
+                <td>Стіл відкритий </td>
+                <td><img src="/img/clock.png" alt="clock"> </td>
                 <td>
                     <p>{{minutes|minutes_houres}} <span>відкритий</span></p>
                 </td>
             </tr>
             <tr>
-                <td>Ціна за хвилину</td>
+                <td>Ціна за хвилину </td>
                 <td><img src="/img/many.png" alt="many"></td>
                 <td>
                     <p>{{priceOrderMinutes}}</p>
                 </td>
             </tr>
-            <tr>
+            <tr v-show="pauses.length>0">
                 <td>Паузи</td>
                 <td><img src="/img/pause.png" alt="pause"></td>
                 <td>
                     <p v-for="(pause,index) in pauses">
                         {{pause.startM}} - {{pause.endM}}
-                        <span v-if="pause.minpause_this">
+
+                        <span v-if="pause.minpause_this!==!1">
                             пауза  {{pause.minpause_this}}хв
                         </span>
                         <span v-else>
                             триває
                         </span>
+
                     </p>
                 </td>
             </tr>
@@ -96,11 +100,12 @@
             <print-table></print-table>
             <a href="" @click.prevent="CloseTableOrder" class="link-item link-blues">
                 <img src="/img/zakaz.png" alt="zakaz">
-                <p>Закрити
-                </p>
+                <p>Закрити</p>
             </a>
         </div>
-        <a class="back backTable" @click.prevent='Back' href=""><img src="/img/back.png" alt="back"></a>
+        <a class="back backTable" @click.prevent='Back' href="">
+            <img src="/img/back.png" alt="back">
+        </a>
     </div>
 </template>
 
@@ -148,14 +153,12 @@
         watch: {
             TableCloseActive: function (id, old_id) {
                 this.UpdateActiveTable();
-
                 if(id){
                     this.interval=setInterval(()=>{
                         this.IntervalUpdateTable();
                     },60000);
                 }else{
                     clearInterval(this.interval);
-                    console.log('clearInterval');
                 }
             }
         },
@@ -188,10 +191,10 @@
 
             UpdateActiveTable(popup=true) {
                 if (this.order_id) {
+
                     if(popup){
                         this.swal();
                     }
-
                     return axios.post('/table/GetTablePrice', {
                         id: this.order_id
                     })

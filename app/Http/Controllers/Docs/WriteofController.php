@@ -11,15 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Excel;
 class WriteofController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $pageCount=20;
     public function index(Request $request)
     {
-
-
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
 
             $purchaseinvoices = new Writeof();
@@ -28,28 +22,25 @@ class WriteofController extends Controller
             if ($request->has('start') && !empty($request->start)) {
                 $purchaseinvoices = $purchaseinvoices->where('created_at', '>=', $request->start . ' 00:00:00');
             }
-
             if ($request->has('end') && !empty($request->end)) {
                 $purchaseinvoices = $purchaseinvoices->where('created_at', '<', $request->end . ' 23:59:59');
             }
             if ($request->has('user_id') && !empty($request->user_id)) {
                 $purchaseinvoices = $purchaseinvoices->where('user_id', '=', $request->user_id);
             }
-
-            $purchaseinvoices = $purchaseinvoices->orderBy('created_at', 'desc')->paginate(10);
+            $purchaseinvoices = $purchaseinvoices->orderBy('created_at', 'desc')->paginate($this->pageCount);
 
         } else {
             $purchaseinvoices = Writeof::orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate($this->pageCount);
         }
-
-        $roleIds = [3];
+        $roleIds = [3,2];
         $users = \App\User::whereHas('roles', function ($q) use ($roleIds) {
             $q->whereIn('id', $roleIds);
         })->get();
 
         return view('doc.writeofs', [
-            'purchaseinvoices' => $purchaseinvoices,
+            'purchaseinvoices' => $purchaseinvoices->appends($request->except('page')),
             'users' => $users,
             'this_url' => '/doc/writeof'
         ]);
@@ -109,8 +100,6 @@ class WriteofController extends Controller
                     ]
                 );
             }
-
-
         }
         // обновляем продукты и ингадиенты
         \App\Services\PurchaseinvoiceService::WriteofUpdateStockIngr($writeof->id);
@@ -130,7 +119,8 @@ class WriteofController extends Controller
         return view('doc.writeof',[
             'purchaseinvoice'=>$purchaseinvoice,
             'id'=>$id,
-            'cause'=>true
+            'cause'=>true,
+            'this_url' => '/doc/writeof/' . $id,
 
         ]);
     }
@@ -143,7 +133,7 @@ class WriteofController extends Controller
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**
@@ -171,11 +161,10 @@ class WriteofController extends Controller
 
     // получить все продукты
     public function getProducts(){
+
         $stocks=Stock::where('resolve',1)->has('ingredients', '<', 1)->orderBy('created_at', 'desc')->get();
         $ingredients = Ingredient::orderBy('created_at', 'desc')->get();
-
         $causes=config('causes');
-
         return response()->json([
             'success'=>true,
             'stocks'=>$stocks,
@@ -185,6 +174,7 @@ class WriteofController extends Controller
     }
 
     public function export(Request $request){
+      
         $id = $request->id;
         $purchaseinvoice=Writeof::findOrFail($id);
         $results = [];

@@ -14,8 +14,9 @@ use App\Customer;
 
 class BookingController extends Controller
 {
-   public function index(){
+    public function index()
+    {
 
-       return view('booking');
-   }
+        return view('booking');
+    }
 }

@@ -6,17 +6,24 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Role;
 use Illuminate\Auth;
+
+//use Laravel\Passport\HasApiTokens;
+
 class User extends Authenticatable
 {
+
+//    use HasApiTokens,Notifiable;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'osebe', 'avatar', 'language',
-    ];
+        'name', 'phone' , 'language',
+        'email', 'password',
+        //'avatar',
 
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -24,7 +31,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /****/
@@ -35,11 +43,8 @@ class User extends Authenticatable
      **/
     public function roles()
     {
-
         return $this->belongsToMany('App\Role', 'users_roles', 'user_id', 'role_id');
     }
-
-
 
     /**
      * Проверка принадлежит ли пользователь к какой либо роли
@@ -51,6 +56,7 @@ class User extends Authenticatable
         $roles = $this->roles->toArray();
         return !empty($roles);
     }
+
     /**
      * Проверка имеет ли пользователь определенную роль
      *
@@ -58,11 +64,9 @@ class User extends Authenticatable
      */
     public function hasRole($check)
     {
-
-            return in_array($check, array_pluck($this->roles->toArray(), 'name'));
-
-
+        return in_array($check, array_pluck($this->roles->toArray(), 'name'));
     }
+
     /**
      * Получение идентификатора роли
      *
@@ -98,6 +102,4 @@ class User extends Authenticatable
         }
         $this->roles()->attach($assigned_roles);
     }
-
-    /****/
 }

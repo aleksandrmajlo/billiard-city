@@ -50,10 +50,10 @@
             <button type="submit" class="btn btn-primary">@lang('act.send')</button>
         </div>
         <div class="itemFilter">
-            {{--<a href="{{url('/doc/act/'.$id)}}" class="btn btn-primary">--}}
             <a href="{{url($urlFilter)}}" class="btn btn-primary">
                 @lang('act.reset')
             </a>
         </div>
     </div>
 </form>
+

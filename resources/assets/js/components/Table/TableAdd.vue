@@ -131,12 +131,7 @@
         },
         methods: {
             AddTable() {
-                this.$swal.fire({
-                    icon: 'error',
-                    text: 'Почекайте...',
-                    showConfirmButton: false,
-                    closeOnClickOutside: false
-                });
+                this.showShwal('info',this.$t('table_add_send'),false);
                 axios.post('/table/AddTable', {
                     table: this.TableAddActive,
                     user: this.user,
@@ -144,10 +139,16 @@
                 }).then(response => {
                     this.$swal.close();
                     let id = this.TableAddActive;
+                    // активный стол отключаем
                     this.$store.commit('SetTableAddActive', false);
+
                     this.$store.dispatch('getTables').then(() => {
                         this.$store.commit('SetTableactive', id);
+
                     });
+
+                    $('.ConteerRowTable').removeClass('TableOpen')
+                    $('.ConteerRowTable').removeClass("TableOpenFree");
                 })
             },
             SMS() {

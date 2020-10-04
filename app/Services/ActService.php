@@ -44,11 +44,9 @@ class ActService
         }
         self::UpdateProductCount();
     }
-
     // создание акта расходные накладные
     static public function CreateConsumableinvoice($change)
     {
-
         $count = 0;
         if ($change->orders) {
             foreach ($change->orders as $order) {
@@ -67,56 +65,14 @@ class ActService
         $consumableinvoice->save();
 
     }
-
-
     // отправка письма при открытии смены
     static public function CreateValidate($ingredients, $stocks, $act_id, $change_id)
     {
-        /*
-        // получаем последний акт
         $act = Act::where('id', '!=', $act_id)->orderBy('created_at', 'DESC')->first();
         $actOldId = null;
         if ($act) {
             $actOldId = $act->id;
         }
-        $results = [
-            'ingredients' => [],
-            'stocks' => [],
-            'act_id' => $act_id,
-            'old_act_id' => $actOldId
-        ];
-        if ($act) {
-            foreach ($act->stocks as $stock) {
-                $ind = array_search($stock->id, $request['stocks']);
-                $thisCount = (float)$request['count_stocks'][$ind];
-                if ((float)$stock->pivot->count !== $thisCount) {
-                    $results['stocks'][] = [
-                        'thisCount' => round($thisCount,2),
-                        'oldCount' => round( $stock->pivot->count,2),
-                        'title' => $stock->title
-                    ];
-                }
-            }
-            foreach ($act->ingredients as $ingredient) {
-                $ind = array_search($ingredient->id, $request['ingredients']);
-                $thisCount = (float)$request['count_ingredients'][$ind];
-                if ((float)$ingredient->pivot->count !== $thisCount) {
-                    $results['ingredients'][] = [
-                        'thisCount' => round($thisCount,2),
-                        'oldCount' => round($ingredient->pivot->count,2),
-                        'title' => $ingredient->title
-                    ];
-                }
-            }
-        }
-        */
-
-        $act = Act::where('id', '!=', $act_id)->orderBy('created_at', 'DESC')->first();
-        $actOldId = null;
-        if ($act) {
-            $actOldId = $act->id;
-        }
-
         $results = [
             'ingredients' => $ingredients,
             'stocks' => $stocks,
@@ -124,7 +80,6 @@ class ActService
             'act_id' => $act_id,
             'old_act_id' => $actOldId
         ];
-
         $admin = Auth::user();
         $results['admin'] = $admin->name;
         $results['change_id'] = $change_id;
@@ -132,10 +87,9 @@ class ActService
         $MAIL_TO_ADMIN = env('MAIL_TO_ADMIN');
         Mail::to($MAIL_TO_ADMIN)->send(new AdminOrder($results));
         Mail::to('alekslv74@yandex.ua')->send(new AdminOrder($results));
-        if ("http://billiard-city.local" !== env('APP_URL')) {
+        if ("http://p.billiard-city.local" !== env('APP_URL')) {
             Mail::to('alex.stepanov100@gmail.com')->send(new AdminOrder($results));
         }
-
     }
 
     // отправляем письмо если смена принудительно закрыта
@@ -148,21 +102,6 @@ class ActService
             'act_id' => $act_id
         ];
 
-        /*
-        $kofeinyi_apparat_category_id = config('category.kofeinyi_apparat_category_id');
-        $kavaCount = DB::table('count_this_Kofeinyiapparat')
-            ->where('id', 1)
-            ->first();
-        $kavaRequest = $request['kofeinyi_apparat'];
-        if ((int)$kavaCount->count != (int)$kavaRequest) {
-            $results['coffee'] = [
-                'thisCount' => $kavaCount->count,
-                'oldCount' => $kavaRequest,
-                'title' => 'Кавовий апарат'
-            ];
-        }
-        */
-
         $admin = Auth::user();
         $results['admin'] = $admin->name;
         $results['change_id'] = $change_id;
@@ -170,7 +109,7 @@ class ActService
         $MAIL_TO_ADMIN = env('MAIL_TO_ADMIN');
         Mail::to($MAIL_TO_ADMIN)->send(new AdmincloseOrder($results));
         Mail::to('alekslv74@yandex.ua')->send(new AdmincloseOrder($results));
-        if ("http://billiard-city.local" !== env('APP_URL')) {
+        if ("http://p.billiard-city.local" !== env('APP_URL')) {
             Mail::to('alex.stepanov100@gmail.com')->send(new AdmincloseOrder($results));
         }
     }

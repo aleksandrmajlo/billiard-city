@@ -39,6 +39,7 @@ return [
     */
 
     'debug' => env('APP_DEBUG', false),
+    'billiardroom'=>'1',
 
     /*
     |--------------------------------------------------------------------------
@@ -181,7 +182,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-
+        UoGSoE\ApiTokenMiddleware\ApiTokenServiceProvider::class,
 
     ],
 
