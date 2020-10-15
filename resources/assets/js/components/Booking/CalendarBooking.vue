@@ -142,7 +142,6 @@
                                         let d = $(this).text();
                                         if ((parseInt(el) == parseInt(d)) && day <= parseInt(el)) {
                                             let count = $(this).data('count');
-                                            console.log(count+" count")
                                             if (typeof count == "undefined") {
                                                 $(this).attr('data-count', 1)
                                             } else {

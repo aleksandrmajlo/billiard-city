@@ -9,6 +9,6 @@ class Reservation extends Model
 
     public function customer()
     {
-        return $this->belongsTo('App\Customer','id_customers');
+        return $this->belongsTo('App\Customer','id_customers')->withTrashed();
     }
 }

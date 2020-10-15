@@ -5910,7 +5910,12 @@ span.tdbutton {
         margin-right: 5px;
     }
 }
-
+@media (max-width:768px) {
+    .form-user form .radio-source,
+    .form-user form .radio-confirm{
+        flex-direction: column;
+    }
+}
 @media (max-width:480px) {
 
     .filter-block.filter-order p,

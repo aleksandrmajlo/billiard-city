@@ -56,6 +56,7 @@ return [
     'summaDiscount' => 'Сума зі знижкою',
     'cina' => 'Ціна',
     'del' => 'Видалити',
+    'delit' => 'Продукт видалений',
     'edit' => 'Редагувати',
     'gist' => 'Гість',
     'date_end' => 'Дата закриття',
@@ -143,11 +144,19 @@ return [
 
     'analytics' => 'Аналітика',
     'analytic_attendance' => 'Відвідуваність закладу',
-    'LinkApiRu' => 'Допомога RU',
-    'LinkApiEn' => 'Допомога EN',
+    'LinkApiRu' => 'Допомога',
+    'LinkApiEn' => 'Допомога',
     'TitleApi' => 'Апі ключі',
     'CreateApi' => 'Створити ключ',
     'ServiceApi' => 'Назва',
     'TokenApi' => 'Ключ',
+    "Categories"=>"Kатегорії",
+    "Category"=>"Kатегорія",
+
+    "ProductAdd"=>"Продукт доданий",
+    "ProductUpdate"=>"Продукт оновлений",
+    "Update"=>"Оновити",
+    "ProductAction"=>"Дія"
+
 
 ];

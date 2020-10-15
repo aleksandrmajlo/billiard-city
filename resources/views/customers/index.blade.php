@@ -22,7 +22,6 @@
                     <p class="p"><span class="h4">@lang('site.add_customers')</span></p>
                 </div>
                 <div class="col-xs-4 col-sm-6 col-sm-pull-6">
-{{--                    <p><span>ID : 957</span></p>--}}
                 </div>
             </div>
             <add-customer></add-customer>

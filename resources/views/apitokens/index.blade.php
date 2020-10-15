@@ -6,15 +6,22 @@
                 <div class="user__title">
                     <h2>@lang('site.TitleApi')</h2>
                 </div>
+                <div class="ApiKeyButtonWraperr">
+                    <a class="overhead__buttom" href="{{route('apitokens.create')}}">
+                        <img src="/img/user-plus.png">
+                        @lang('site.CreateApi')
+                    </a>
+                    @if ( Config::get('app.locale') == 'ua')
+                        <a href="/helpapi_en" class="btn btn-danger" target="_blank">
+                            <img src="/img/help.png">
+                            @lang('site.LinkApiEn')
+                        </a>
+                    @elseif ( Config::get('app.locale') == 'ru' )
+                        <a href="/helpapi" class="btn btn-danger" target="_blank">
+                            <img src="/img/help.png">
+                            @lang('site.LinkApiRu')</a>
+                    @endif
 
-
-                <div class="list-group" style="max-width: 400px;">
-                    <a href="/helpapi" class="btn btn-danger" target="_blank"> @lang('site.LinkApiRu')</a>
-                    <a href="/helpapi_en" class="btn btn-danger" target="_blank">@lang('site.LinkApiEn')</a>
-                </div>
-
-                <div>
-                    <a class="btn btn-primary" href="{{route('apitokens.create')}}">@lang('site.CreateApi')</a>
                 </div>
                 <div class="user_table">
                     <table>

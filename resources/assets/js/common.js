@@ -1,8 +1,9 @@
 $(document).ready(function () {
+
     $('#addIngredientForm').submit(function (e) {
         e.preventDefault();
         let formData = new FormData(this);
-        axios.post('/bars/ingredient', formData)
+        axios.post('/bars/ingredients', formData)
             .then(response => {
                 if (response.data.success) {
                     location.reload();
@@ -12,37 +13,7 @@ $(document).ready(function () {
                 alert('Ошибка.Попробуйте позже')
             });
     });
-    if ($('#IngredientTable').length) {
-        if (LanguneThisJs == 'ua') {
-            var url = "//cdn.datatables.net/plug-ins/1.10.20/i18n/Ukrainian.json";
-        } else {
-            var url = "//cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json";
-        }
-        $('#IngredientTable').DataTable({
-            "language": {
-                "url": url
-            },
-            "pageLength": 50,
-            "columnDefs": [{
-                "targets": [1, 2],
-                "orderable": false,
-                "searchable": false
-            }, ]
-        });
-    };
-    if ($('.DataTable').length) {
-        if (LanguneThisJs == 'ua') {
-            var url = "//cdn.datatables.net/plug-ins/1.10.20/i18n/Ukrainian.json";
-        } else {
-            var url = "//cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json";
-        }
-        $('.DataTable').DataTable({
-            "language": {
-                "url": url
-            },
-            "pageLength": 50,
-        });
-    };
+
     if ($('.select2').length) {
         $('.select2').select2();
     }
@@ -131,12 +102,14 @@ $(document).ready(function () {
         $('#compareActWin').addClass('target');
     });
 
-    $('#closeCompareActWin,.overlayDoc,#closeWin').click(function (e) {
+    $('#closeCompareActWin,.overlayDoc,#closeWin,.closeWin').click(function (e) {
         e.preventDefault();
         $('.overlayDoc').removeClass('target');
         $('#compareActWin').removeClass('target');
         $('#readOrderWin').removeClass('target');
     });
+
+
 
     // cайт бар
     $('#SidebarToggle').click(function () {
@@ -147,5 +120,10 @@ $(document).ready(function () {
             })
         }, 50);
     })
+
+    $('.DellProduct').click(function(event) {
+        event.preventDefault();
+        $('#FormDeleteProduct')[0].submit();
+    });
 
 });

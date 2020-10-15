@@ -57,7 +57,30 @@
         <div class="user_table acts__table" id="print">
             <table>
                 <tr class="td-one">
-                    <td>@lang('act.name')</td>
+                    <td>
+                        @lang('act.name')
+{{--
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post"
+                              id="categoryDocSortOrderForm">
+                            <input type="hidden" name="name">
+                            {{csrf_field()}}
+                        </form>
+
+                        @if($categoryDocSortOrder=="desc")
+                            <a href="" data-sort="asc" class="categoryDocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-sort="desc" class="categoryDocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
+
+
+--}}
+
+                    </td>
+
                     <td>@lang('act.cat')
                         <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post"
                               id="categoryDocSortOrderForm">

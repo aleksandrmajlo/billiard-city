@@ -56,6 +56,7 @@ return [
     'summaDiscount' => 'Сумма cо скидкой',
     'cina' => 'Стоимость',
     'del' => 'Удалить',
+    'delit' => 'Продукт удален',
     'edit' => 'Редактировать',
     'gist' => 'Гость',
     'date_end' => 'Дата закрытия',
@@ -140,11 +141,19 @@ return [
 
     'analytics' => 'Аналитика',
     'analytic_attendance' => 'Посещаемость заведения',
-    'LinkApiRu' => 'Помощь RU',
-    'LinkApiEn' => 'Помощь EN',
+    'LinkApiRu' => 'Помощь',
+    'LinkApiEn' => 'Помощь',
     'TitleApi' => 'Апи ключи',
     'CreateApi' => 'Создать ключ',
     'ServiceApi' => 'Название',
     'TokenApi' => 'Ключ',
+    "Categories"=>"Категории",
+    "Category"=>"Категория",
+    "ProductAdd"=>"Продукт добавлен",
+    "ProductUpdate"=>"Продукт обновлен",
+
+    "Update"=>"Обновить",
+    "ProductAction"=>"Действие"
+
 
 ];

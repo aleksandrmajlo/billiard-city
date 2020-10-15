@@ -71,10 +71,12 @@ class ActController extends Controller
         }
 
 
+
         // сортировка старт **************************************
         // desc - стрелка вверх по алфавиту вниз  а..я
         // asc - стрелка dybp по алфавиту я а
         $categoryDocSortOrder = session('categoryDocSortOrder', 'desc');
+
         if($categoryDocSortOrder=="desc"){
             $cats = CategoryStock::orderBy('title','desc')->get();
         }else{
@@ -91,7 +93,7 @@ class ActController extends Controller
             if (isset($cat_title[$item['categorystock_id']])) {
                 $title = $cat_title[$item['categorystock_id']];
             } else {
-                $cat = CategoryStock::select('title', 'id')->find($item['categorystock_id']);
+                $cat = CategoryStock::select('title', 'id')->withTrashed()->find($item['categorystock_id']);
                 $cat_title[$cat->id] = $cat->title;
                 $title = $cat->title;
             }

@@ -9345,6 +9345,7 @@ a.ResetLink:hover {
   transform: rotate(180deg);
 }
 
+#readIngWin.target,
 #readOrderWin.target,
 #compareActWin.target {
   top: 50%;
@@ -9469,5 +9470,122 @@ input.isInvalid {
   position: fixed;
   height: calc(100vh - 58px);
   overflow-y: auto;
+}
+
+.ApiKeyButtonWraperr {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ApiKeyButtonWraperr a.btn-danger {
+  background-color: #f2994a !important;
+  border-color: #f2994a !important;
+  height: 33px;
+}
+
+.ApiKeyButtonWraperr a.overhead__buttom {
+  display: inline-block;
+  width: auto;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 4px;
+  height: auto;
+  height: 33px;
+  margin-right: 20px;
+}
+
+.td-left {
+  text-align: left !important;
+  padding-left: 10px !important;
+}
+
+@media (max-width: 768px) {
+  .over__formsearch_ing #searchform {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .saves .user_top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .saves .user_top a.dell {
+    margin-right: 5px;
+  }
+
+  .saves .user_top a.edit {
+    margin-left: 5px;
+  }
+}
+
+.CatFormImage,
+.CategoryImg {
+  max-width: 150px;
+  height: auto;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.CatBackColor {
+  width: 30px;
+  height: 15px;
+  display: inline-block;
+}
+
+@media (max-width: 1050px) {
+  .user_table table {
+    min-width: inherit !important;
+  }
+}
+
+#dropzone {
+  border-radius: 0.625rem !important;
+  border: 1px dashed #519eeb !important;
+  background-color: #ecf5ff !important;
+  text-align: center !important;
+  min-height: 4.375rem !important;
+  padding: 1.25rem 0.625rem 0.625rem !important;
+  position: relative !important;
+}
+
+#dropzone .dropzone .dz-message {
+  margin: 1em 0 !important;
+}
+
+#dropzone .fa {
+  font-size: 20px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+#dropzone .dz-progress,
+#dropzone .dz-size {
+  display: none !important;
+}
+
+#dropzone .dz-progress span,
+#dropzone .dz-size span {
+  display: none !important;
+}
+
+.ProductReadButtonBlock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .row.WrapDropzone > div {
+    width: 100% !important;
+    text-align: center;
+    padding-left: 15px;
+  }
 }
 

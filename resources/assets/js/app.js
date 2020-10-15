@@ -104,6 +104,7 @@ Vue.component('OpenBarmen', require('./components/Change/OpenBarmen.vue').defaul
 Vue.component('ReadOrder', require('./components/Order/ReadOrder.vue').default);
 // телефон маска
 Vue.component('Phone', require('./components/Phone.vue').default);
+
 // пользователи
 Vue.component('ListCustomers', require('./components/Customers/ListCustomers.vue').default);
 Vue.component('SearchCustomers', require('./components/Customers/SearchCustomers.vue').default);
@@ -111,6 +112,17 @@ Vue.component('AddCustomer', require('./components/Customers/AddCustomer.vue').d
 Vue.component('ReadCustomer', require('./components/Customers/ReadCustomer.vue').default);
 Vue.component('DeleteCustomer', require('./components/Customers/DeleteCustomer.vue').default);
 
+// инградиенты
+Vue.component('ListIngrs', require('./components/Bar/ListIngrs.vue').default);
+Vue.component('SearchIngr', require('./components/Bar/SearchIngr.vue').default);
+Vue.component('FormIngr', require('./components/Bar/FormIngr.vue').default);
+Vue.component('AddIngr', require('./components/Bar/AddIngr.vue').default);
+
+// категории
+Vue.component('ListCat', require('./components/Bar/ListCat.vue').default);
+Vue.component('SearchCat', require('./components/Bar/SearchCat.vue').default)
+Vue.component('FormCat', require('./components/Bar/FormCat.vue').default);;
+Vue.component('AddCat', require('./components/Bar/AddCat.vue').default);
 
 // аналитика
 Vue.component('AttendancAnalitic', require('./components/analytic/AttendancAnalitic.vue').default);

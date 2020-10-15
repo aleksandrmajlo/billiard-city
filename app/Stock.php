@@ -18,7 +18,7 @@ class Stock extends Model
 
     public function categorySee()
     {
-        return $this->hasOne('App\CategoryStock', 'id', 'categorystock_id');
+        return $this->hasOne('App\CategoryStock', 'id', 'categorystock_id')->withTrashed();
     }
 
 

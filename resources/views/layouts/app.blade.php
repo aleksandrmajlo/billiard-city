@@ -18,7 +18,7 @@
     {{-- <link href="{{ asset('/css/my.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
-    <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    {{-- <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css"> --}}
     {{-- <link href="{{ asset('/css/order.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('production/css/app.css') }}" rel="stylesheet">
     {{--
@@ -165,11 +165,9 @@
 							</span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="/bars/ingredient"> <span>@lang('ingrredient.title')</span></a></li>
-                            <li><a href="/stock"> <span>@lang('site.stock')</span></a></li>
-                            @if($user->hasRole('admin'))
-                                <li><a href="/category"> <span>@lang('sidebar.categories')</span></a></li>
-                            @endif
+                            <li><a href="/bars/ingredients"> <span>@lang('ingrredient.title')</span></a></li>
+                            <li><a href="/bars/stocks"> <span>@lang('site.stock')</span></a></li>
+                            <li><a href="/bars/categories"> <span>@lang('sidebar.categories')</span></a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -246,14 +244,11 @@
     </div>
 </div>
 
-    {{-- перенеcено в компонент Booking --}}
-    {{-- скрипты верстальщика --}}
-    {{-- <script type="text/javascript" src="{{ asset('js/pickmeup.js') }}"></script> --}}
-    {{-- скрипты верстальщика --}}
+
 
     <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    {{-- <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> --}}
 
     <script src="{{ asset('production/js/app.js') }}" ></script>
     {{--    старые скрипты --}}

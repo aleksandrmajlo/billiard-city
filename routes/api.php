@@ -24,6 +24,8 @@ use App\Table;
 //    return $request->user();
 //});
 
+Route::post('images-save', 'UploadImagesController@store');
+Route::post('images-delete', 'UploadImagesController@destroy');
 
 $services = DB::table('api_tokens')->pluck('service')->toArray();
 $services_str = implode(",", $services);

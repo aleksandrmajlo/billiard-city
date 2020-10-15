@@ -51,19 +51,27 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/table-create', 'TableController@create')->name('tablecreate');
         Route::post('/table-edit', 'TableController@store')->name('tablestore');
 
-        Route::get('/stock-create', 'StockController@create')->name('stockcreate');
-        Route::post('/stock-store', 'StockController@store')->name('stockstore');
-        Route::post('/stock-edit', 'StockController@edit')->name('stockstore');
-        Route::get('/stock', 'StockController@index')->name('indexstock');
-        Route::delete('/stock/{id}', 'StockController@destroy');
+
+//        Route::get('/stock-create', 'StockController@create')->name('stockcreate');
+//        Route::post('/stock-store', 'StockController@store')->name('stockstore');
+//        Route::post('/stock-edit', 'StockController@edit')->name('stockstore');
+//        Route::get('/stock', 'StockController@index')->name('indexstock');
+//        Route::delete('/stock/{id}', 'StockController@destroy');
+
 
 
         Route::delete('/tarif/{id}', 'TariffController@destroy');
         Route::get('/tarif', 'TariffController@index')->name('tarifs');
-        Route::post('/category-create', 'CategoryStockController@store')->name('categorycreate');
-        Route::get('/category', 'CategoryStockController@index')->name('categoryindex');
-        Route::delete('/category/{id}', 'CategoryStockController@destroy');
-        Route::post('/category-edit', 'CategoryStockController@edit')->name('categoryedit');
+
+
+
+        /*
+      Route::post('/category-create', 'CategoryStockController@store')->name('categorycreate');
+       Route::get('/category', 'CategoryStockController@index')->name('categoryindex');
+       Route::delete('/category/{id}', 'CategoryStockController@destroy');
+       Route::post('/category-edit', 'CategoryStockController@edit')->name('categoryedit');
+       */
+
         Route::get('/cupon', 'CuponController@index')->name('cuponindex');
         Route::get('/info-money', 'MoneyController@index')->name('moneyindex');
         Route::any('/edit-money', 'MoneyController@edit')->name('moneyedit');
@@ -110,11 +118,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('changes', 'ChangeController');
 
-    //    Route::get('/change', 'ChangeController@index')->name('change');
-    // информация о смене
-    //    Route::get('/change/{id}', 'ChangeController@seeChange')->name('seeChange');
-    //    Route::post('/change-create', 'ChangeController@create')->name('changecreate');
-    //    Route::post('/change-close', 'ChangeController@closeChange')->name('changeclosechange');
 
     //закрытие смены
     Route::get('/close_order', 'Change\CloseBarmen@close_change')->name('close_change');
@@ -140,7 +143,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/close-bar', 'OrderController@closeBar')->name('closeBar');
     Route::get('/close-table', 'OrderController@closeTable')->name('closeTable');
 
-    Route::get('/stock', 'StockController@index')->name('stock');
+//    Route::get('/stock', 'StockController@index')->name('stock');
 
     // бронирование **************************************************
     Route::get('/booking', 'BookingController@index')->name('booking');
@@ -170,7 +173,15 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::group(['prefix' => 'bars', 'namespace' => 'Bars'], function () {
-        Route::resource('/ingredient', 'IngredientController');
+
+        Route::get('/ingredient/{q}', 'IngredientController@search');
+        Route::resource('/ingredients', 'IngredientController');
+
+        Route::get('/category/{q}', 'CategoryController@search');
+        Route::resource('/categories', 'CategoryController');
+
+        Route::resource('/stocks', 'StockController');
+
     });
 
     Route::group(['prefix' => 'doc', 'namespace' => 'Docs'], function () {

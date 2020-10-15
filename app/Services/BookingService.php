@@ -66,8 +66,15 @@ class BookingService
      // телефон к одному виду
      public static function ValidPhone($phone){
          $phone=str_replace('+',"",$phone);
+         $phone=str_replace('-',"",$phone);
+         $phone=str_replace(' ', '', $phone);
+
          $firstCharacter = $phone[0];
          if($firstCharacter=="3"){
+             $phone = substr($phone, 1);
+         }
+         $firstCharacter = $phone[0];
+         if($firstCharacter=="8"){
              $phone = substr($phone, 1);
          }
          return $phone;

@@ -16,24 +16,41 @@ class IngredientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    protected $pageCount = 20;
+
+    public function index(Request $request)
     {
         $ingredients = Ingredient::orderBy('title', 'ASC')
-            ->get();
-        $user=Auth::user();
-        $ReadCount=false;
-        if($user->hasRole('admin')){
-            $ReadCount=true;
+            ->paginate($this->pageCount);
+
+        if ($request->ajax()) {
+            return response()->json(['ingredients' => $ingredients]);
         }
 
-        $kofeinyi_apparat_category_id=config('category.kofeinyi_apparat_category_id');
-        $kofeinyiapparatcount=Kofeinyiapparatcount::get();
+        $page = 1;
+        if ($request->has('page')) {
+            $page = $request->page;
+        }
+        $user = Auth::user();
+        $ReadCount = false;
+        if ($user->hasRole('admin')) {
+            $ReadCount = true;
+        }
 
-        return view('bars/ingredients', [
+        return view('bars/ingredient_index', [
+            'page' => $page,
             'ingredients' => $ingredients,
-            'ReadCount'   =>$ReadCount,
-            'kofeinyiapparatcount'=>$kofeinyiapparatcount
+            'ReadCount' => $ReadCount,
+//            'kofeinyiapparatcount' => $kofeinyiapparatcount,
         ]);
+    }
+
+    // поиск
+    public function search($q)
+    {
+        $ingredients = Ingredient::where('title', 'LIKE', "%$q%")
+            ->get();
+        return response()->json(['ingredients' => $ingredients]);
     }
 
     /**
@@ -49,7 +66,7 @@ class IngredientController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -58,15 +75,13 @@ class IngredientController extends Controller
         $ingr->title = $request->title;
         $ingr->count = $request->count;
         $ingr->save();
-        return response()->json([
-            'success' => true,
-        ], 200);
+        return response()->json(['success' => true]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -77,7 +92,7 @@ class IngredientController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -88,32 +103,32 @@ class IngredientController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $ing=Ingredient::find($id);
-        $ing->count=$request->count;
+        $ing = Ingredient::findOrFail($id);
+        $ing->title = $request->data['title'];
+        $ing->count = $request->data['count'];
         $ing->save();
 
         ActService::UpdateProductCount();
-        return response()->json([
-            'success' => true,
-        ], 200);
+        return response()->json(['success' => true]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $ingredient = Ingredient::find($id);
+        $ingredient = Ingredient::findOrFail($id);
         $ingredient->delete();
-        return redirect()->back()->with('status', 'Delete!');
+        ActService::UpdateProductCount();
+        return response()->json(['success' => true]);
     }
 }

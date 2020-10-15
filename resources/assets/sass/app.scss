@@ -768,6 +768,7 @@ a.ResetLink {
     }
 }
 
+#readIngWin.target,
 #readOrderWin.target,
 #compareActWin.target {
     top: 50%;
@@ -902,9 +903,134 @@ input.isInvalid {
         height: calc(100vh - 58px);
         overflow-y: auto;
 
-        .sidebar {
-            // height: 100vh !important;
-            // padding-bottom: 0 !important;
+    }
+}
+
+.ApiKeyButtonWraperr {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    a.btn-danger {
+        background-color: #f2994a !important;
+        border-color: #f2994a !important;
+        height: 33px;
+    }
+
+    a.overhead__buttom {
+        display: inline-block;
+        width: auto;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.428571429;
+        border-radius: 4px;
+        height: auto;
+        height: 33px;
+        margin-right: 20px;
+    }
+}
+
+.td-left {
+    text-align: left !important;
+    padding-left: 10px !important;
+}
+
+@media (max-width: 768px) {
+    .over__formsearch_ing {
+        #searchform {
+            margin-left: 0;
+            width: 100%;
+            margin-top: 20px;
         }
     }
+
+    .saves {
+        .user_top {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+
+            a.dell {
+                margin-right: 5px;
+            }
+
+            a.edit {
+                margin-left: 5px;
+            }
+        }
+    }
+}
+
+.CatFormImage,
+.CategoryImg {
+    max-width: 150px;
+    height: auto;
+    display: inline-block;
+    margin-bottom: 10px;
+
+}
+
+.CatBackColor {
+    width: 30px;
+    height: 15px;
+    display: inline-block
+}
+
+@media (max-width: 1050px) {
+    .user_table table {
+        min-width: inherit !important;
+    }
+}
+
+#dropzone {
+    border-radius: .625rem !important;
+    border: 1px dashed rgb(81, 158, 235) !important;
+    background-color: rgb(236, 245, 255) !important;
+    text-align: center !important;
+    min-height: 4.375rem !important;
+    padding: 1.25rem .625rem .625rem !important;
+    position: relative !important;
+
+    .dropzone .dz-message {
+        margin: 1em 0 !important;
+    }
+
+    .fa {
+        font-size: 20px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .dz-progress,
+    .dz-size {
+        display: none !important;
+
+        span {
+            display: none !important;
+        }
+    }
+}
+
+.ProductReadButtonBlock {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+
+    [type="submit"] {
+        // margin-right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .row.WrapDropzone {
+        &>div {
+            width: 100% !important;
+            text-align: center;
+            padding-left: 15px;
+        }
+    }
+
+
 }

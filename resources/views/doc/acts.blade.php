@@ -1,5 +1,4 @@
 @extends('layouts.app')
-@php App::setLocale(session('lng'));@endphp
 @section('content')
     <div class="user">
         <div class="row">
