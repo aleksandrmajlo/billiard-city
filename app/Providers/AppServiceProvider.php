@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 
+use App\Observers\StockObserver;
+use App\Stock;
+
 use Illuminate\Support\Facades\App;
 
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
 
         View::composer(['layouts.app'], SettingsComposer::class);
+        Stock::observe(StockObserver::class);
     }
 
     /**

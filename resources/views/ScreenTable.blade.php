@@ -12,8 +12,8 @@
     <title>Billiards CRM</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap&subset=cyrillic" rel="stylesheet">
+    <link href="{{ asset('production/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
 
     <script>
@@ -22,10 +22,14 @@
 
     <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('production/js/app.js') }}" defer></script>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap&subset=cyrillic" rel="stylesheet">
+    <style type="text/css">
+        html{
+            zoom: 1.5;
+        }
+    </style>
+
 </head>
 <body>
 <div class="wrapper billiard" id="app">

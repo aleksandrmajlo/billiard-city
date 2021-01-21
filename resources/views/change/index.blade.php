@@ -86,9 +86,7 @@
                 @endforeach
             </table>
         </div>
-{{--        @if($paginate)--}}
-            @include('pagination.default', ['paginator' => $changes])
-{{--        @endif--}}
+        @include('pagination.default', ['paginator' => $changes])
 
     </div>
 @endsection

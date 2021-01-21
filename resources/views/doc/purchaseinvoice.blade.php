@@ -48,27 +48,97 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                @lang('site.SortThis'):
+                <b>
+                    @if($ActSortOrder=="cat")
+                        @lang('site.Category')
+                    @elseif($ActSortOrder=="title")
+                        @lang('act.name')
+                    @elseif($ActSortOrder=='type')
+                        @lang('act.type')
+                    @endif
+                </b>
+                -
+                <b>
+                    @if($ActSortOrder=='type')
+                        @if($ActSortOrderType=='act')
+                            @lang('act.product') @lang('site.SortThisAsc2')
+                        @else
+                            @lang('act.ingredient')  @lang('site.SortThisAsc2')
+                        @endif
+                    @else
+                        @if($ActSortOrderType=='act')
+                            @lang('site.SortThisAsc')
+                        @else
+                            @lang('site.SortThisDesc')
+                        @endif
+                    @endif
+
+                </b>
+            </div>
+        </div>
         <div class="user_table acts__table" id="print">
             <table>
                 <tr class="td-one">
                     <td>
                         @lang('act.name')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="title">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
                     </td>
                     <td>
                         @lang('act.cat')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="cat">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
                     </td>
                     <td>
                         @lang('act.type')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="type">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
                     </td>
                     <td>
                         @lang('purchaseinvoice.sklad')
                     </td>
                 </tr>
-                @foreach($purchaseinvoice->stocks as $stock)
-                    @include('doc.stock')
-                @endforeach
-                @foreach($purchaseinvoice->ingredients as $ingredient)
-                    @include('doc.ingredient')
+                @foreach($products as $product)
+                    @include('doc.product')
                 @endforeach
             </table>
         </div>

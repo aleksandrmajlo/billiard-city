@@ -39,7 +39,6 @@
             </div>
             <div class="col-xs-6 col-xs-xs-12">
                 <div class="col-xs-12 col-xs-xs-10 col-xs-xs-xs-12 no-pdd" v-if="!showCode">
-
                     <imask-input
                             v-model="phone"
                             :mask="'+{38}(000)000-00-00'"
@@ -69,7 +68,6 @@
                     <span v-show="codeError" class="text-warning">{{$t('SmsCodeErrorEnter')}}</span>
                 </div>
             </div>
-
             <div class="col-xs-6 col-xs-xs-12 ">
                 <!--
                 <div class="col-xs-6 col-xs-xs-5 col-xs-xs-xs-6 no-pdd" v-if="!showCode">
@@ -80,18 +78,15 @@
                         <label class="label" for="phone">Phone</label>
                     </div>
                 </div>
-
                 <div class="col-xs-6 col-xs-xs-5 col-xs-xs-xs-6 no-pdd " v-if="!showCode">
                     <input class="sab" type="submit" :disabled="disabled" @click.prevent="sendSMS"
                            :value="$t('send_phone')">
                 </div>
-
-
                 <div class="col-xs-6 col-xs-xs-5 col-xs-xs-xs-6 no-pdd " v-else-if="!isCodeValid">
                     <input class="sab" type="submit" :disabled="disabled" @click.prevent="checkCode"
                            :value="$t('send_phone')">
                 </div>
-                    -->
+              -->
             </div>
             <div class="col-xs-12">
                 <input class="note" type="text" v-model="description" :placeholder="$t('comment')">
@@ -118,7 +113,6 @@
         data() {
             return {
                 id_sms: "",
-
                 phoneValid: false,
                 phoneError: false,
                 code: "",
@@ -153,7 +147,7 @@
                         this.description = response.data.customer.description;
                 })
                 .catch(error => {
-                    // this.showShwal('error', this.$t('error'));
+                    this.showShwal('error', this.$t('error'));
                 })
                 .then(() => {
                 })

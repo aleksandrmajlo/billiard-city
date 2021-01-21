@@ -144,7 +144,6 @@
         data() {
             return {
                 ActiveCategory: '',//активная категория ID
-
                 products: {},
                 ingredients: [],
                 cats: [

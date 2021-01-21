@@ -28,11 +28,15 @@ class Change extends Model
     public function getTotalAttribute()
     {
         $total = 0;
+
         if ($this->orders) {
             foreach ($this->orders as $order) {
-                $total += $order->amount;
+                if ($order->closed) {
+                    $total += $order->amount;
+                }
             }
         }
+
         return round($total, 2);
     }
 
@@ -41,9 +45,12 @@ class Change extends Model
         $total = 0;
         if ($this->orders) {
             foreach ($this->orders as $order) {
-                if(is_null($order->billing)||$order->billing==1){
-                    $total += $order->amount;
+                if ($order->closed) {
+                    if (is_null($order->billing) || $order->billing == 1) {
+                        $total += $order->amount;
+                    }
                 }
+
             }
         }
         return round($total, 2);
@@ -54,9 +61,12 @@ class Change extends Model
         $total = 0;
         if ($this->orders) {
             foreach ($this->orders as $order) {
-                if($order->billing==2){
-                    $total += $order->amount;
+                if ($order->closed) {
+                    if ($order->billing == 2) {
+                        $total += $order->amount;
+                    }
                 }
+
             }
         }
         return round($total, 2);

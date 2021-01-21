@@ -75,20 +75,14 @@ $(document).ready(function () {
 
 $(document).ready(function () {
 
-    $('.categoryDocSortOrder').click(function (e) {
+    $('.DocSortOrder').click(function (e) {
         e.preventDefault();
-        let sort = $(this).data('sort');
-        $('[name="sort"]').val(sort);
-        document.getElementById('categoryDocSortOrderForm').submit();
+        let type = $(this).data('type');
+        let $form=$(this).siblings('form');
+        $form.find('[name="type"]').val(type);
+        $form[0].submit();
     });
-
-    $('.typeDocSortOrder').click(function (e) {
-        e.preventDefault();
-        let sort = $(this).data('sort');
-        $('[name="type"]').val(sort);
-        document.getElementById('typeDocSortOrderForm').submit();
-    });
-
+     
     //модалка
     $('.modalShow').click(function (e) {
         e.preventDefault();

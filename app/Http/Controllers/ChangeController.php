@@ -47,7 +47,6 @@ class ChangeController extends Controller
 
             } else {
                 $changes = Change::orderBy('created_at', 'desc')->paginate($this->countPage);
-//                $changes = Change::paginate($this->countPage);
             }
         } else {
 
@@ -101,7 +100,7 @@ class ChangeController extends Controller
         $change = Change::findOrFail($id);
         $orders = Order::where('user_id', $change->user_id)
             ->where('changes_id', $change->id)
-            ->paginate(10);
+            ->paginate($this->countPage);
         return view('change.show', compact(
             'change',
             'orders'
@@ -160,41 +159,6 @@ class ChangeController extends Controller
         return redirect('/')->with('status', 'Close change!');
     }
 
-
-    /*
-    // закрытие смены !!!!!!!!!!!!!нерабочее для бармена точно !!!!!!!!!!!!!!!
-    public function closeChange(Request $request)
-    {
-
-        $change = Change::find($request->id);
-        $change->summa_end = $request->summa_end;
-        $change->stop = Carbon::now()->format('Y-m-d H:i:s');
-        $change->save();
-        return redirect('/')->with('status', 'Close change!');
-    }
-    public function seeChange($id)
-    {
-        $change = Change::findOrFail($id);
-        $orders = Order::where('user_id', $change->user_id)
-            ->where('changes_id', $change->id)
-            ->paginate(10);
-        $all_orders=Order::where('user_id', $change->user_id)
-            ->where('changes_id', $change->id)
-            ->get();
-        $amountCountClients=0;
-        $amountCountChange=0;
-        foreach ($all_orders as $order){
-            $amountCountClients++;
-            $amountCountChange+=$order->amount;
-        }
-        return view('see-change', compact(
-            'change',
-            'orders',
-            'amountCountClients',
-            'amountCountChange'
-        ));
-    }
-    */
 
 
 }

@@ -1,41 +1,35 @@
+
 html,
 body {
     height: 100%
 }
-
 .layout-boxed html,
 .layout-boxed body {
     height: 100%
 }
-
 body {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     overflow-x: hidden;
     overflow-y: auto
 }
-
 .wrapper {
     height: 100%;
     position: relative;
     overflow-x: hidden;
     overflow-y: auto
 }
-
 .wrapper:before,
 .wrapper:after {
     content: " ";
     display: table
 }
-
 .wrapper:after {
     clear: both
 }
-
 .mob {
     display: none;
 }
-
 .wrapper__main {
     -webkit-transition: -webkit-transform .3s ease-in-out, margin .3s ease-in-out;
     -moz-transition: -moz-transform .3s ease-in-out, margin .3s ease-in-out;
@@ -44,7 +38,6 @@ body {
     margin-left: 230px;
     z-index: 820
 }
-
 @media (max-width:970px) {
     .wrapper__main {
         margin-left: 0
@@ -58,13 +51,11 @@ body {
         display: none;
     }
 }
-
 @media (min-width:970px) {
     .sidebar-collapse .wrapper__main {
         margin-left: 0
     }
 }
-
 @media (max-width:970px) {
     .sidebar-open .wrapper__main {
         -webkit-transform: translate(230px, 0);
@@ -73,52 +64,42 @@ body {
         transform: translate(230px, 0)
     }
 }
-
 .wrapper__main {
     min-height: calc(100vh + 11px);
     background-color: #ecf0f5;
     z-index: 800
 }
-
 @media (max-width:767px) {
     .wrapper__main {
         min-height: calc(100vh - 151px)
     }
 }
-
 .fixed .header__main,
 .fixed .sidebar__main,
 .fixed .left-side {
     position: fixed
 }
-
 .fixed .header__main {
     top: 0;
     right: 0;
     left: 0
 }
-
 .fixed .wrapper__main,
 .fixed .right-side {
     padding-top: 50px
 }
-
 @media (max-width:767px) {
-
     .fixed .wrapper__main,
     .fixed .right-side {
         padding-top: 100px
     }
 }
-
 .fixed.layout-boxed .wrapper {
     max-width: 100%
 }
-
 .fixed .wrapper {
     overflow: hidden
 }
-
 .hold-transition .wrapper__main,
 .hold-transition .right-side,
 .hold-transition .main-footer,
@@ -131,7 +112,6 @@ body {
     -o-transition: none;
     transition: none
 }
-
 .content__main {
     min-height: 250px;
     padding: 15px;
@@ -140,11 +120,9 @@ body {
     padding-left: 15px;
     padding-right: 15px
 }
-
 a {
     color: #3c8dbc
 }
-
 a:hover,
 a:active,
 a:focus {
@@ -152,18 +130,15 @@ a:focus {
     text-decoration: none;
     color: #72afd2
 }
-
 .page-header {
     margin: 10px 0 20px 0;
     font-size: 22px
 }
-
 .page-header>small {
     color: #666;
     display: block;
     margin-top: 5px
 }
-
 .header__main {
     position: relative;
     max-height: 100px;
@@ -173,7 +148,6 @@ a:focus {
     padding-right: 15px;
     white-space: nowrap;
 }
-
 .header__main .navbar {
     -webkit-transition: margin-left .3s ease-in-out;
     -o-transition: margin-left .3s ease-in-out;
@@ -185,67 +159,54 @@ a:focus {
     border-radius: 0;
     color: #000A1A;
 }
-
 .layout-top-nav .header__main .navbar {
     margin-left: 0
 }
-
 @media (max-width:991px) {
     .header__main .navbar-custom-menu a {
         color: inherit;
         background: transparent
     }
 }
-
 .header__main .sidebar-toggle {
     float: left;
     background-color: transparent;
     background-image: none;
-    /*padding: 19px 15px 10px;*/
     padding: 11px 15px 11px;
     font-family: fontAwesome;
     color: #15499F;
     line-height: 1.428571429;
 }
-
 .header__main .sidebar-toggle:before {
     content: "\f0c9";
     font-size: 25px;
 }
-
 .header__main .sidebar-toggle:focus,
 .header__main .sidebar-toggle:active {
     background: transparent
 }
-
 .header__main .sidebar-toggle.fa5 {
     font-family: "Font Awesome\ 5 Free"
 }
-
 .header__main .sidebar-toggle.fa5:before {
     content: "\f0c9";
     font-weight: 900
 }
-
 .header__main .sidebar-toggle .icon-bar {
     display: none
 }
-
 .header__main .navbar .nav>li>a,
 .header__main .navbar .nav>li>a>span {
     color: #000A1A;
     font-size: 16px;
 }
-
 .header__main .navbar-nav>li>a,
 .header__main .navbar .nav>li.time-menu>a {
     padding: 21px 30px 15px;
 }
-
 .header__main .navbar-nav>li.messages-menu>a {
     padding-top: 15px;
 }
-
 .header__main .navbar .nav>li>a>.label {
     position: absolute;
     top: 9px;
@@ -258,13 +219,11 @@ a:focus {
     border-radius: 50%;
     color: #ECF0F5;
 }
-
 .header__main .navbar .nav {
     display: flex;
     justify-content: space-between;
     float: none;
 }
-
 .header__main .navbar .nav li:nth-child(4) {
     margin-left: auto;
 }

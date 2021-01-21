@@ -156,7 +156,15 @@ return [
     "ProductAdd"=>"Продукт доданий",
     "ProductUpdate"=>"Продукт оновлений",
     "Update"=>"Оновити",
-    "ProductAction"=>"Дія"
+    "ProductAction"=>"Дія",
+    "SortThis"=>"Сортування",
+    "SortThisDesc"=>" з останніх",
+    "SortThisAsc"=>" з перших",
+    "SortThisAsc2"=>" перший",
+    "Comments"=>"Коментар",
+    "OrdersNotClose"=>"не закрите",
+    "PaginationFirst"=>"Початок",
+    "PaginationLast"=>"Остання"
 
 
 ];

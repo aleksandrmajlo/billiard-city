@@ -43,6 +43,9 @@ import './filter'
 import i18n from './lang/i18n'
 
 
+// вход в админку
+Vue.component('LoginForm', require('./components/LoginForm.vue').default);
+
 
 // таймер для стола открытого
 Vue.component('TimerTable', require('./components/TimerTable.vue').default);
@@ -129,6 +132,9 @@ Vue.component('AttendancAnalitic', require('./components/analytic/AttendancAnali
 Vue.component('AttendancfooterAnalitic', require('./components/analytic/AttendancfooterAnalitic.vue').default);
 Vue.component('AttendancCalendar', require('./components/analytic/AttendancCalendar.vue').default);
 Vue.component('AttendancCalendarmobile', require('./components/analytic/AttendancCalendarmobile.vue').default);
+
+Vue.component('PopularitytablesAnalitic', require('./components/analytic/PopularitytablesAnalitic.vue').default);
+Vue.component('PopularitytablesfooterAnalitic', require('./components/analytic/PopularitytablesfooterAnalitic.vue').default);
 
 const app = new Vue({
     el: '#app',

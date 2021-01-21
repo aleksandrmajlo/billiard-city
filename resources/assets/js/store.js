@@ -380,7 +380,6 @@ let store = {
                 })
 
         },
-
         // проверка кода
         checkCode({
             commit,
@@ -411,7 +410,6 @@ let store = {
                 })
                 .catch(error => {})
         },
-
         // получение продуктов первончально при загрузке страницы
         getOrder({
             commit,
@@ -430,7 +428,6 @@ let store = {
 
                 })
         },
-
         // запрос цены открытого стола
         getTablePrice({
             commit,
@@ -441,8 +438,6 @@ let store = {
                     commit('SetTotalTable', response.data.results)
                 })
         },
-
-
         // при добавлении сохранение продуктов
         setReserveAndCart({
             commit,

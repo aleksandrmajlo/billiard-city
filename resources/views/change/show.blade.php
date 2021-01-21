@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-7">
                 <div class="filter-block filter-order">
-                    <form class="filter-form" >
+                    <form class="filter-form">
                         <div class="row">
                             <div class="col-xs-3 col-xs-xs-6">
                                 <label>@lang('site.changeUser')</label>
@@ -45,7 +45,7 @@
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
                                 <p>
-                                    {{ $change->nal  }}  ₴
+                                    {{ $change->nal  }} ₴
                                 </p>
                             </div>
 
@@ -54,7 +54,7 @@
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
                                 <p>
-                                    {{ $change->cart  }}  ₴
+                                    {{ $change->cart  }} ₴
                                 </p>
                             </div>
 
@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
                                 <p>
-                                    {{ $change->total  }}  ₴
+                                    {{ $change->total  }} ₴
                                 </p>
                             </div>
                             <div class="col-xs-3 col-xs-xs-6">
@@ -94,7 +94,11 @@
                 <tr class="td-one">
                     <td>#</td>
                     <td>Тип</td>
-                    <td>@lang('site.stil')</td>
+                    @if($change->user->hasRole('barmen'))
+                        <td style="max-width: 20%;">@lang('site.Comments')</td>
+                    @else
+                        <td>@lang('site.stil')</td>
+                    @endif
                     <td>@lang('site.date_start')</td>
                     <td>@lang('site.date_end')</td>
                     <td>@lang('site.summa')</td>
@@ -103,25 +107,37 @@
                 @foreach($orders as $order)
                     <tr>
                         <td>{{ $order->id }} </td>
-                        <td>@if($order->type_billiards == 1) більярдна @endif @if($order->type_bar == 1)
-                                бар @endif</td>
-                        <td>{{$order->tableId->title ?? '-'}}</td>
+                        <td>@if($order->type_billiards == 1) більярдна @endif
+                            @if($order->type_bar == 1) бар @endif
+                        </td>
+                        @if($order->type_billiards == 1)
+                            <td> {{$order->tableId->title ?? '-'}}</td>
+                        @else
+                            <td>{{$order->info}}</td>
+                        @endif
                         <td>{{ $order->start }}</td>
-                        <td>{{ $order->closed ?? "не закрите" }}</td>
-
                         <td>
-                            @if(is_null($order->closed)) не закрите
+                            @if(is_null($order->closed))
+                                @lang('site.OrdersNotClose')
                             @else
+                                {{$order->closed}}
+                            @endif
+                        </td>
+                        <td>
+{{--                            @if(is_null($order->closed))--}}
+{{--                                @lang('site.OrdersNotClose')--}}
+{{--                            @else--}}
                                 @if($order->type_billiards == 1)
                                     {{$order->amount}} грн.
                                 @endif
                                 @if($order->type_bar == 1)
                                     {{$order->amount}} грн.
                                 @endif
-
-                            @endif
+{{--                            @endif--}}
                         </td>
-                        <td><a href="/info/{{ $order->id }}">>>></a></td>
+                        <td>
+                            <a href="/info/{{ $order->id }}">>>></a>
+                        </td>
                     </tr>
                 @endforeach
             </table>

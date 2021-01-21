@@ -66,11 +66,14 @@
           <h4 class="modal-title">@lang('site.add')</h4>
         </div>
         <div class="modal-body">
+{{--
           <form method="POST" action="{{action('CategoryStockController@store')}}" enctype="multipart/form-data" />
           {{ csrf_field() }}
           <input type="text" name="title"  class="form-control" value="{{ $stock->title ?? '' }}" required />
           <br> <input type = 'submit'   class="btn btn-primary active" />
           </form>
+--}}
+
         </div>
       </div>
     </div>    </div>
@@ -83,12 +86,15 @@
             <h4 class="modal-title">@lang('site.add')</h4>
           </div>
           <div class="modal-body">
+{{--
             <form method="POST" action="{{action('CategoryStockController@edit')}}" enctype="multipart/form-data" />
             {{ csrf_field() }}
             <input type="text" style="display: none" name="id"  class="form-control idcatecory" value="1" required />
             <input type="text" name="title"  class="form-control titlecatecory" value="2" required />
             <br> <input type = 'submit'   class="btn btn-primary active" />
             </form>
+--}}
+
           </div>
         </div>
       </div>

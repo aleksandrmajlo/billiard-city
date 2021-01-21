@@ -126,11 +126,13 @@
                 axios
                     .get("/booking_ajax/calendar_bookings")
                     .then((response) => {
+
                         this.bookings = response.data.bookings;
                         let month = $(".pmu-month").data("month");
                         let year = $(".pmu-month").data("year");
                         let date = new Date();
                         let day = date.getDate();
+                        // let day = date.getMonth();
                         if (
                             typeof this.bookings[year] !== "undefined" &&
                             typeof this.bookings[year][month] !== "undefined"
@@ -141,11 +143,11 @@
                                     .each(function () {
                                         let d = $(this).text();
                                         if ((parseInt(el) == parseInt(d)) && day <= parseInt(el)) {
-                                            let count = $(this).data('count');
+                                            var count = $(this).attr('data-count');
                                             if (typeof count == "undefined") {
                                                 $(this).attr('data-count', 1)
                                             } else {
-                                                $(this).attr('data-count', parseInt(count) + 1);
+                                                $(this).attr('data-count', (parseInt(count) + 1));
                                             }
                                             $(this).addClass('YesBooking')
                                         }

@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Docs;
 
 use App\Customer;
+use App\Traits\UcfirstTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Acts\Consumableinvoice;
-
 use Excel;
 
 class ConsumableinvoiceController extends Controller
 {
-    protected $pageCount=20;
+    use UcfirstTrait;
+    protected $pageCount = 20;
+
     public function index(Request $request)
     {
+        session()->forget('ActSortOrder');
+        session()->forget('ActSortOrderType');
+
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
             $consumableinvoices = Consumableinvoice::orderBy('created_at', 'desc');
             if ($request->has('start') && !empty($request->start)) {
@@ -30,7 +35,7 @@ class ConsumableinvoiceController extends Controller
             $consumableinvoices = Consumableinvoice::orderBy('created_at', 'desc')
                 ->paginate($this->pageCount);
         }
-        $roleIds = [3,2];
+        $roleIds = [3, 2];
         $users = \App\User::whereHas('roles', function ($q) use ($roleIds) {
             $q->whereIn('id', $roleIds);
         })->get();
@@ -56,7 +61,7 @@ class ConsumableinvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -67,7 +72,7 @@ class ConsumableinvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id, Request $request)
@@ -76,10 +81,9 @@ class ConsumableinvoiceController extends Controller
         $consumableinvoice = Consumableinvoice::findOrFail($id);
         $change = $consumableinvoice->change;
         $total = 0;
-        $category = false;
-        if ($request->has('category')) {
-            $category = intval($request->category);
-        }
+
+
+
         if ($change && $change->orders) {
             $countDiscount = [];
             foreach ($change->orders as $order) {
@@ -93,36 +97,29 @@ class ConsumableinvoiceController extends Controller
                         }
                     }
                     foreach ($order->bars as $bar) {
-                        if (!$category) {
-                                $products[] = [
-                                    'id' => $bar->stock->id,
-                                    'title' => $bar->stock->title,
-                                    'count' => $bar->count,
-                                    'price' => $bar->stock->price,
-                                    'discount' => $skidka
-                                ];
-                        } elseif ($category == $bar->stock->categorySee->id) {
-                            $products[] = [
-                                'id' => $bar->stock->id,
-                                'title' => $bar->stock->title,
-                                'count' => $bar->count,
-                                'price' => $bar->stock->price,
-                                'discount' => $skidka
-                            ];
-                        }
+                        $products[] = [
+                            'id' => $bar->stock->id,
+                            'title' => $this->mb_ucfirst($bar->stock->title),
+                            'count' => $bar->count,
+                            'price' => $bar->stock->price,
+                            'discount' => $skidka,
+                            'cat' => $this->mb_ucfirst($bar->stock->categorySee->title)
+                        ];
                     }
                 }
             }
             $productRes = [];
-            $title=null;
-            if($request->has('title')){
-                $title=mb_strtolower($request->title);
+            $title = null;
+            if ($request->has('title')) {
+                $title = mb_strtolower($request->title);
             }
             foreach ($products as $product) {
-                if($title){
+
+                if ($title) {
                     $pos = strpos(mb_strtolower($product['title']), $title);
                     if ($pos === false) continue;
                 }
+
                 if (isset($productRes[$product['id']])) {
                     if (isset($productRes[$product['id']][$product['discount']])) {
                         $productRes[$product['id']][$product['discount']]['count'] = $product['count'] + $productRes[$product['id']][$product['discount']]['count'];
@@ -131,6 +128,7 @@ class ConsumableinvoiceController extends Controller
                             'count' => $product['count'],
                             'price' => $product['price'],
                             'title' => $product['title'],
+                            'cat' => $product['cat'],
                             'total' => 0
                         ];
                     }
@@ -140,6 +138,7 @@ class ConsumableinvoiceController extends Controller
                         'count' => $product['count'],
                         'price' => $product['price'],
                         'title' => $product['title'],
+                        'cat' => $product['cat'],
                         'total' => 0
                     ];
                 }
@@ -155,45 +154,87 @@ class ConsumableinvoiceController extends Controller
                 }
             }
         }
+
+
+        $ARproducts = collect();
+        foreach ($productRes as $products) {
+            foreach ($products as $k => $product) {
+                $ARproducts->push([
+                    'title' => $product['title'],
+                    'count' => $product['count'],
+                    'price' => $product['price'],
+                    'cat' => $product['cat'],
+                    'skidka' => $k,
+                    'total' => $product['total']
+                ]);
+            }
+        }
+
+        // тип отображение start **************************************
+        $ActSortOrder = session('ActSortOrder', 'title');
+        $ActSortOrderType = session('ActSortOrderType', 'asc');
+        // тип отображение end **************************************
+
+
+        if ($ActSortOrder == "total") {
+            if ($ActSortOrderType == "desc") {
+                $ARproducts = $ARproducts->sortByDesc('total');
+            } else {
+                $ARproducts = $ARproducts->sortBy('total');
+            }
+        }
+
+        if ($ActSortOrder == "price") {
+            if ($ActSortOrderType == "desc") {
+                $ARproducts = $ARproducts->sortByDesc('price');
+            } else {
+                $ARproducts = $ARproducts->sortBy('price');
+            }
+        }
+
+        if ($ActSortOrder == "title") {
+            if ($ActSortOrderType == "desc") {
+                $ARproducts = $ARproducts->sortByDesc('title', SORT_NATURAL|SORT_FLAG_CASE);
+            } else {
+                $ARproducts = $ARproducts->sortBy('title', SORT_NATURAL|SORT_FLAG_CASE);
+            }
+        }
+
+        if ($ActSortOrder == "cat") {
+            if ($ActSortOrderType == "desc") {
+                $ARproducts = $ARproducts->sortByDesc('cat', SORT_FLAG_CASE);
+            } else {
+                $ARproducts = $ARproducts->sortBy('cat', SORT_FLAG_CASE);
+            }
+        }
+
+        $ARproducts->values()->all();
+
         return view('doc.consumableinvoice', [
+            'products' => $ARproducts,
             'consumableinvoice' => $consumableinvoice,
             'total' => round($total, 2),
             'productRes' => $productRes,
             'categories' => \App\CategoryStock::all(),
             'this_url' => '/doc/consumableinvoice/' . $id,
-            'category_id' => $category
+//            'category_id' => $category,
+            'ActSortOrder' => $ActSortOrder,
+            'ActSortOrderType' => $ActSortOrderType
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         //
@@ -220,7 +261,7 @@ class ConsumableinvoiceController extends Controller
                         }
                     }
                     foreach ($order->bars as $bar) {
-                        if($bar->stock&&$bar->stock->id){
+                        if ($bar->stock && $bar->stock->id) {
                             $products[] = [
                                 'id' => $bar->stock->id,
                                 'title' => $bar->stock->title,
@@ -265,7 +306,7 @@ class ConsumableinvoiceController extends Controller
                 }
             }
             $arExcel = [];
-            foreach ($productRes as  $productRe) {
+            foreach ($productRes as $productRe) {
                 foreach ($productRe as $k => $item) {
                     $arExcel[] = [
                         $item['title'],
@@ -289,4 +330,7 @@ class ConsumableinvoiceController extends Controller
             })->download('xls');
         }
     }
+
+
+
 }

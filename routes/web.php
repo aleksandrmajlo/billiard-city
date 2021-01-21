@@ -1,12 +1,5 @@
 <?php
 
-/*
-| Web Routes
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 Route::get('/test', 'TestController@index');
 // телевизор
 Route::get('/tv', 'TV\TVController@ScreenTable');
@@ -52,25 +45,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/table-edit', 'TableController@store')->name('tablestore');
 
 
-//        Route::get('/stock-create', 'StockController@create')->name('stockcreate');
-//        Route::post('/stock-store', 'StockController@store')->name('stockstore');
-//        Route::post('/stock-edit', 'StockController@edit')->name('stockstore');
-//        Route::get('/stock', 'StockController@index')->name('indexstock');
-//        Route::delete('/stock/{id}', 'StockController@destroy');
-
-
-
         Route::delete('/tarif/{id}', 'TariffController@destroy');
         Route::get('/tarif', 'TariffController@index')->name('tarifs');
-
-
-
-        /*
-      Route::post('/category-create', 'CategoryStockController@store')->name('categorycreate');
-       Route::get('/category', 'CategoryStockController@index')->name('categoryindex');
-       Route::delete('/category/{id}', 'CategoryStockController@destroy');
-       Route::post('/category-edit', 'CategoryStockController@edit')->name('categoryedit');
-       */
 
         Route::get('/cupon', 'CuponController@index')->name('cuponindex');
         Route::get('/info-money', 'MoneyController@index')->name('moneyindex');
@@ -103,7 +79,6 @@ Route::group(['middleware' => 'auth'], function () {
     // открытие смены
     Route::get('/change_open', 'ChangeController@change_open')->name('change_open');
 
-
     //получение данных для закрытия и открытия смены(пока только барменом)
     Route::group(['prefix' => 'change_data', 'namespace' => 'Change'], function () {
         //получение категорий товаров
@@ -116,12 +91,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('changes/closeManager', 'ChangeController@closeChangeManager')->name('closeManager');
     Route::get('changes/closeBarmen', 'ChangeController@closeBarmenFormView')->name('closeBarmenForm');
 
+    // смены
     Route::resource('changes', 'ChangeController');
-
 
     //закрытие смены
     Route::get('/close_order', 'Change\CloseBarmen@close_change')->name('close_change');
-
 
     // история заказов
     Route::get('/history_orders', 'StatisticsController@index')->name('history_orders');
@@ -143,7 +117,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/close-bar', 'OrderController@closeBar')->name('closeBar');
     Route::get('/close-table', 'OrderController@closeTable')->name('closeTable');
 
-//    Route::get('/stock', 'StockController@index')->name('stock');
 
     // бронирование **************************************************
     Route::get('/booking', 'BookingController@index')->name('booking');
@@ -260,6 +233,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix' => 'analytic', 'namespace' => 'Analytic'], function () {
+
         Route::get('/attendance', 'AnalyticController@attendance');
 
         // получение данных для посещаемости по месяцам
@@ -269,10 +243,15 @@ Route::group(['middleware' => 'auth'], function () {
 
         //
         Route::post('/Billiards profitability', 'AnalyticController@attendanceDate');
+
+        // популярные столы
+        Route::get('/popularity-tables', 'AnalytictableController@index')->name('popularity-tables');
+
+        Route::post('PopularitytablesAjax', 'AnalytictableController@ajax');
+        Route::get('PopularitytablesAjax', 'AnalytictableController@ajax');
+
     });
 
-
     //  мои роуты  end **************************************************
-
     Route::get('/no-access', 'HomeController@noAccess')->name('noaccess');
 });

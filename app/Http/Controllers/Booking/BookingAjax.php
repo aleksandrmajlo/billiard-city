@@ -42,10 +42,13 @@ class BookingAjax extends Controller
                 $bookings[$key]['to'] = $booking_before->format('Y-m-d');
 
                 $bookings[$key]['table_number'] = $booking->table_number;
-                if(!empty($booking->id_customers)){
-                    $bookings[$key]['name']=$booking->customer->name;
-                    $bookings[$key]['lastname']=$booking->customer->surname;
+
+
+                if (!empty($booking->id_customers)) {
+                    $bookings[$key]['name'] = $booking->customer->name;
+                    $bookings[$key]['lastname'] = $booking->customer->surname;
                 }
+
             }
         }
         return response()->json([
@@ -105,9 +108,9 @@ class BookingAjax extends Controller
                 $bookings[$key]['to'] = $booking_before->format('Y-m-d');
 
                 $bookings[$key]['table_number'] = $booking->table_number;
-                if(!empty($booking->id_customers)){
-                    $bookings[$key]['name']=$booking->customer->name;
-                    $bookings[$key]['lastname']=$booking->customer->surname;
+                if (!empty($booking->id_customers)) {
+                    $bookings[$key]['name'] = $booking->customer->name;
+                    $bookings[$key]['lastname'] = $booking->customer->surname;
                 }
 
             }
@@ -127,10 +130,10 @@ class BookingAjax extends Controller
             $reservation->id_customers = $request->id_customers;
         } else {
             // поскольку телефон уникален-проверяем или существует такой пользователь
-            $customerFind=BookingService::FindCustomerByPhone($request->phone);
-            if($customerFind){
+            $customerFind = BookingService::FindCustomerByPhone($request->phone);
+            if ($customerFind) {
                 $reservation->id_customers = $customerFind;
-            }else{
+            } else {
                 //добавляем пользователя
                 $customer = new Customer;
                 $customer->name = $request->name;
@@ -144,7 +147,7 @@ class BookingAjax extends Controller
         }
         $reservation->name = $request->name;
         $reservation->lastname = $request->lastname;
-        $reservation->phone =BookingService::ValidPhone($request->phone) ;
+        $reservation->phone = BookingService::ValidPhone($request->phone);
 
         $reservation->email = $request->email;
         $reservation->booking_from = $request->from . ' ' . $request->from_time;
@@ -230,10 +233,10 @@ class BookingAjax extends Controller
         $reservation->booking_before = $request->booking_before; //объзательное поле
 
         $reservation->phone = BookingService::ValidPhone($request->phone);
-        $customer_id=BookingService::FindCustomerByPhone($request->phone);
-        if($customer_id){
+        $customer_id = BookingService::FindCustomerByPhone($request->phone);
+        if ($customer_id) {
             $reservation->id_customers = $customer_id;
-        }else{
+        } else {
             //добавляем пользователя
             $customer = new Customer;
             $customer->phone = BookingService::ValidPhone($request->phone);

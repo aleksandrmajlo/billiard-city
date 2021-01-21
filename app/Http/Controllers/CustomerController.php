@@ -24,11 +24,13 @@ class CustomerController extends Controller
         if ($request->has('page')) {
             $page = $request->page;
         }
+        $isAdmin=Auth::user()->hasRole('admin');
         return view(
             'customers.index',
             [
                 'customers' => $customers,
-                'page' => $page
+                'page' => $page,
+                'isAdmin'=>$isAdmin
             ]);
     }
 
@@ -37,6 +39,7 @@ class CustomerController extends Controller
     {
         $customer = Customer::where('id', $id)->firstOrFail();
         $ordersum = Order::where('customer_id', $id)->sum('amount');
+
         return view(
             'customers.show',
             [

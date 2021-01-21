@@ -13,13 +13,9 @@
     <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="/dist/css/skins/skin-blue.min.css">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    {{-- <link href="{{ asset('/css/my.css') }}" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
-    {{-- <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css"> --}}
-    {{-- <link href="{{ asset('/css/order.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('production/css/app.css') }}" rel="stylesheet">
     {{--
       cтили верстальщика
@@ -94,13 +90,6 @@
                             <img src="/img/logo 1.png" alt="logo">BilliardCRM</span>
                         </a>
                     </li>
-                    {{-- 
-                        <li class="active">
-                        <a href="">
-                            <img src="/img/menu1.png" alt="Уведомления"> <span>Уведомления </span>
-                        </a>
-                    </li>  
-                        --}}
                     <li class="active">
                         <a href="/customers">
                             <img src="/img/menu2.png" alt="База клиентов">
@@ -229,7 +218,13 @@
                                   <a href="/analytic/attendance">
                                       <span>@lang('site.analytic_attendance')</span>
                                   </a>
+                              </li>                              
+                              <li>
+                                  <a href="{{ route('popularity-tables') }}">
+                                      <span>@lang('analytic.popularity-tables')</span>
+                                  </a>
                               </li>
+
                           </ul>
                     </li>
 
@@ -244,11 +239,8 @@
     </div>
 </div>
 
-
-
     <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-    {{-- <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> --}}
 
     <script src="{{ asset('production/js/app.js') }}" ></script>
     {{--    старые скрипты --}}

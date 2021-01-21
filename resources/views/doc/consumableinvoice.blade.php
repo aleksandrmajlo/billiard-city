@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-
     <div class="user">
         <div class="user__title">
             <h2> @lang('сonsumableinvoice.titleOne') #{{$consumableinvoice->id}}  </h2>
@@ -49,18 +48,97 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                @lang('site.SortThis'):
+                <b>
+                    @if($ActSortOrder=="price")
+                        @lang('сonsumableinvoice.price')
+                    @elseif($ActSortOrder=="cat")
+                            @lang('site.Category')
+                    @elseif($ActSortOrder=="title")
+                        @lang('act.name')
+                    @elseif($ActSortOrder=="skidka")
+                        @lang('сonsumableinvoice.skidka')
+                    @elseif($ActSortOrder=='total')
+                        @lang('сonsumableinvoice.allprice')
+                    @endif
+                </b>
+                -
+                <b>
+                    @if($ActSortOrder=='type')
+                        @if($ActSortOrderType=='act')
+                            @lang('act.product')
+                        @else
+                            @lang('act.ingredient')
+                        @endif
+                    @else
+                        @if($ActSortOrderType=='act')
+                            @lang('site.SortThisAsc')
+                        @else
+                            @lang('site.SortThisDesc')
+                        @endif
+                    @endif
 
+                </b>
+            </div>
+        </div>
         <div class="user_table acts__table" id="print">
             <table>
                 <tr class="td-one">
                     <td>
                         @lang('act.name')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="title">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
+                    </td>
+                    <td>
+                        @lang('act.cat')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="cat">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
                     </td>
                     <td>
                         @lang('сonsumableinvoice.count')
                     </td>
                     <td>
                         @lang('сonsumableinvoice.price')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="price">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
                     </td>
 
                     <td>
@@ -69,134 +147,42 @@
 
                     <td>
                         @lang('сonsumableinvoice.allprice')
+                        <form style="display:none;" action="{{ route('setCategoryDocSortOrder') }}" method="post">
+                            <input type="hidden" name="sort" value="total">
+                            <input type="hidden" name="type" value="">
+                            {{csrf_field()}}
+                        </form>
+                        @if($ActSortOrderType=="desc")
+                            <a href="" data-type="act" class="DocSortOrder categoryDocSortOrderASC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @else
+                            <a href="" data-type="desc" class="DocSortOrder categoryDocSortOrderDESC">
+                                <img src="/img/arrey.png" alt="arrey">
+                            </a>
+                        @endif
                     </td>
                 </tr>
-                @foreach($productRes as $products)
-                    @foreach($products as $k=>$product)
-                        <tr>
-                            <td>{{$product['title']}}</td>
-                            <td>{{$product['count']  }}</td>
-                            <td>{{$product['price']  }} грн.</td>
-                            <td>{{$k}} %</td>
-                            <td>{{$product['total'] }} грн.</td>
-                        </tr>
-                    @endforeach
+                @foreach($products as $k=>$product)
+                    <tr>
+                        <td>{{$product['title']}}</td>
+                        <td>
+                            @if($product['cat'])
+                                {{$product['cat']}}
+                            @endif
+                        </td>
+                        <td>{{$product['count']  }}</td>
+                        <td>{{$product['price']  }} грн.</td>
+                        <td>{{$product['skidka']}} %</td>
+                        <td>{{$product['total'] }} грн.</td>
+                    </tr>
                 @endforeach
+
                 <tr>
                     <td colspan="2">@lang('сonsumableinvoice.allpriceProducts')</td>
                     <td colspan="2">{{$total}} грн.</td>
                 </tr>
             </table>
         </div>
-
-
     </div>
-
-
-{{--
-
-    <section class="content-header">
-        <h1 class="mb-10">
-            @lang('сonsumableinvoice.titleOne') #{{$consumableinvoice->id}} {{$consumableinvoice->created_at}}
-        </h1>
-    </section>
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-12">
-                    <doc-print id="ActsTable" header=""></doc-print>
-                    <a class="btn btn-info" target="_blank" href="/doc/consumableinvoice/export/{{$consumableinvoice->id}}">@lang('act.excel')</a>
-                </div>
-                <div class="col-xs-12">
-                     <h4 >Категории</h4>
-                </div>
-                <div class="col-xs-12">
-                    <form method="GET" class="form-inline" >
-                            <div class="form-group">
-                                <select class="form-control" name="category">
-                                    @foreach ($categories as $category)
-                                        <option @if ($category_id&&$category_id==$category->id)
-                                            selected
-                                        @endif value="{{$category->id}}">{{$category->title}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Фильтрировать</button>
-                        <a class="btn" href="{{$this_url}}">Очистить</a>
-                        </div>
-                    </form>
-                </div>
-                <br>
-                <div class="col-xs-12">
-                    <div class="box">
-                        @if($productRes)
-                            <div class="box-body">
-                                <div class="table-container">
-                                    <div id="print">
-                                        <div class="table-responsive">
-
-                                            <table id="ActsTable" class=" DataTable table table-bordered table-striped">
-                                                <thead>
-                                                <tr>
-                                                    <td>
-                                                        @lang('act.name')
-                                                    </td>
-                                                    <td>
-                                                        @lang('сonsumableinvoice.count')
-                                                    </td>
-
-                                                    <td>
-                                                        @lang('сonsumableinvoice.price')
-                                                    </td>
-
-                                                    <td>
-                                                        @lang('сonsumableinvoice.skidka')
-                                                    </td>
-
-                                                    <td>
-                                                        @lang('сonsumableinvoice.allprice')
-                                                    </td>
-
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach($productRes as $products)
-                                                    @foreach($products as $k=>$product)
-                                                        <tr>
-                                                            <td>{{$product['title']}}</td>
-                                                            <td>{{$product['count']  }}</td>
-                                                            <td>{{$product['price']  }} грн.</td>
-                                                            <td>{{$k}} %</td>
-                                                            <td>{{$product['total'] }} грн.</td>
-                                                        </tr>
-
-                                                    @endforeach
-                                                @endforeach
-                                                </tbody>
-                                                <thead>
-                                                <tr>
-                                                    <td colspan="2">@lang('сonsumableinvoice.allpriceProducts')</td>
-                                                    <td colspan="2">{{$total}} грн.</td>
-                                                </tr>
-                                                </thead>
-                                            </table>
-
-                                            <table></table>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
---}}
-
-
-
 @endsection

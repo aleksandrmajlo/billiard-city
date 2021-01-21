@@ -24,7 +24,7 @@
                 <div class="col-xs-4 col-sm-6 col-sm-pull-6">
                 </div>
             </div>
-            <add-customer></add-customer>
+            <add-customer isadmin="{{$isAdmin}}"></add-customer>
         </div>
         <a class="close " id="closeCompareActWin" title="Закрыть " href="#close "></a>
     </div>

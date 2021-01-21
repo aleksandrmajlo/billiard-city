@@ -12,21 +12,18 @@ use Illuminate\Support\Facades\DB;
 
 class AnalyticController extends Controller
 {
-
     public function attendance()
     {
         return view('analytic.attendance', [
         ]);
-
     }
-
 
     // подсчет данных по посещаемости
     public function attendanceData(Request $request)
     {
+        $res = [];
         if ($request->has('monthData')) {
             $monthData = $request->monthData;
-            $res = [];
             foreach ($monthData as $monthDatum) {
 
                 $count_order_bars = Order::whereYear('start', '=', $monthDatum['year'])
@@ -40,6 +37,7 @@ class AnalyticController extends Controller
                     ->count();
 
                 $count_orders = $count_order_bars + $count_order_billiards;
+
                 $res[] = [
                     "month" => $monthDatum['month'],
                     "year" => $monthDatum['year'],
@@ -48,8 +46,8 @@ class AnalyticController extends Controller
                     "count_order_billiards" => $count_order_billiards
                 ];
             }
-            return response()->json($res);
         }
+        return response()->json($res);
     }
 
     public function attendanceDate(Request $request)
@@ -73,11 +71,11 @@ class AnalyticController extends Controller
                 $count_order_billiards = Order::whereDate('start', '=', $dateDay)
                     ->where('type_billiards', '=', 1)
                     ->count();
-                $count_orders=$count_order_bars+$count_order_billiards;
+                $count_orders = $count_order_bars + $count_order_billiards;
                 $res[] = [
-                    "date"=>$i->format('d'),
-                    "month" =>  ((int)$i->format('n')-1)    ,
-                    "year" =>$i->format('Y'),
+                    "date" => $i->format('d'),
+                    "month" => ((int)$i->format('n') - 1),
+                    "year" => $i->format('Y'),
                     "count" => $count_orders,
                     "count_order_bars" => $count_order_bars,
                     "count_order_billiards" => $count_order_billiards

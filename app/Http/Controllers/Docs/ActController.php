@@ -12,14 +12,19 @@ use App\Acts\Act;
 use App\CategoryStock;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\UcfirstTrait;
 use Excel;
 
 class ActController extends Controller
 {
+    use UcfirstTrait;
     protected $pageCount = 20;
 
     public function index(Request $request)
     {
+
+        session()->forget('ActSortOrder');
+        session()->forget('ActSortOrderType');
 
         if ($request->has('start') || $request->has('end') || $request->has('user_id')) {
             $acts = new Act();
@@ -58,6 +63,7 @@ class ActController extends Controller
     {
         $act = Act::findOrFail($id);
         $showApparat = true;
+
         if ($request->has('title')) {
             $showApparat = false;
         }
@@ -69,57 +75,75 @@ class ActController extends Controller
         } elseif ($request->has('cat') && $request->cat !== '20') {
             $showApparat = false;
         }
-
-
-
-        // сортировка старт **************************************
-        // desc - стрелка вверх по алфавиту вниз  а..я
-        // asc - стрелка dybp по алфавиту я а
-        $categoryDocSortOrder = session('categoryDocSortOrder', 'desc');
-
-        if($categoryDocSortOrder=="desc"){
-            $cats = CategoryStock::orderBy('title','desc')->get();
-        }else{
-            $cats = CategoryStock::orderBy('title','asc')->get();
-        }
-        $stocks = $act->stocks->toArray();;
-        $stocks_res = [];
-        $cat_title = [];
-        foreach ($cats as $cat){
-            $stocks_res[$cat->title]=[];
-        }
-        foreach ($stocks as $item) {
-            $title = "";
-            if (isset($cat_title[$item['categorystock_id']])) {
-                $title = $cat_title[$item['categorystock_id']];
-            } else {
-                $cat = CategoryStock::select('title', 'id')->withTrashed()->find($item['categorystock_id']);
-                $cat_title[$cat->id] = $cat->title;
-                $title = $cat->title;
-            }
-            $stocks_res[$title][]=[
-                'title' => $item['title'],
-                'category_id' => $item['categorystock_id'],
-                'count' => $item['pivot']['count'],
-                'category_title' => $title,
-            ];
-        }
-        // сортировка end **************************************
-
         // тип отображение start **************************************
-        $typeDocSortOrder=session('typeDocSortOrder', 'stocks');
+        $ActSortOrder=session('ActSortOrder', 'cat');
+        $ActSortOrderType=session('ActSortOrderType','asc');
         // тип отображение end **************************************
+        $products = collect();
+        $stocks = $act->stocks;
+        $ingredients=$act->ingredients;
+
+        foreach ($stocks as $stock){
+            $products->push([
+                'title'=>$this->mb_ucfirst($stock->title),
+                'cat'=>$this->mb_ucfirst($stock->categorySee->title),
+                'count'=>$stock->pivot->count,
+                'type'=>1,
+            ]);
+        }
+
+        if($ActSortOrder=="cat"){
+            if($ActSortOrderType=="desc"){
+                $products = $products->sortByDesc('cat');
+            }else{
+                $products = $products->sortBy('cat');
+            }
+        }
+        foreach ($ingredients as $stock){
+            $products->push([
+                'title'=>$this->mb_ucfirst($stock->title),
+                'cat'=>null,
+                'count'=>$stock->pivot->count,
+                'type'=>2,
+            ]);
+        }
+
+        if($ActSortOrder=="title"){
+            if($ActSortOrderType=="desc"){
+                $products = $products->sortByDesc('title');
+            }else{
+                $products = $products->sortBy('title');
+            }
+        }
+
+        if($ActSortOrder=="type"){
+            if($ActSortOrderType=="desc"){
+                $products = $products->sortByDesc('type');
+            }else{
+                $products = $products->sortBy('type');
+            }
+        }
+
+        if ($request->has('title')) {
+            $search=$request->title;
+            $products = $products->filter(function($item) use ($search) {
+                return stripos($item['title'],$search) !== false;
+            });
+        }
+
+        $products->values()->all();
+        // сортировка end **************************************
 
         return view('doc/act', [
             'act' => $act,
-            'stocks' => $stocks_res,
-            'cats' => $cats,
+            'products'=>$products,
             'id' => $id,
             'showApparat' => $showApparat,
             'urlFilter' => '/doc/act/' . $id,
-            'categoryDocSortOrder' => $categoryDocSortOrder,
-            'typeDocSortOrder' => $typeDocSortOrder,
+            'ActSortOrder'=>$ActSortOrder,
+            'ActSortOrderType'=>$ActSortOrderType
         ]);
+
     }
 
     // сравнение актов
@@ -239,16 +263,6 @@ class ActController extends Controller
                 $ingredient->pivot->count
             ];
         }
-
-        /*
-        $results[]=[
-            trans('act.kofeinyi_apparat'),
-            '',
-            '',
-            $act->kofeinyiapparat->count
-        ];
-        */
-
         Excel::create('Акт №' . $id, function ($excel) use ($results) {
             $excel->sheet('Лист 1', function ($sheet) use ($results) {
                 $sheet->fromArray($results)->row(1, array(
@@ -270,8 +284,6 @@ class ActController extends Controller
 
             $act1 = Act::find($request->act1);
             $act2 = Act::find($request->act2);
-
-
             $product = trans('act.product');
             if (count($act1->stocks) > 0) {
                 foreach ($act1->stocks as $k => $stock) {
@@ -330,20 +342,13 @@ class ActController extends Controller
                     ));
                 });
             })->download('xls');
-
-
         }
     }
 
-    //установить порядок сортировки категорий
+    //установить порядок сортировки
     public function setCategoryDocSortOrder(Request $request){
-        session(['categoryDocSortOrder' => $request->sort]);
+        session(['ActSortOrder' => $request->sort]);
+        session(['ActSortOrderType' => $request->type]);
         return back();
     }
-    // установить тип отображения
-    public function setTypeDocSortOrder(Request $request){
-        session(['typeDocSortOrder' => $request->type]);
-        return back();
-   }
-
 }

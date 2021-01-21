@@ -153,7 +153,18 @@ return [
     "ProductUpdate"=>"Продукт обновлен",
 
     "Update"=>"Обновить",
-    "ProductAction"=>"Действие"
+    "ProductAction"=>"Действие",
 
+    "SortThis"=>"Сортировка",
+    "SortThisDesc"=>" c последних",
+    "SortThisAsc"=>" c первых",
+    "SortThisAsc2"=>" первый",
+
+     "Comments"=>"Комментарий",
+
+     "OrdersNotClose"=>"не закрыт",
+
+     'PaginationFirst'=>'Начало',
+     'PaginationLast' =>'Последня '
 
 ];
