@@ -93,7 +93,6 @@ class OrderService
         $priceProductsDiscount = 0;
         $priceProcentProducts = 0;
 
-
         /*
         * Пользователь если есть
         */
@@ -184,6 +183,10 @@ class OrderService
 
         $startB = ($s1->format("N") * 24 * 60) + Tariff::minuts($startM);
         $endB = ($s2->format("N") * 24 * 60) + Tariff::minuts($endM);
+
+//        dump($startB);
+//        dump($endB);
+
         $tablePrices = Tariff::withTrashed()
             ->where('table_id', '=', $order->table_id)
             ->get();
@@ -196,6 +199,8 @@ class OrderService
         } else {
             $vars = range($startB, $endB - 1);
         }
+
+
 
         foreach ($vars as $k => $var) {
             $varo[] = $var[$k];

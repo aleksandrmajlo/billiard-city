@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
-    <link href="{{ asset('production/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('production/css/app.css') }}?version=1.0.1" rel="stylesheet">
     {{--
       cтили верстальщика
       /css/demo.css подключать отдельно  в контэнтэ
@@ -242,7 +242,8 @@
     <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
-    <script src="{{ asset('production/js/app.js') }}" ></script>
+    <script src="{{ asset('production/js/app.js') }}?version=1.0.1" ></script>
+   
     {{--    старые скрипты --}}
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('js/jquery.maskedinput.min.js') }}"></script>

@@ -81,6 +81,7 @@ class TableController extends Controller
     {
         $id = $request->id;
         $results = OrderService::priceOrder($id);
+
         return response()->json(['results' => $results]);
     }
 

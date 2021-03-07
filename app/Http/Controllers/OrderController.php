@@ -423,8 +423,10 @@ class OrderController extends Controller
     {
         $tablePrices = Tariff::withTrashed()->where('table_id', '=', $orderId->table_id)
             ->get();
+
         foreach ($tablePrices as $tablePrice2) {
             $range[] = range($tablePrice2->start, $tablePrice2->end);
+
             foreach ($range as $d => $rang) {
                 $rang = $rang;
             }

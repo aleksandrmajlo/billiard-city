@@ -107,12 +107,11 @@ let store = {
                 }
             }
         },
-
         AddPlusProduct(state, product) {
             let i = state.cart.map(item => parseInt(item.id)).indexOf(parseInt(product.id));
             // продукт
             let j = state.products.map(item => item.id).indexOf(product.id);
-            let plusCount = 0.5;
+            let plusCount = 1;
             if (j !== -1) {
                 if (plusCount > state.products[j].count && state.cart[i].unlimited !== 1 && state.cart[i].unlimited !== '1') {
                     state.cart[i].isOpen = true;
@@ -120,7 +119,7 @@ let store = {
                         state.cart[i].isOpen = false;
                     }, 2000)
                 } else {
-                    state.cart[i].count = state.cart[i].count + 0.5;
+                    state.cart[i].count = state.cart[i].count +plusCount;
                     //изменяем к-во
                     state.products[j].count = parseFloat(state.products[j].count) - plusCount;
                 }
@@ -131,7 +130,7 @@ let store = {
                         state.cart[i].isOpen = false;
                     }, 2000)
                 } else {
-                    state.cart[i].count = state.cart[i].count + 0.5;
+                    state.cart[i].count = state.cart[i].count + plusCount;
                 }
 
             }
